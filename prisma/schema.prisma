@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -7,97 +7,42 @@ datasource db {
   provider = "postgresql"
 }
 
-enum AuthProvider {
-  email
-  google
-  apple
-}
-
-enum SubscriptionStatus {
-  active
-  canceled
-  past_due
-}
-
-enum SubscriptionPlan {
-  free
-  pro
-}
+// -------- Better Auth models --------
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  emailVerified Boolean        @default(false)
+  id            String    @id
   name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
   image         String?
-  provider      AuthProvider   @default(email)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  pages         Page[]
-  subscription  Subscription?
-  sessions      Session[]
-  accounts      Account[]
-}
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-model Page {
-  id          String   @id @default(cuid())
-  userId      String
-  slug        String   @unique
-  title       String
-  description String?
-  avatarUrl   String?
-  themeConfig Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  // app fields
+  plan          Plan      @default(FREE)
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
 
-  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  links Link[]
+  sessions Session[]
+  accounts Account[]
+  pages    Page[]
 
-  @@index([userId])
-}
-
-model Link {
-  id          String   @id @default(cuid())
-  pageId      String
-  title       String
-  description String?
-  url         String
-  imageUrl    String?
-  position    Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
-
-  @@index([pageId, position])
-}
-
-model Subscription {
-  id                   String             @id @default(cuid())
-  userId               String             @unique
-  stripeCustomerId     String?            @unique
-  stripeSubscriptionId String?            @unique
-  status               SubscriptionStatus @default(canceled)
-  plan                 SubscriptionPlan   @default(free)
-  currentPeriodEnd     DateTime?
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("users")
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
   token     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("session")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model Account {
@@ -105,7 +50,6 @@ model Account {
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -116,16 +60,60 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
-  @@map("account")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
 }
 
 model Verification {
-  id         String    @id
+  id         String   @id
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime? @default(now())
-  updatedAt  DateTime? @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@map("verification")
+  @@map("verifications")
+}
+
+// -------- Domain models --------
+
+enum Plan {
+  FREE
+  PRO
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  bio       String?
+  image     String?
+  published Boolean  @default(true)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links Link[]
+
+  @@index([userId])
+  @@map("pages")
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  image     String?
+  active    Boolean  @default(true)
+  position  Int
+  pageId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+  @@map("links")
 }

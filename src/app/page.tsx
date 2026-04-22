@@ -1,109 +1,97 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { ArrowRight, Link2, ShieldCheck, Sparkles } from "lucide-react";
 
-const features = [
-  {
-    title: "Bio page própria",
-    description:
-      "Crie sua página personalizada em lnkcore.com/seu-slug e compartilhe com qualquer pessoa.",
-  },
-  {
-    title: "Links ilimitados",
-    description:
-      "Adicione quantos links quiser: redes sociais, portfólio, projetos e mais.",
-  },
-  {
-    title: "Dashboard simples",
-    description:
-      "Gerencie tudo em um painel limpo e intuitivo. Sem complicações.",
-  },
-];
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-          <span className="font-bold tracking-tight">lnkcore</span>
+    <div className="flex min-h-dvh flex-col">
+      <header className="border-b">
+        <div className="container mx-auto flex h-16 items-center justify-between px-6">
+          <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Link2 className="h-5 w-5" />
+            lnkcore
+          </Link>
           <nav className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">Entrar</Link>
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/sign-in">Entrar</Link>
             </Button>
-            <Button size="sm" asChild>
-              <Link href="/register">Criar conta</Link>
+            <Button asChild size="sm">
+              <Link href="/sign-up">Começar</Link>
             </Button>
           </nav>
         </div>
       </header>
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="mx-auto flex max-w-3xl flex-col items-center px-6 py-24 text-center">
-          <Badge variant="secondary" className="mb-4">
-            Grátis para começar
-          </Badge>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Seu hub de links em{" "}
-            <span className="text-primary">um único lugar</span>
+        <section className="container mx-auto flex flex-col items-center gap-8 px-6 py-24 text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border bg-muted px-3 py-1 text-xs text-muted-foreground">
+            <Sparkles className="h-3.5 w-3.5" /> Tudo o que importa em um único link
+          </span>
+          <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
+            Um link. Todas as suas páginas.
           </h1>
-          <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-            Crie sua bio page personalizada, organize seus links e compartilhe
-            tudo com uma única URL. Simples assim.
+          <p className="max-w-xl text-lg text-muted-foreground">
+            Crie a sua página lnkcore, reúna seus links, redes sociais e
+            conteúdos em um só lugar e compartilhe com o mundo.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Button size="lg" asChild>
-              <Link href="/register">Criar minha página grátis</Link>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg">
+              <Link href="/sign-up">
+                Criar conta grátis <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/login">Já tenho conta</Link>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/sign-in">Já tenho conta</Link>
             </Button>
-          </div>
-          <p className="mt-4 text-sm text-muted-foreground">
-            lnkcore.com/<span className="font-medium text-foreground">seu-slug</span>
-          </p>
-        </section>
-
-        <Separator />
-
-        {/* Features */}
-        <section className="mx-auto max-w-5xl px-6 py-20">
-          <h2 className="mb-12 text-center text-2xl font-semibold tracking-tight">
-            Tudo que você precisa
-          </h2>
-          <div className="grid gap-8 sm:grid-cols-3">
-            {features.map((feature) => (
-              <div key={feature.title} className="space-y-2">
-                <h3 className="font-medium">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
           </div>
         </section>
 
-        <Separator />
-
-        {/* CTA */}
-        <section className="mx-auto max-w-2xl px-6 py-20 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Pronto para começar?
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Crie sua conta e tenha sua bio page no ar em menos de 2 minutos.
-          </p>
-          <Button className="mt-6" size="lg" asChild>
-            <Link href="/register">Criar conta grátis</Link>
-          </Button>
+        <section className="container mx-auto grid gap-6 px-6 pb-24 sm:grid-cols-3">
+          <Feature
+            icon={<Link2 className="h-5 w-5" />}
+            title="Múltiplas páginas"
+            description="Crie quantas páginas quiser, cada uma com o seu próprio tema e links."
+          />
+          <Feature
+            icon={<Sparkles className="h-5 w-5" />}
+            title="Editor simples"
+            description="Arraste, solte e ative seus links com poucos cliques."
+          />
+          <Feature
+            icon={<ShieldCheck className="h-5 w-5" />}
+            title="Login seguro"
+            description="Autenticação com cookies httpOnly e sessões criptografadas."
+          />
         </section>
       </main>
 
-      <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} lnkcore. Feito com Next.js.
+      <footer className="border-t">
+        <div className="container mx-auto flex h-14 items-center justify-between px-6 text-sm text-muted-foreground">
+          <span>© {new Date().getFullYear()} lnkcore</span>
+          <span>Feito com Next.js</span>
+        </div>
       </footer>
+    </div>
+  );
+}
+
+function Feature({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="rounded-xl border bg-card p-6">
+      <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-md bg-muted">
+        {icon}
+      </div>
+      <h3 className="mb-1 font-semibold">{title}</h3>
+      <p className="text-sm text-muted-foreground">{description}</p>
     </div>
   );
 }
