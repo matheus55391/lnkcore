@@ -1,78 +1,132 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { signUp } from "@/lib/auth-client";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  registerResolver,
+  useRegisterMutation,
+  type RegisterInput,
+} from "@/queries/use-register-mutation";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-
-    const response = await signUp.email({
-      name,
-      email,
-      password,
-    });
-
-    if (response.error) {
-      setError(response.error.message ?? "Falha no cadastro");
-      return;
-    }
-
-    await fetch("/api/auth/setup", { method: "POST" });
-    router.push("/dashboard");
-  }
+  const mutation = useRegisterMutation();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterInput>({ resolver: registerResolver });
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-6">
-      <h1 className="mb-6 text-2xl font-semibold">Criar conta</h1>
-      <form
-        className="space-y-4"
-        onSubmit={handleSubmit}
-        data-cy="register-form"
-      >
-        <input
-          data-cy="register-name"
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2"
-          placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          data-cy="register-email"
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2"
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          data-cy="register-password"
-          className="w-full rounded-lg border border-zinc-300 px-3 py-2"
-          placeholder="Senha"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        <button
-          type="submit"
-          data-cy="register-submit"
-          className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-white"
-        >
-          Criar e entrar
-        </button>
-      </form>
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 text-center">
+          <Link href="/" className="text-xl font-bold tracking-tight">
+            lnkcore
+          </Link>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Criar sua conta</CardTitle>
+            <CardDescription>
+              Comece a compartilhar seus links hoje mesmo
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form
+              className="space-y-4"
+              onSubmit={handleSubmit((data) => mutation.mutate(data))}
+              data-cy="register-form"
+            >
+              <div className="space-y-1.5">
+                <Label htmlFor="name">Nome</Label>
+                <Input
+                  id="name"
+                  data-cy="register-name"
+                  placeholder="Seu nome"
+                  autoComplete="name"
+                  aria-invalid={!!errors.name}
+                  {...register("name")}
+                />
+                {errors.name && (
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  data-cy="register-email"
+                  placeholder="voce@exemplo.com"
+                  type="email"
+                  autoComplete="email"
+                  aria-invalid={!!errors.email}
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  data-cy="register-password"
+                  placeholder="••••••••"
+                  type="password"
+                  autoComplete="new-password"
+                  aria-invalid={!!errors.password}
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+              {mutation.error && (
+                <p className="text-sm text-destructive">
+                  {mutation.error.message}
+                </p>
+              )}
+              <Button
+                type="submit"
+                data-cy="register-submit"
+                className="w-full"
+                size="lg"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? "Criando conta..." : "Criar e entrar"}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="justify-center">
+            <p className="text-sm text-muted-foreground">
+              Já tem uma conta?{" "}
+              <Link
+                href="/login"
+                className="text-foreground underline-offset-4 hover:underline"
+              >
+                Entrar
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }
