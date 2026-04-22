@@ -12,8 +12,6 @@
 
 # testing
 /coverage
-/cypress/videos
-/cypress/screenshots
 
 # next.js
 /.next/
@@ -42,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma generated client (generated in CI/local)
-/src/generated
+# prisma generated client
+src/generated/
