@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthProvider {
+  email
+  google
+  apple
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  past_due
+}
+
+enum SubscriptionPlan {
+  free
+  pro
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  emailVerified Boolean        @default(false)
+  name          String
+  image         String?
+  provider      AuthProvider   @default(email)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  pages         Page[]
+  subscription  Subscription?
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Page {
+  id          String   @id @default(cuid())
+  userId      String
+  slug        String   @unique
+  title       String
+  description String?
+  avatarUrl   String?
+  themeConfig Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links Link[]
+
+  @@index([userId])
+}
+
+model Link {
+  id          String   @id @default(cuid())
+  pageId      String
+  title       String
+  description String?
+  url         String
+  imageUrl    String?
+  position    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, position])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  status               SubscriptionStatus @default(canceled)
+  plan                 SubscriptionPlan   @default(free)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}

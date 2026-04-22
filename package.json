@@ -7,21 +7,50 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "vitest run --config vitest.config.ts --project unit",
+    "test:integration": "vitest run --config vitest.config.ts --project integration",
+    "test:watch": "vitest --config vitest.config.ts --project unit --project integration",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open",
+    "test:e2e:ci": "start-server-and-test dev http://localhost:3000 test:e2e",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@tanstack/react-query": "^5.99.2",
+    "bcryptjs": "^3.0.3",
+    "better-auth": "^1.6.7",
+    "dotenv": "^17.4.2",
+    "jose": "^6.2.2",
     "next": "16.2.4",
+    "pg": "^8.20.0",
+    "prisma": "^7.8.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "stripe": "^22.0.2",
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.5",
     "babel-plugin-react-compiler": "1.0.0",
+    "cypress": "^15.14.1",
+    "start-server-and-test": "^3.0.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }
