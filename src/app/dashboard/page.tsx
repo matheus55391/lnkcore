@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export const metadata = { title: "Dashboard · lnkcore" };
 
@@ -20,6 +21,7 @@ export default async function DashboardPage() {
             <span className="text-muted-foreground">
               {session.user.name ?? session.user.email}
             </span>
+            <ModeToggle />
             <SignOutButton />
           </div>
         </div>
