@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ArrowRight, Link2, ShieldCheck, Sparkles } from "lucide-react";
-
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { getSession } from "@/lib/get-session";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b">
@@ -12,14 +15,30 @@ export default function Home() {
             <Link2 className="h-5 w-5" />
             lnkcore
           </Link>
-          <nav className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/sign-in">Entrar</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/sign-up">Começar</Link>
-            </Button>
-          </nav>
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-muted-foreground">
+              {session ? (session.user.name ?? session.user.email) : null}
+            </span>
+            <nav className="flex items-center gap-2">
+              <Button
+                asChild
+                variant={session ? "outline" : "ghost"}
+                size="sm"
+                className={
+                  session
+                    ? "bg-white text-black hover:bg-zinc-100 hover:text-black"
+                    : undefined
+                }
+              >
+                <Link href="/sign-in">Entrar</Link>
+              </Button>
+              {session ? null : (
+                <Button asChild size="sm">
+                  <Link href="/sign-up">Começar</Link>
+                </Button>
+              )}
+            </nav>
+          </div>
         </div>
       </header>
 
@@ -36,11 +55,13 @@ export default function Home() {
             conteúdos em um só lugar e compartilhe com o mundo.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg">
-              <Link href="/sign-up">
-                Criar conta grátis <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+            {session ? null : (
+              <Button asChild size="lg">
+                <Link href="/sign-up">
+                  Criar conta grátis <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            )}
             <Button asChild size="lg" variant="outline">
               <Link href="/sign-in">Já tenho conta</Link>
             </Button>
@@ -81,7 +102,7 @@ function Feature({
   title,
   description,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }) {
