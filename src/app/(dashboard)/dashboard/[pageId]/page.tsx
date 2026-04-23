@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowLeftIcon, ExternalLinkIcon, Loader2Icon } from "lucide-react";
 import { use } from "react";
 
 import { Button } from "@/components/ui/button";
 import { LinksManager } from "@/components/links/links-manager";
-import { listPages } from "@/actions/pages/list-pages";
-import { pagesQueryKey } from "@/hooks/use-pages";
+import { usePage } from "@/queries/use-page-query";
 
 type Params = { pageId: string };
 
@@ -19,12 +17,7 @@ export default function PageDetailPage({
 }) {
   const { pageId } = use(params);
 
-  const { data: pages, isLoading } = useQuery({
-    queryKey: pagesQueryKey,
-    queryFn: () => listPages(),
-  });
-
-  const page = pages?.find((p) => p.id === pageId);
+  const { data: page, isLoading } = usePage(pageId);
 
   if (isLoading) {
     return (

@@ -40,10 +40,12 @@ export async function createCheckoutSession(): Promise<
   const checkout = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
+    client_reference_id: user.id,
     line_items: [{ price: STRIPE_PRO_PRICE_ID, quantity: 1 }],
     success_url: `${origin}/dashboard?upgraded=1`,
     cancel_url: `${origin}/dashboard`,
     metadata: { userId: user.id },
+    subscription_data: { metadata: { userId: user.id } },
   });
 
   if (!checkout.url) {

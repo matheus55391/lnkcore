@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,14 +17,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createPage } from "@/actions/pages/create-page";
 import { createPageSchema, type CreatePageInput } from "@/schemas/pages";
-import { pagesQueryKey } from "@/hooks/use-pages";
+import { useCreatePageMutation } from "@/queries/use-create-page-mutation";
 
 export function CreatePageDialog() {
   const [open, setOpen] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const queryClient = useQueryClient();
 
   const {
     register,
@@ -37,18 +34,12 @@ export function CreatePageDialog() {
     defaultValues: { slug: "" },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (values: CreatePageInput) => {
-      const result = await createPage(values);
-      if (!result.success) throw new Error(result.error);
-      return result.data;
-    },
+  const mutation = useCreatePageMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: pagesQueryKey });
       reset();
       setOpen(false);
     },
-    onError: (err: Error) => setServerError(err.message),
+    onError: (err) => setServerError(err.message),
   });
 
   function handleOpenChange(next: boolean) {

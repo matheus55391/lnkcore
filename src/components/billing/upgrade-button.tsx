@@ -1,23 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { SparklesIcon, Loader2Icon } from "lucide-react";
+import { SparklesIcon, Loader2Icon, BadgeCheckIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createCheckoutSession } from "@/actions/stripe/create-checkout-session";
+import { useCurrentUser } from "@/queries/use-current-user-query";
+import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 
 export function UpgradeButton() {
   const [error, setError] = useState<string | null>(null);
+  const { data: currentUser, isLoading } = useCurrentUser();
 
-  const mutation = useMutation({
-    mutationFn: async () => {
-      const res = await createCheckoutSession();
-      if (!res.success) throw new Error(res.error);
-      window.location.href = res.data.url;
-    },
-    onError: (err: Error) => setError(err.message),
+  const mutation = useCreateCheckoutSessionMutation({
+    onError: (err) => setError(err.message),
   });
+
+  if (isLoading) {
+    return (
+      <div className="h-8 w-24" aria-hidden="true" />
+    );
+  }
+
+  if (currentUser?.plan === "PRO") {
+    return (
+      <span className="flex items-center gap-1.5 text-sm font-medium text-primary">
+        <BadgeCheckIcon className="h-4 w-4" />
+        PRO
+      </span>
+    );
+  }
 
   return (
     <div className="flex flex-col items-end gap-1">

@@ -15,7 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { usePages } from "@/hooks/use-pages";
+import { usePages } from "@/queries/use-pages-query";
 
 export default function DashboardPage() {
   const { data: pages, isLoading } = usePages();

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, PlusIcon, TrashIcon } from "lucide-react";
@@ -19,26 +18,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { useLinks, linksQueryKey } from "@/hooks/use-links";
-import { createLink } from "@/actions/links/create-link";
-import { deleteLink } from "@/actions/links/delete-link";
+import { useLinks } from "@/queries/use-links-query";
+import { useCreateLinkMutation } from "@/queries/use-create-link-mutation";
+import { useDeleteLinkMutation } from "@/queries/use-delete-link-mutation";
 import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
 
 type Props = { pageId: string };
 
 export function LinksManager({ pageId }: Props) {
   const { data: links, isLoading } = useLinks(pageId);
-  const queryClient = useQueryClient();
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const res = await deleteLink({ id });
-      if (!res.success) throw new Error(res.error);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: linksQueryKey(pageId) });
-    },
-  });
+  const deleteMutation = useDeleteLinkMutation({ pageId });
 
   if (isLoading) {
     return (
@@ -92,7 +81,6 @@ export function LinksManager({ pageId }: Props) {
 function CreateLinkDialog({ pageId }: { pageId: string }) {
   const [open, setOpen] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const queryClient = useQueryClient();
 
   const {
     register,
@@ -104,18 +92,13 @@ function CreateLinkDialog({ pageId }: { pageId: string }) {
     defaultValues: { pageId, title: "", url: "" },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (values: CreateLinkInput) => {
-      const res = await createLink(values);
-      if (!res.success) throw new Error(res.error);
-      return res.data;
-    },
+  const mutation = useCreateLinkMutation({
+    pageId,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: linksQueryKey(pageId) });
       reset({ pageId, title: "", url: "" });
       setOpen(false);
     },
-    onError: (err: Error) => setServerError(err.message),
+    onError: (err) => setServerError(err.message),
   });
 
   function handleOpenChange(next: boolean) {
