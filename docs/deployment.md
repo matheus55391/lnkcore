@@ -12,18 +12,22 @@ Configure todas as variáveis abaixo no painel da plataforma de deploy:
 | `BETTER_AUTH_SECRET` | ✅ | Secret ≥ 32 chars. Gere com `openssl rand -base64 32` |
 | `BETTER_AUTH_URL` | ✅ | URL pública do app em produção (ex: `https://lnkcore.com`) |
 | `NEXT_PUBLIC_BETTER_AUTH_URL` | ❌ | Opcional — expõe a URL base ao cliente. Se ausente, usa `window.location.origin` |
-| `S3_ENDPOINT` | ✅ | Endpoint do bucket S3 (ex: `https://<id>.r2.cloudflarestorage.com`) |
-| `S3_REGION` | ✅ | Região S3 (ex: `us-east-1` ou `auto` para R2) |
-| `S3_ACCESS_KEY` | ✅ | Access key do bucket |
-| `S3_SECRET_KEY` | ✅ | Secret key do bucket |
-| `S3_BUCKET` | ✅ | Nome do bucket |
-| `S3_FORCE_PATH_STYLE` | ✅ | `true` para MinIO/R2; `false` para AWS S3 |
+| `STRIPE_SECRET_KEY` | ✅ (para billing) | Chave secreta do Stripe (`sk_live_...`) |
+| `STRIPE_PRO_PRICE_ID` | ✅ (para billing) | Price ID do plano PRO no Stripe |
+| `STRIPE_WEBHOOK_SECRET` | ✅ (para billing) | Secret do endpoint de webhook (`whsec_...`) |
+| `S3_ENDPOINT` | ❌ | Endpoint do bucket S3 (quando storage for implementado) |
+| `S3_REGION` | ❌ | Região S3 |
+| `S3_ACCESS_KEY` | ❌ | Access key do bucket |
+| `S3_SECRET_KEY` | ❌ | Secret key do bucket |
+| `S3_BUCKET` | ❌ | Nome do bucket |
+| `S3_FORCE_PATH_STYLE` | ❌ | `true` para MinIO/R2; `false` para AWS S3 |
 
 ---
 
-## Checklist pré-deploy
-
-- [ ] PostgreSQL provisionado e `DATABASE_URL` configurada
+## Che`BETTER_AUTH_SECRET` gerado com `openssl rand -base64 32`
+- [ ] `BETTER_AUTH_URL` apontando para o domínio de produção
+- [ ] Stripe: produto + price criados, `STRIPE_*` configuradas, endpoint de webhook cadastrado apontando para `https://<dominio>/api/stripe/webhook`
+- [ ] (Opcional, quando storage for implementado) Bucket S3 criado e variáveis `S3_*` configuradas
 - [ ] Bucket S3 criado e variáveis `S3_*` configuradas
 - [ ] `BETTER_AUTH_SECRET` gerado com `openssl rand -base64 32`
 - [ ] `BETTER_AUTH_URL` apontando para o domínio de produção

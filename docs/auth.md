@@ -78,16 +78,40 @@ if (!sessionCookie) {
 }
 ```
 
-### Server Component (`src/app/dashboard/page.tsx`)
+### Server Component / Server Action
 
-Valida a sessão completamente no servidor (inclui consulta ao banco para confirmar validade):
+A validação real da sessão fica centralizada em [src/utils/session.ts](../src/utils/session.ts):
 
 ```ts
-const session = await auth.api.getSession({ headers: await headers() });
-if (!session) redirect("/sign-in");
+import "server-only";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth, type Session } from "@/lib/auth";
+
+export async function getSession(): Promise<Session | null> {
+  return auth.api.getSession({ headers: await headers() });
+}
+
+export async function requireSession(): Promise<Session> {
+  const session = await getSession();
+  if (!session) redirect("/sign-in");
+  return session;
+}
 ```
 
-A dupla verificação garante segurança mesmo que o cookie exista mas a sessão tenha expirado ou sido invalidada.
+Uso típico:
+
+```ts
+// Em um layout de área privada
+const session = await getSession();
+if (!session) redirect("/sign-in");
+
+// Em uma Server Action
+const session = await requireSession();
+// ...opera em nome de session.user.id
+```
+
+A dupla verificação (middleware + server) garante segurança mesmo que o cookie exista mas a sessão tenha expirado.
 
 ### Layout de autenticação (`src/app/(auth)/layout.tsx`)
 

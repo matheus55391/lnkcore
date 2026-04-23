@@ -84,7 +84,38 @@ Abra [http://localhost:3000](http://localhost:3000).
 - `/` — Landing page pública
 - `/sign-up` — Criar conta
 - `/sign-in` — Entrar
-- `/dashboard` — Área protegida (requer login)
+- `/dashboard` — Lista de páginas (privado)
+- `/dashboard/[pageId]` — Gerenciar links de uma página
+- `/[slug]` — Página pública de um usuário
+
+---
+
+## 6. (Opcional) Stripe em dev
+
+Para testar o fluxo de upgrade PRO, instale a [Stripe CLI](https://stripe.com/docs/stripe-cli) e rode:
+
+```bash
+npm run stripe:login
+npm run stripe:listen
+```
+
+Cole o `whsec_...` retornado no `.env` em `STRIPE_WEBHOOK_SECRET` e defina também `STRIPE_SECRET_KEY` e `STRIPE_PRO_PRICE_ID`. Detalhes em [billing.md](./billing.md).
+
+### Checklist rápido para funcionar localmente
+
+1. Produto PRO criado no Stripe Sandbox com preço recorrente mensal.
+2. `STRIPE_SECRET_KEY` e `STRIPE_PRO_PRICE_ID` preenchidos no `.env`.
+3. Listener ativo com `npm run stripe:listen`.
+4. `STRIPE_WEBHOOK_SECRET` atualizado com o `whsec_...` da CLI.
+5. App reiniciado após atualizar `.env`.
+
+### Teste de eventos sem UI
+
+```bash
+npm run stripe:trigger:checkout
+npm run stripe:trigger:subscription:update
+npm run stripe:trigger:subscription:delete
+```
 
 ---
 
@@ -96,6 +127,11 @@ Abra [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Build de produção |
 | `npm start` | Servidor de produção (requer build antes) |
 | `npm run lint` | Executa o ESLint |
+| `npm run stripe:login` | Autentica Stripe CLI na conta de teste |
+| `npm run stripe:listen` | Encaminha eventos do Stripe para o webhook local |
+| `npm run stripe:trigger:checkout` | Dispara evento de teste `checkout.session.completed` |
+| `npm run stripe:trigger:subscription:update` | Dispara evento de teste `customer.subscription.updated` |
+| `npm run stripe:trigger:subscription:delete` | Dispara evento de teste `customer.subscription.deleted` |
 | `npx prisma studio` | Abre o Prisma Studio (GUI do banco) |
 | `npx prisma migrate dev` | Cria e aplica nova migração |
 | `npx prisma generate` | Regenera o cliente Prisma |
