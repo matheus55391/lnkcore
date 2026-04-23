@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Link2, ShieldCheck, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { getSession } from "@/lib/get-session";
+import { getSession } from "@/services/auth/get-session";
 
 export default async function Home() {
   const session = await getSession();

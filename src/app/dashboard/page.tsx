@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/get-session";
+import { getSession } from "@/services/auth/get-session";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ModeToggle } from "@/components/mode-toggle";
 
