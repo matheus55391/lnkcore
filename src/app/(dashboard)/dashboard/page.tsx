@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { ExternalLinkIcon, GlobeIcon, Loader2Icon } from "lucide-react";
+import Link from "next/link";
 
-import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { CreatePageDialog } from "@/components/pages/create-page-dialog";
+import { ProfileAvatar } from "@/components/profile-avatar";
 import { UpgradeButton } from "@/components/billing/upgrade-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +15,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useCurrentUser } from "@/queries/use-current-user-query";
 import { usePages } from "@/queries/use-pages-query";
 
 export default function DashboardPage() {
   const { data: pages, isLoading } = usePages();
+  const { data: currentUser } = useCurrentUser();
 
   return (
     <div className="min-h-dvh bg-muted/30">
@@ -26,9 +28,13 @@ export default function DashboardPage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <span className="font-semibold tracking-tight">lnkcore</span>
           <div className="flex items-center gap-3 text-sm">
-            <UpgradeButton />
             <ModeToggle />
-            <SignOutButton />
+            <UpgradeButton />
+            {
+              currentUser && (
+                <ProfileAvatar user={currentUser} />
+              )
+            }
           </div>
         </div>
       </header>
