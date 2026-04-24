@@ -1,20 +1,21 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-
-import { signUpSchema, type SignUpInput } from "@/schemas/auth";
-import { signUp } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signUp } from "@/lib/auth-client";
+import { signUpSchema, type SignUpInput } from "@/schemas/auth";
+import { PasswordInput } from "../password-input";
 
 export function SignUpForm() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
+
 
   const {
     register,
@@ -71,33 +72,19 @@ export function SignUpForm() {
         ) : null}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
-        <Input
-          id="password"
-          type="password"
-          autoComplete="new-password"
-          {...register("password")}
-        />
-        {errors.password ? (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        ) : null}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirmar senha</Label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          {...register("confirmPassword")}
-        />
-        {errors.confirmPassword ? (
-          <p className="text-sm text-destructive">
-            {errors.confirmPassword.message}
-          </p>
-        ) : null}
-      </div>
+      <PasswordInput
+        id="password"
+        autoComplete="new-password"
+        {...register("password")}
+        error={errors.password?.message}
+      />
+      <PasswordInput
+        id="confirmPassword"
+        label="Confirmar senha"
+        autoComplete="new-password"
+        {...register("confirmPassword")}
+        error={errors.confirmPassword?.message}
+      />
 
       {serverError ? (
         <p className="text-sm text-destructive">{serverError}</p>

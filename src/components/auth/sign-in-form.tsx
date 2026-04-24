@@ -1,17 +1,17 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { signIn } from "@/lib/auth-client";
+import { signInSchema, type SignInInput } from "@/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-
-import { signInSchema, type SignInInput } from "@/schemas/auth";
-import { signIn } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { PasswordInput } from "../password-input";
 
 export function SignInForm() {
   const router = useRouter();
@@ -59,24 +59,23 @@ export function SignInForm() {
       </div>
 
       <div className="space-y-2">
+
+        <PasswordInput
+          id="password"
+          autoComplete="new-password"
+          {...register("password")}
+          error={errors.password?.message}
+        />
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Senha</Label>
+
           <Link
             href="/forgot-password"
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="text-xs text-muted-foreground hover:text-foreground w-full text-right"
           >
-            Esqueceu?
+            Esqueceu sua senha?
           </Link>
         </div>
-        <Input
-          id="password"
-          type="password"
-          autoComplete="current-password"
-          {...register("password")}
-        />
-        {errors.password ? (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        ) : null}
+
       </div>
 
       {serverError ? (
