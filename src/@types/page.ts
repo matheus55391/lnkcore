@@ -1,3 +1,5 @@
+import { Link } from "./link";
+
 export type Page = {
   id: string;
   slug: string;
@@ -8,4 +10,5 @@ export type Page = {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  links?: Link[];
 };

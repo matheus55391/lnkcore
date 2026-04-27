@@ -2,7 +2,6 @@
 
 import { ExternalLinkIcon, GlobeIcon, Loader2Icon } from "lucide-react";
 import Link from "next/link";
-
 import { ModeToggle } from "@/components/mode-toggle";
 import { CreatePageDialog } from "@/components/pages/create-page-dialog";
 import { ProfileAvatar } from "@/components/profile-avatar";
@@ -17,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import { useCurrentUser } from "@/queries/use-current-user-query";
 import { usePages } from "@/queries/use-pages-query";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { PageCard } from "@/components/page-card";
 
 export default function DashboardPage() {
   const { data: pages, isLoading } = usePages();
@@ -69,27 +70,7 @@ export default function DashboardPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {pages.map((page) => (
               <Link key={page.id} href={`/dashboard/${page.id}`}>
-                <Card className="hover:border-primary/50 transition cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="truncate">{page.title}</CardTitle>
-                    <CardDescription className="truncate">
-                      lnkcore.app/{page.slug}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardFooter className="flex items-center justify-between gap-2">
-                    <span className="text-muted-foreground text-xs">
-                      {page.linksCount} link{page.linksCount !== 1 ? "s" : ""}
-                      {" · "}
-                      {page.published ? "Publicada" : "Rascunho"}
-                    </span>
-                    <Button asChild variant="outline" size="sm">
-                      <span>
-                        <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
-                        Abrir
-                      </span>
-                    </Button>
-                  </CardFooter>
-                </Card>
+                <PageCard page={page} />
               </Link>
             ))}
           </div>
