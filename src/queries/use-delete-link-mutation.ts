@@ -3,6 +3,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteLink } from "@/actions/links/delete-link";
 import { linksQueryKey } from "./use-links-query";
+import { pageQueryKey } from "./use-page-query";
+import { pagesQueryKey } from "./use-pages-query";
 
 type Options = {
   pageId: string;
@@ -20,6 +22,8 @@ export function useDeleteLinkMutation({ pageId, onSuccess, onError }: Options) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: linksQueryKey(pageId) });
+      queryClient.invalidateQueries({ queryKey: pageQueryKey(pageId) });
+      queryClient.invalidateQueries({ queryKey: pagesQueryKey });
       onSuccess?.();
     },
     onError,

@@ -36,7 +36,7 @@ import { useState } from "react";
 import { useDeletePageMutation } from "@/queries/use-delete-page-mutation";
 
 type PageCardProps = {
-    page: Page;
+    page: Page & { linksCount?: number };
 };
 
 export function PageCard({ page }: PageCardProps) {
@@ -176,10 +176,8 @@ export function PageCard({ page }: PageCardProps) {
 
             <CardFooter className="flex items-center justify-between gap-2">
                 <span className="text-muted-foreground text-xs">
-                    {page.links?.length || 0} link
-                    {(page.links?.length || 0) !== 1 ? "s" : ""}
-                    {" · "}
-                    {page.published ? "Publicada" : "Rascunho"}
+                    {(page.links?.length ?? page.linksCount ?? 0)} link
+                    {(page.links?.length ?? page.linksCount ?? 0) !== 1 ? "s" : ""}
                 </span>
 
                 <Button asChild variant="outline" size="sm">
