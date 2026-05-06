@@ -2,6 +2,7 @@
 
 import { CurrentUser } from "@/actions/user/get-current-user";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { ThemeMenuSub } from "@/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -88,6 +89,8 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
                             Upgrade
                         </DropdownMenuItem>
                     )}
+
+                    <ThemeMenuSub />
 
                     <DropdownMenuItem
                         onSelect={(e) => {

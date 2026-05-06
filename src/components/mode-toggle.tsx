@@ -1,14 +1,18 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun } from "lucide-react"
+import { Moon, Sun, SunMoon } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
+    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -31,10 +35,42 @@ export function ModeToggle() {
                 <DropdownMenuItem onClick={() => setTheme("dark")}>
                     Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                    System
-                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
+    )
+}
+
+export function ThemeMenuSub() {
+    const { theme, setTheme } = useTheme()
+
+    return (
+        <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+                <SunMoon className="mr-2 h-4 w-4" />
+                Tema
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent alignOffset={-6}>
+                <DropdownMenuCheckboxItem
+                    checked={theme === "light"}
+                    onSelect={(e) => {
+                        e.preventDefault()
+                        setTheme("light")
+                    }}
+                >
+                    <Sun className="mr-2 h-4 w-4" />
+                    Claro
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                    checked={theme === "dark"}
+                    onSelect={(e) => {
+                        e.preventDefault()
+                        setTheme("dark")
+                    }}
+                >
+                    <Moon className="mr-2 h-4 w-4" />
+                    Escuro
+                </DropdownMenuCheckboxItem>
+            </DropdownMenuSubContent>
+        </DropdownMenuSub>
     )
 }

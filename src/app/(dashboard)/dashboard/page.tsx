@@ -29,7 +29,6 @@ export default function DashboardPage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <span className="font-semibold tracking-tight">lnkcore</span>
           <div className="flex items-center gap-3 text-sm">
-            <ModeToggle />
             <UpgradeButton />
             {
               currentUser && (
