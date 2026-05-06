@@ -71,7 +71,7 @@ export default function PageDetailPage({
 
         <LinksManager pageId={page.id} />
       </main>
-      <div className="w-64">
+      <div className="w-[320px] h-[640px] rounded-[2.5rem] overflow-hidden">
         <SlugPageView page={page} />
       </div>
     </div>
