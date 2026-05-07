@@ -3,13 +3,13 @@
 import { Camera } from "lucide-react";
 import { useRef, useState } from "react";
 
-type IconImageProps = {
+type ImageUploadProps = {
     initialImage?: string;
 };
 
-export function IconImage({
+export function ImageUpload({
     initialImage,
-}: IconImageProps) {
+}: ImageUploadProps) {
     const [preview, setPreview] = useState(
         initialImage || ""
     );

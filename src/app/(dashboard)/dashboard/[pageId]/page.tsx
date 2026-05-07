@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { LinksManager } from "@/components/links/links-manager";
 import { usePage } from "@/queries/use-page-query";
 import { SlugPageView } from "@/components/page-slug-view";
-import { IconImage } from "@/components/image-upload";
+import { ImageUpload } from "@/components/image-upload";
 
 type Params = { pageId: string };
 
@@ -57,7 +57,7 @@ export default function PageDetailPage({
           <div className="flex items-center justify-between gap-4">
             {/* Left side */}
             <div className="flex items-center gap-3 min-w-0">
-              <IconImage />
+              <ImageUpload />
 
               <div className="min-w-0">
                 <h1 className="text-2xl font-bold truncate">
