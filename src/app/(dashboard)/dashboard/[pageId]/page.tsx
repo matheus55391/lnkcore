@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { LinksManager } from "@/components/links/links-manager";
 import { usePage } from "@/queries/use-page-query";
 import { SlugPageView } from "@/components/page-slug-view";
+import { IconImage } from "@/components/image-upload";
 
 type Params = { pageId: string };
 
@@ -53,14 +54,23 @@ export default function PageDetailPage({
               Voltar
             </Link>
           </Button>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold">{page.title}</h1>
-              <p className="text-muted-foreground text-sm">
-                lnkcore.app/{page.slug}
-              </p>
+          <div className="flex items-center justify-between gap-4">
+            {/* Left side */}
+            <div className="flex items-center gap-3 min-w-0">
+              <IconImage />
+
+              <div className="min-w-0">
+                <h1 className="text-2xl font-bold truncate">
+                  {page.title}
+                </h1>
+                <p className="text-muted-foreground text-sm truncate">
+                  lnkcore.app/{page.slug}
+                </p>
+              </div>
             </div>
-            <Button asChild variant="outline" size="sm">
+
+            {/* Right side */}
+            <Button asChild variant="outline" size="sm" className="shrink-0">
               <Link href={`/${page.slug}`} target="_blank">
                 <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
                 Ver página
