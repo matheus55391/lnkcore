@@ -9,6 +9,7 @@ import { LinksManager } from "@/components/links/links-manager";
 import { usePage } from "@/queries/use-page-query";
 import { SlugPageView } from "@/components/page-slug-view";
 import { ImageUpload } from "@/components/image-upload";
+import { EditPageInfoDialog } from "@/components/pages/edit-page-info-dialog";
 
 type Params = { pageId: string };
 
@@ -60,8 +61,8 @@ export default function PageDetailPage({
             <div className="flex items-center gap-3 min-w-0">
               <ImageUpload pageId={page.id} initialImage={page.image} />
               <div className="min-w-0">
-                <h1 className="font-semibold truncate">{page.title}</h1>
-                <p className="text-muted-foreground text-sm truncate">
+                <EditPageInfoDialog page={page} />
+                <p className="text-muted-foreground text-xs truncate mt-0.5">
                   lnkcore.app/{page.slug}
                 </p>
               </div>
