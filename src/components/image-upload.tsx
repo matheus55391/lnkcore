@@ -80,13 +80,12 @@ export function ImageUpload({ pageId, initialImage }: ImageUploadProps) {
 
                 {/* Hover / loading overlay */}
                 <span
-                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 transition-opacity"
-                    style={{ opacity: uploading ? 1 : undefined }}
+                    className={`absolute inset-0 flex items-center justify-center rounded-full bg-black/50 transition-opacity ${uploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                     aria-hidden
                 >
                     {uploading
                         ? <Loader2 className="size-5 text-white animate-spin" />
-                        : <Camera className="size-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                        : <Camera className="size-5 text-white" />
                     }
                 </span>
             </button>

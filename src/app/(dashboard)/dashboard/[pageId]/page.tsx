@@ -45,7 +45,7 @@ export default function PageDetailPage({
   }
 
   return (
-    <div className="flex flex-col xl:flex-row min-h-0">
+    <div className="flex flex-col lg:flex-row min-h-0">
       {/* Main content */}
       <main className="flex-1 min-w-0 container mx-auto px-4 sm:px-6 py-8 space-y-8">
         <div>
@@ -80,8 +80,8 @@ export default function PageDetailPage({
         <LinksManager pageId={page.id} />
       </main>
 
-      {/* Phone preview — only shown on xl+ */}
-      <aside className="hidden xl:flex xl:items-start xl:justify-center xl:px-8 xl:py-8">
+      {/* Phone preview — only shown on lg+ */}
+      <aside className="hidden lg:flex lg:items-start lg:justify-center lg:px-8 lg:py-8">
         <div
           className="w-[320px] h-160 rounded-[2.5rem] overflow-hidden border border-border shadow-xl"
         >
