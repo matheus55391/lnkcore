@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2Icon, PlusIcon, TrashIcon } from "lucide-react";
+import { Loader2Icon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,9 @@ import {
 import { useLinks } from "@/queries/use-links-query";
 import { useCreateLinkMutation } from "@/queries/use-create-link-mutation";
 import { useDeleteLinkMutation } from "@/queries/use-delete-link-mutation";
-import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
+import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
+import { createLinkSchema, updateLinkSchema, type CreateLinkInput, type UpdateLinkInput } from "@/schemas/links";
+import type { Link } from "@/@types";
 
 type Props = { pageId: string };
 
@@ -61,20 +63,123 @@ export function LinksManager({ pageId }: Props) {
                   {link.url}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => deleteMutation.mutate(link.id)}
-                disabled={deleteMutation.isPending}
-                aria-label="Excluir link"
-              >
-                <TrashIcon className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <EditLinkDialog link={link} pageId={pageId} />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => deleteMutation.mutate(link.id)}
+                  disabled={deleteMutation.isPending}
+                  aria-label="Excluir link"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
       )}
     </div>
+  );
+}
+
+function EditLinkDialog({ link, pageId }: { link: Link; pageId: string }) {
+  const [open, setOpen] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UpdateLinkInput>({
+    resolver: zodResolver(updateLinkSchema),
+    defaultValues: { id: link.id, title: link.title, url: link.url },
+  });
+
+  const mutation = useUpdateLinkMutation({
+    pageId,
+    onSuccess: () => setOpen(false),
+    onError: (err) => setServerError(err.message),
+  });
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    if (!next) {
+      setServerError(null);
+      reset({ id: link.id, title: link.title, url: link.url });
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="sm" aria-label="Editar link">
+          <PencilIcon className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Editar link</DialogTitle>
+          <DialogDescription>
+            Altere o título ou a URL do link.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={handleSubmit((values) => {
+            setServerError(null);
+            mutation.mutate(values);
+          })}
+          className="space-y-4"
+        >
+          <input type="hidden" {...register("id")} />
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-title">Título</Label>
+            <Input
+              id="edit-title"
+              placeholder="Meu site"
+              {...register("title")}
+              aria-invalid={errors.title ? "true" : "false"}
+            />
+            {errors.title && (
+              <p className="text-destructive text-sm">{errors.title.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-url">URL</Label>
+            <Input
+              id="edit-url"
+              placeholder="https://..."
+              {...register("url")}
+              aria-invalid={errors.url ? "true" : "false"}
+            />
+            {errors.url && (
+              <p className="text-destructive text-sm">{errors.url.message}</p>
+            )}
+          </div>
+
+          {serverError && (
+            <p className="text-destructive text-sm">{serverError}</p>
+          )}
+
+          <DialogFooter>
+            <Button
+              type="submit"
+              disabled={mutation.isPending}
+              className="w-full"
+            >
+              {mutation.isPending ? (
+                <Loader2Icon className="h-4 w-4 animate-spin" />
+              ) : (
+                "Salvar"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
