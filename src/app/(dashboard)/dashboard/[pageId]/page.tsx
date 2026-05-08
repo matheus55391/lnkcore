@@ -44,32 +44,29 @@ export default function PageDetailPage({
   }
 
   return (
-    <div className="flex flex-row">
-
-      <main className="container mx-auto px-6 py-10 space-y-8">
+    <div className="flex flex-col xl:flex-row min-h-0">
+      {/* Main content */}
+      <main className="flex-1 min-w-0 container mx-auto px-4 sm:px-6 py-8 space-y-8">
         <div>
-          <Button asChild variant="ghost" size="sm" className="mb-2 -ml-3">
+          <Button asChild variant="ghost" size="sm" className="mb-4 -ml-3">
             <Link href="/dashboard">
               <ArrowLeftIcon className="h-4 w-4 mr-1" />
               Voltar
             </Link>
           </Button>
-          <div className="flex items-center justify-between gap-4">
-            {/* Left side */}
-            <div className="flex items-center gap-3 min-w-0">
-              <ImageUpload />
 
+          <div className="flex items-center justify-between gap-4">
+            {/* Profile row */}
+            <div className="flex items-center gap-3 min-w-0">
+              <ImageUpload pageId={page.id} initialImage={page.image} />
               <div className="min-w-0">
-                <h1 className="text-2xl font-bold truncate">
-                  {page.title}
-                </h1>
+                <h1 className="font-semibold truncate">{page.title}</h1>
                 <p className="text-muted-foreground text-sm truncate">
                   lnkcore.app/{page.slug}
                 </p>
               </div>
             </div>
 
-            {/* Right side */}
             <Button asChild variant="outline" size="sm" className="shrink-0">
               <Link href={`/${page.slug}`} target="_blank">
                 <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
@@ -81,10 +78,15 @@ export default function PageDetailPage({
 
         <LinksManager pageId={page.id} />
       </main>
-      <div className="w-[320px] h-[640px] rounded-[2.5rem] overflow-hidden">
-        <SlugPageView page={page} />
-      </div>
-    </div>
 
+      {/* Phone preview — only shown on xl+ */}
+      <aside className="hidden xl:flex xl:items-start xl:justify-center xl:px-8 xl:py-8">
+        <div
+          className="w-[320px] h-160 rounded-[2.5rem] overflow-hidden border border-border shadow-xl"
+        >
+          <SlugPageView page={page} />
+        </div>
+      </aside>
+    </div>
   );
 }

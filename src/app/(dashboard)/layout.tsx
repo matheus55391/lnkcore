@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/utils/session";
 import { QueryProvider } from "@/lib/query-provider";
+import { DashboardHeader } from "@/components/dashboard-header";
 
 export default async function DashboardLayout({
   children,
@@ -10,5 +11,12 @@ export default async function DashboardLayout({
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
-  return <QueryProvider>{children}</QueryProvider>;
+  return (
+    <QueryProvider>
+      <div className="min-h-dvh bg-muted/30 flex flex-col">
+        <DashboardHeader />
+        {children}
+      </div>
+    </QueryProvider>
+  );
 }

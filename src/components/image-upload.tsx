@@ -1,71 +1,104 @@
 "use client";
 
-import { Camera } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
+import { uploadPageImage } from "@/actions/pages/upload-page-image";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ImageUploadProps = {
-    initialImage?: string;
+    pageId: string;
+    initialImage?: string | null;
 };
 
-export function ImageUpload({
-    initialImage,
-}: ImageUploadProps) {
-    const [preview, setPreview] = useState(
-        initialImage || ""
-    );
-
+export function ImageUpload({ pageId, initialImage }: ImageUploadProps) {
+    const [preview, setPreview] = useState(initialImage ?? "");
+    const [uploading, setUploading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const queryClient = useQueryClient();
 
-    async function handleImageChange(
-        event: React.ChangeEvent<HTMLInputElement>
-    ) {
+    async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
-
         if (!file) return;
 
-        // preview local
-        const imageUrl = URL.createObjectURL(file);
+        const localUrl = URL.createObjectURL(file);
+        setPreview(localUrl);
+        setUploading(true);
 
-        setPreview(imageUrl);
+        try {
+            const formData = new FormData();
+            formData.append("image", file);
+            formData.append("folder", "pages");
+            formData.append("entityId", pageId);
 
-        // upload
-        const formData = new FormData();
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
 
-        formData.append("image", file);
+            if (!res.ok) {
+                const { error } = await res.json();
+                throw new Error(error ?? "Upload failed.");
+            }
 
-        await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-        });
+            const { url } = await res.json();
+            const result = await uploadPageImage(pageId, url);
+            if (!result.success) throw new Error(result.error);
+
+            queryClient.invalidateQueries({ queryKey: ["page", pageId] });
+        } catch (err) {
+            console.error(err);
+            setPreview(initialImage ?? "");
+        } finally {
+            setUploading(false);
+            URL.revokeObjectURL(localUrl);
+        }
     }
 
     return (
-        <div className="relative w-fit">
+        <>
             <button
                 type="button"
+                aria-label="Alterar imagem da página"
+                disabled={uploading}
                 onClick={() => inputRef.current?.click()}
-                className="relative h-24 w-24 rounded-full overflow-hidden border-2 border-zinc-300"
+                style={{ width: 72, height: 72 }}
+                className="group relative rounded-full overflow-hidden bg-muted border border-border shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
+                {/* Image or empty state */}
                 {preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                         src={preview}
-                        alt="Ícone"
-                        className="h-full w-full object-cover"
+                        alt="Imagem da página"
+                        className="w-full h-full object-cover"
                     />
                 ) : (
-                    <div className="h-full w-full bg-zinc-100 flex items-center justify-center">
-                        <Camera className="size-8 text-zinc-500" />
-                    </div>
+                    <span className="flex w-full h-full items-center justify-center">
+                        <Camera className="size-7 text-muted-foreground" />
+                    </span>
                 )}
+
+                {/* Hover / loading overlay */}
+                <span
+                    className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 transition-opacity"
+                    style={{ opacity: uploading ? 1 : undefined }}
+                    aria-hidden
+                >
+                    {uploading
+                        ? <Loader2 className="size-5 text-white animate-spin" />
+                        : <Camera className="size-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    }
+                </span>
             </button>
 
             <input
                 ref={inputRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 className="hidden"
                 onChange={handleImageChange}
             />
-        </div>
+        </>
     );
 }
+
