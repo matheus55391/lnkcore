@@ -69,12 +69,12 @@ export function EditPageInfoDialog({ page }: Props) {
           type="button"
           className="group flex flex-col items-start min-w-0 text-left focus-visible:outline-none"
         >
-          <span className="font-semibold truncate leading-tight group-hover:underline underline-offset-2">
+          <span className="font-semibold truncate leading-tight hover:underline hover:cursor-pointer underline-offset-2">
             {page.title}
           </span>
           <span className="text-muted-foreground text-sm truncate">
             {page.bio ? page.bio : (
-              <span className="italic">Adicionar bio</span>
+              <span className="italic hover:underline hover:cursor-pointer">Adicionar bio</span>
             )}
           </span>
         </button>
