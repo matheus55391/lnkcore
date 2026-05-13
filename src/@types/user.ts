@@ -8,7 +8,6 @@ export type User = {
   image: string | null;
   createdAt: Date;
   updatedAt: Date;
-
   plan: Plan;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
