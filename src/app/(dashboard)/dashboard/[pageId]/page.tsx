@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftIcon, ExternalLinkIcon, Loader2Icon } from "lucide-react";
+import { ArrowLeftIcon, ExternalLinkIcon, Loader2Icon, PaletteIcon } from "lucide-react";
 import { use } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -68,12 +68,22 @@ export default function PageDetailPage({
               </div>
             </div>
 
-            <Button asChild variant="outline" size="sm" className="shrink-0">
-              <Link href={`/${page.slug}`} target="_blank">
-                <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
-                Ver página
-              </Link>
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button asChild variant="outline" size="sm" className="shrink-0">
+                <Link href={`/dashboard/${page.slug}/design`}>
+                  <PaletteIcon className="h-3.5 w-3.5 mr-1" />
+                  Tema
+                </Link>
+              </Button>
+
+              <Button asChild variant="outline" size="sm" className="shrink-0">
+                <Link href={`/${page.slug}`} target="_blank">
+                  <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
+                  Ver página
+                </Link>
+              </Button>
+            </div>
+
           </div>
         </div>
 
