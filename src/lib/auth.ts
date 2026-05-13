@@ -7,25 +7,36 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
   emailAndPassword: {
     enabled: true,
+    autoSignIn: true,
+    minPasswordLength: 8,
   },
-  socialProviders: {
-    google:
-      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-        ? {
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          }
-        : undefined,
-    apple:
-      process.env.APPLE_CLIENT_ID && process.env.APPLE_CLIENT_SECRET
-        ? {
-            clientId: process.env.APPLE_CLIENT_ID,
-            clientSecret: process.env.APPLE_CLIENT_SECRET,
-          }
-        : undefined,
+  // Social providers ready to plug in later (GitHub/Google...) when configured.
+  socialProviders: {},
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // refresh cookie every 1 day
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5, // 5 minutes
+    },
+  },
+  advanced: {
+    cookies: {
+      session_token: {
+        attributes: {
+          httpOnly: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+          path: "/",
+        },
+      },
+    },
   },
   plugins: [nextCookies()],
-  trustedOrigins: [process.env.APP_URL ?? "http://localhost:3000"],
 });
+
+export type Session = typeof auth.$Infer.Session;
