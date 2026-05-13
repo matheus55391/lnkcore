@@ -12,7 +12,6 @@ export async function deleteLink(
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };
   }
-
   const session = await requireSession();
   const link = await prisma.link.findUnique({
     where: { id: parsed.data.id },
