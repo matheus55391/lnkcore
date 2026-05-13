@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2Icon, PencilIcon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 
 import { updatePage } from "@/actions/pages/update-page";
 import { pageQueryKey } from "@/queries/use-page-query";
@@ -32,17 +32,23 @@ export function EditPageInfoDialog({ page }: Props) {
   const [bio, setBio] = useState(page.bio ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const queryClient = useQueryClient();
 
-  // Keep fields in sync when page data refreshes
-  useEffect(() => {
-    setTitle(page.title);
-    setBio(page.bio ?? "");
-  }, [page.title, page.bio]);
+  function handleOpenChange(value: boolean) {
+    setOpen(value);
+
+    // sincroniza apenas ao abrir
+    if (value) {
+      setTitle(page.title);
+      setBio(page.bio ?? "");
+    }
+  }
 
   async function handleSave() {
     setError(null);
     setSaving(true);
+
     try {
       const result = await updatePage({
         id: page.id,
@@ -55,7 +61,10 @@ export function EditPageInfoDialog({ page }: Props) {
         return;
       }
 
-      queryClient.invalidateQueries({ queryKey: pageQueryKey(page.id) });
+      queryClient.invalidateQueries({
+        queryKey: pageQueryKey(page.id),
+      });
+
       setOpen(false);
     } finally {
       setSaving(false);
@@ -63,7 +72,7 @@ export function EditPageInfoDialog({ page }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button
           type="button"
@@ -72,9 +81,12 @@ export function EditPageInfoDialog({ page }: Props) {
           <span className="font-semibold truncate leading-tight hover:underline hover:cursor-pointer underline-offset-2">
             {page.title}
           </span>
-          <span className="text-muted-foreground text-sm truncate">
-            {page.bio ? page.bio : (
-              <span className="italic hover:underline hover:cursor-pointer">Adicionar bio</span>
+
+          <span className="text-muted-foreground text-sm truncate hover:underline hover:cursor-pointer underline-offset-2">
+            {page.bio ? (
+              page.bio
+            ) : (
+              <span className="italic">Adicionar bio</span>
             )}
           </span>
         </button>
@@ -86,9 +98,9 @@ export function EditPageInfoDialog({ page }: Props) {
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
-          {/* Title */}
           <div className="space-y-1.5">
             <Label htmlFor="page-title">Título</Label>
+
             <Input
               id="page-title"
               value={title}
@@ -96,14 +108,15 @@ export function EditPageInfoDialog({ page }: Props) {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Seu nome ou marca"
             />
+
             <p className="text-xs text-muted-foreground text-right">
               {title.length} / {TITLE_MAX}
             </p>
           </div>
 
-          {/* Bio */}
           <div className="space-y-1.5">
             <Label htmlFor="page-bio">Bio</Label>
+
             <textarea
               id="page-bio"
               value={bio}
@@ -113,13 +126,16 @@ export function EditPageInfoDialog({ page }: Props) {
               placeholder="Conte um pouco sobre você..."
               className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             />
+
             <p className="text-xs text-muted-foreground text-right">
               {bio.length} / {BIO_MAX}
             </p>
           </div>
 
           {error && (
-            <p className="text-sm text-destructive">{error}</p>
+            <p className="text-sm text-destructive">
+              {error}
+            </p>
           )}
 
           <Button
@@ -127,7 +143,10 @@ export function EditPageInfoDialog({ page }: Props) {
             disabled={saving || !title.trim()}
             onClick={handleSave}
           >
-            {saving && <Loader2Icon className="mr-2 size-4 animate-spin" />}
+            {saving && (
+              <Loader2Icon className="mr-2 size-4 animate-spin" />
+            )}
+
             Salvar
           </Button>
         </div>
