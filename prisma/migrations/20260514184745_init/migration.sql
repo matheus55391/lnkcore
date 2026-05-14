@@ -70,6 +70,7 @@ CREATE TABLE "pages" (
     "bio" TEXT,
     "image" TEXT,
     "published" BOOLEAN NOT NULL DEFAULT true,
+    "themeId" INTEGER NOT NULL DEFAULT 1,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

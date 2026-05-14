@@ -90,6 +90,7 @@ model Page {
   bio       String?
   image     String?
   published Boolean  @default(true)
+  themeId   Int      @default(1)
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -117,3 +118,5 @@ model Link {
   @@index([pageId])
   @@map("links")
 }
+
+// Temas definidos em src/lib/themes.ts — adicione novos temas lá.

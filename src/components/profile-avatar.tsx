@@ -2,7 +2,7 @@
 
 import { CurrentUser } from "@/actions/user/get-current-user";
 import { SignOutButton } from "@/components/auth/sign-out-button";
-import { ThemeMenuSub } from "@/components/mode-toggle";
+import { ThemeMenuSub } from "@/components/theme-menu-sub";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

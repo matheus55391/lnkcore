@@ -20,6 +20,7 @@ export const updatePageSchema = z.object({
   bio: z.string().max(280).nullable().optional(),
   image: z.string().url("URL inválida").nullable().optional(),
   published: z.boolean().optional(),
+  themeId: z.number().int().min(1).optional(),
 });
 export type UpdatePageInput = z.infer<typeof updatePageSchema>;
 

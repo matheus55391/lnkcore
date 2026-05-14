@@ -1,0 +1,119 @@
+# Stack de produção: Next.js app + PostgreSQL (+ MinIO para teste local)
+#
+# VPS (produção real):
+#   docker compose -f docker-compose.prod.yml --env-file .env up -d
+#
+# Local (simular produção):
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod.local \
+#     --profile local up --build -d
+#
+# Ver docs/deployment.md para a lista completa de variáveis.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lnkcore-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-lnkcore}
+      POSTGRES_USER: ${POSTGRES_USER:-lnkcore}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lnkcore-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lnkcore}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    # Em produção: image do Docker Hub. Local: build direto do Dockerfile.
+    image: ${DOCKER_IMAGE:-lnkcore}:${IMAGE_TAG:-latest}
+    build:
+      context: .
+      # 'build' só é usado quando --profile local está ativo ou quando
+      # se chama explicitamente com --build. Na VPS o 'docker compose pull'
+      # baixa a imagem e o build é ignorado.
+    container_name: lnkcore-app
+    ports:
+      # VPS: 127.0.0.1 (nginx na frente). Local: 0.0.0.0 para acesso direto.
+      - "${APP_HOST:-127.0.0.1}:${APP_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PRO_PRICE_ID=${STRIPE_PRO_PRICE_ID}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+      - S3_REGION=${S3_REGION}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_KEY=${S3_SECRET_KEY}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_FORCE_PATH_STYLE=${S3_FORCE_PATH_STYLE:-false}
+      - S3_PUBLIC_URL=${S3_PUBLIC_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - lnkcore-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── MinIO (apenas para teste local — profile: local) ───────────────────────
+  minio:
+    profiles: [local]
+    image: minio/minio:latest
+    container_name: lnkcore-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-lnkcore}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-lnkcore123}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - lnkcore-network
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    profiles: [local]
+    image: minio/mc:latest
+    container_name: lnkcore-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 ${S3_ACCESS_KEY:-lnkcore} ${S3_SECRET_KEY:-lnkcore123} &&
+        mc mb --ignore-existing local/${S3_BUCKET:-lnkcore} &&
+        mc anonymous set public local/${S3_BUCKET:-lnkcore}
+      "
+    restart: "no"
+    networks:
+      - lnkcore-network
+
+networks:
+  lnkcore-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
