@@ -77,4 +77,27 @@ export class S3StorageProvider implements StorageProvider {
   publicUrl(key: string): string {
     return buildPublicUrl(this.bucket, key);
   }
+
+  keyFromUrl(url: string): string | null {
+    const forcePathStyle =
+      (process.env.S3_FORCE_PATH_STYLE ?? "true") === "true";
+    const endpoint = process.env.S3_ENDPOINT;
+    const region = process.env.S3_REGION ?? "us-east-1";
+    const publicBase = process.env.S3_PUBLIC_URL ?? endpoint;
+
+    try {
+      if (forcePathStyle || endpoint) {
+        // path-style: <publicBase>/<bucket>/<key>
+        const prefix = `${publicBase}/${this.bucket}/`;
+        if (url.startsWith(prefix)) return url.slice(prefix.length);
+        return null;
+      }
+      // virtual-hosted: https://<bucket>.s3.<region>.amazonaws.com/<key>
+      const prefix = `https://${this.bucket}.s3.${region}.amazonaws.com/`;
+      if (url.startsWith(prefix)) return url.slice(prefix.length);
+      return null;
+    } catch {
+      return null;
+    }
+  }
 }

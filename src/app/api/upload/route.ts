@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import sharp from "sharp";
 import { getSession } from "@/utils/session";
 import { getStorage } from "@/lib/storage";
-import { extname } from "path";
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -12,6 +12,22 @@ const ALLOWED_MIME_TYPES = new Set([
 
 // 5 MB
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+// Max dimension before resizing (keeps aspect ratio)
+const MAX_DIMENSION = 1200;
+
+async function processImage(buffer: Buffer): Promise<Buffer> {
+  return sharp(buffer)
+    // Strip all metadata (EXIF, GPS, ICC profiles, etc.) — security + size
+    .withMetadata({})
+    // Resize only if larger than MAX_DIMENSION (never upscale)
+    .resize(MAX_DIMENSION, MAX_DIMENSION, {
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    // Convert to WebP — good compression with no perceptible quality loss
+    .webp({ quality: 90, effort: 4 })
+    .toBuffer();
+}
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -42,16 +58,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const ext = extname(file.name) || `.${file.type.split("/")[1]}`;
-  // e.g. "pages/clx123abc/avatar.png"
+  // New key structure: {userId}/{folder}/{entityId}/avatar.webp
   const key = entityId
-    ? `${folder}/${entityId}/avatar${ext}`
-    : `${folder}/${session.user.id}/avatar${ext}`;
+    ? `${session.user.id}/${folder}/${entityId}/avatar.webp`
+    : `${session.user.id}/${folder}/avatar.webp`;
 
-  const body = Buffer.from(await file.arrayBuffer());
+  const raw = Buffer.from(await file.arrayBuffer());
+  const body = await processImage(raw);
 
   const storage = getStorage();
-  const result = await storage.upload({ key, body, contentType: file.type });
+  const result = await storage.upload({ key, body, contentType: "image/webp" });
 
   return NextResponse.json({ url: result.url });
 }
