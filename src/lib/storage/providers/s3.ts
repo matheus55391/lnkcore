@@ -2,21 +2,31 @@ import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import type { StorageProvider, UploadParams, UploadResult } from "../types";
+
+function trimTrailingSlash(value: string): string {
+  return value.replace(/\/+$/, "");
+}
 
 function buildPublicUrl(bucket: string, key: string): string {
   const forcePathStyle =
     (process.env.S3_FORCE_PATH_STYLE ?? "true") === "true";
   const endpoint = process.env.S3_ENDPOINT;
   const region = process.env.S3_REGION ?? "us-east-1";
-  // Allow a separate public-facing base URL (useful when the app runs inside
-  // Docker and the internal S3_ENDPOINT differs from what browsers can reach).
-  const publicBase = process.env.S3_PUBLIC_URL ?? endpoint;
+  const publicBase = process.env.S3_PUBLIC_URL;
 
-  if (forcePathStyle || endpoint) {
+  // When S3_PUBLIC_URL is configured (e.g. R2 custom domain or r2.dev),
+  // it is expected to point directly to object root: <publicBase>/<key>.
+  if (publicBase) {
+    return `${trimTrailingSlash(publicBase)}/${key}`;
+  }
+
+  if (endpoint && (forcePathStyle || endpoint)) {
     // MinIO / Cloudflare R2 / path-style: <base>/<bucket>/<key>
-    return `${publicBase}/${bucket}/${key}`;
+    return `${trimTrailingSlash(endpoint)}/${bucket}/${key}`;
   }
 
   // AWS S3 virtual-hosted style: https://<bucket>.s3.<region>.amazonaws.com/<key>
@@ -74,6 +84,39 @@ export class S3StorageProvider implements StorageProvider {
     );
   }
 
+  async objectExists(key: string): Promise<boolean> {
+    try {
+      await this.client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: key })
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async countByPrefix(prefix: string): Promise<number> {
+    let total = 0;
+    let continuationToken: string | undefined;
+
+    do {
+      const response = await this.client.send(
+        new ListObjectsV2Command({
+          Bucket: this.bucket,
+          Prefix: prefix,
+          ContinuationToken: continuationToken,
+        })
+      );
+
+      total += response.Contents?.length ?? 0;
+      continuationToken = response.IsTruncated
+        ? response.NextContinuationToken
+        : undefined;
+    } while (continuationToken);
+
+    return total;
+  }
+
   publicUrl(key: string): string {
     return buildPublicUrl(this.bucket, key);
   }
@@ -83,12 +126,18 @@ export class S3StorageProvider implements StorageProvider {
       (process.env.S3_FORCE_PATH_STYLE ?? "true") === "true";
     const endpoint = process.env.S3_ENDPOINT;
     const region = process.env.S3_REGION ?? "us-east-1";
-    const publicBase = process.env.S3_PUBLIC_URL ?? endpoint;
+    const publicBase = process.env.S3_PUBLIC_URL;
 
     try {
-      if (forcePathStyle || endpoint) {
-        // path-style: <publicBase>/<bucket>/<key>
-        const prefix = `${publicBase}/${this.bucket}/`;
+      if (publicBase) {
+        // publicBase style: <publicBase>/<key>
+        const prefix = `${trimTrailingSlash(publicBase)}/`;
+        if (url.startsWith(prefix)) return url.slice(prefix.length);
+        return null;
+      }
+      if (endpoint && (forcePathStyle || endpoint)) {
+        // path-style: <endpoint>/<bucket>/<key>
+        const prefix = `${trimTrailingSlash(endpoint)}/${this.bucket}/`;
         if (url.startsWith(prefix)) return url.slice(prefix.length);
         return null;
       }

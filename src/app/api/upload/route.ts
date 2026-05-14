@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { getSession } from "@/utils/session";
 import { getStorage } from "@/lib/storage";
+import { prisma } from "@/lib/prisma";
+import { PLAN_LIMITS } from "@/lib/plan";
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -63,10 +65,38 @@ export async function POST(req: NextRequest) {
     ? `${session.user.id}/${folder}/${entityId}/avatar.webp`
     : `${session.user.id}/${folder}/avatar.webp`;
 
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { plan: true },
+  });
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const storage = getStorage();
+  const maxStoredImages = PLAN_LIMITS[user.plan].maxStoredImages;
+
+  const [keyExists, currentCount] = await Promise.all([
+    storage.objectExists(key),
+    storage.countByPrefix(`${session.user.id}/`),
+  ]);
+
+  // Allow overwrite of an existing key; block only new objects above quota.
+  if (!keyExists && currentCount >= maxStoredImages) {
+    return NextResponse.json(
+      {
+        error:
+          user.plan === "FREE"
+            ? "Limite de imagens do plano gratuito atingido. Remova alguma imagem ou faça upgrade para o PRO."
+            : "Limite de imagens do plano PRO atingido.",
+      },
+      { status: 403 }
+    );
+  }
+
   const raw = Buffer.from(await file.arrayBuffer());
   const body = await processImage(raw);
 
-  const storage = getStorage();
   const result = await storage.upload({ key, body, contentType: "image/webp" });
 
   return NextResponse.json({ url: result.url });
