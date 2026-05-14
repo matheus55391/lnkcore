@@ -72,7 +72,7 @@ jobs:
 
           timeout 300 ssh -o BatchMode=yes -o ConnectTimeout=15 "$HOST" bash << 'ENDSSH'
             set -e
-            cd ~/lnkcore
+            cd ~/opt/apps/lnkcore
 
             # Atualiza IMAGE_TAG no .env do servidor
             if grep -q '^IMAGE_TAG=' .env 2>/dev/null; then

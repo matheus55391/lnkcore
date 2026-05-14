@@ -213,7 +213,7 @@ Antes do GitHub Actions, suba pela primeira vez manualmente para verificar que t
 
 ```bash
 # Na VPS, como usuário deploy
-cd ~/lnkcore
+cd ~/opt/apps/lnkcore
 
 docker login -u SEU_USER
 docker compose -f docker-compose.prod.yml --env-file .env up -d
