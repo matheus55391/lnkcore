@@ -3,9 +3,16 @@ import { prisma } from "@/lib/prisma";
 import type { Plan } from "@/@types";
 
 export const PLAN_LIMITS = {
-  FREE: { maxPages: 1, maxLinksPerPage: 10 },
-  PRO: { maxPages: Infinity, maxLinksPerPage: Infinity },
-} as const satisfies Record<Plan, { maxPages: number; maxLinksPerPage: number }>;
+  FREE: { maxPages: 1, maxLinksPerPage: 10, maxStoredImages: 6 },
+  PRO: {
+    maxPages: 100,
+    maxLinksPerPage: 500,
+    maxStoredImages: 5000,
+  },
+} as const satisfies Record<
+  Plan,
+  { maxPages: number; maxLinksPerPage: number; maxStoredImages: number }
+>;
 
 export async function assertCanCreatePage(userId: string): Promise<void> {
   const user = await prisma.user.findUniqueOrThrow({
