@@ -40,8 +40,8 @@ services:
       # baixa a imagem e o build é ignorado.
     container_name: lnkcore-app
     ports:
-      # VPS: 127.0.0.1 (nginx na frente). Local: 0.0.0.0 para acesso direto.
-      - "${APP_HOST:-127.0.0.1}:${APP_PORT:-3000}:3000"
+      # 0.0.0.0 expõe publicamente. Troque por 127.0.0.1 se usar nginx na frente.
+      - "${APP_HOST:-0.0.0.0}:${APP_PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
