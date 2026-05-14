@@ -16,7 +16,8 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          # printf preserva o trailing newline — chaves sem ele são rejeitadas pelo SSH
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
           # Obtém fingerprint real da VPS — evita man-in-the-middle
@@ -26,7 +27,7 @@ jobs:
 
       - name: Deploy
         run: |
-          timeout 300 ssh -o BatchMode=yes -o ConnectTimeout=15 "${{ secrets.SERVER_HOST }}" bash << 'ENDSSH'
+          timeout 300 ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=15 "${{ secrets.SERVER_HOST }}" bash << 'ENDSSH'
             set -e
             cd /opt/apps/lnkcore
 
