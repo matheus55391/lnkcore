@@ -30,7 +30,9 @@ export const auth = betterAuth({
         attributes: {
           httpOnly: true,
           sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
+          // Secure só deve ser true quando servindo via HTTPS.
+          // Usar NODE_ENV=production quebra testes locais via HTTP (Docker local).
+          secure: process.env.BETTER_AUTH_URL?.startsWith("https://") ?? false,
           path: "/",
         },
       },

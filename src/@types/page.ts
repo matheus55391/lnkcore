@@ -7,6 +7,7 @@ export type Page = {
   bio: string | null;
   image: string | null;
   published: boolean;
+  themeId: number;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
