@@ -2,7 +2,6 @@
 
 import { CurrentUser } from "@/actions/user/get-current-user";
 import { SignOutButton } from "@/components/auth/sign-out-button";
-import { ThemeMenuSub } from "@/components/theme-menu-sub";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +14,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 import { useCurrentUser } from "@/queries/use-current-user-query";
-import { Loader2Icon, SettingsIcon, UserIcon, Zap } from "lucide-react";
+import { Loader2Icon, Moon, SettingsIcon, Sun, UserIcon, Zap } from "lucide-react";
+import NextLink from "next/link";
+import { useTheme } from "next-themes";
 import { useState } from "react";
 
 type ProfileAvatarProps = {
@@ -24,7 +25,8 @@ type ProfileAvatarProps = {
 
 export function ProfileAvatar({ user }: ProfileAvatarProps) {
     const [error, setError] = useState<string | null>(null);
-    const { data: currentUser, isLoading } = useCurrentUser();
+    const { data: currentUser } = useCurrentUser();
+    const { theme, setTheme } = useTheme();
 
     const mutation = useCreateCheckoutSessionMutation({
         onError: (err) => setError(err.message),
@@ -63,13 +65,11 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
                 <DropdownMenuSeparator className="my-0" />
 
                 <DropdownMenuGroup className="p-1">
-                    <DropdownMenuItem
-                        onSelect={(e) => {
-                            e.preventDefault();
-                        }}
-                    >
-                        <UserIcon className="mr-2 h-4 w-4" />
-                        Meu Perfil
+                    <DropdownMenuItem asChild>
+                        <NextLink href="/profile">
+                            <UserIcon className="mr-2 h-4 w-4" />
+                            Meu Perfil
+                        </NextLink>
                     </DropdownMenuItem>
 
                     {currentUser?.plan !== "PRO" && (
@@ -90,7 +90,19 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
                         </DropdownMenuItem>
                     )}
 
-                    <ThemeMenuSub />
+                    <DropdownMenuItem
+                        onSelect={(e) => {
+                            e.preventDefault();
+                            setTheme(theme === "dark" ? "light" : "dark");
+                        }}
+                    >
+                        {theme === "dark" ? (
+                            <Sun className="mr-2 h-4 w-4" />
+                        ) : (
+                            <Moon className="mr-2 h-4 w-4" />
+                        )}
+                        Tema
+                    </DropdownMenuItem>
 
                     <DropdownMenuItem
                         onSelect={(e) => {

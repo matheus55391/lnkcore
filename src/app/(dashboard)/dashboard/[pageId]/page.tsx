@@ -57,7 +57,7 @@ export default function PageDetailPage({
             </Link>
           </Button>
 
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             {/* Profile row */}
             <div className="flex items-center gap-3 min-w-0">
               <ImageUpload pageId={page.id} initialImage={page.image} />
@@ -69,17 +69,16 @@ export default function PageDetailPage({
               </div>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               <ThemePickerDialog page={page} />
 
-              <Button asChild variant="outline" size="sm" className="shrink-0">
+              <Button asChild variant="outline" size="sm">
                 <Link href={`/${page.slug}`} target="_blank">
                   <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
                   Ver página
                 </Link>
               </Button>
             </div>
-
           </div>
         </div>
 
