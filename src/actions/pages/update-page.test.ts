@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Session } from "@/lib/auth";
+import type { Page } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -17,18 +19,46 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { updatePage } from "@/actions/pages/update-page";
 
-const mockSession = { user: { id: "user-1" }, session: { id: "sess-1" } };
+const BASE_DATE = new Date("2025-01-01");
 
-const existingPage = { id: "page-1", userId: "user-1" };
-const updatedPage = {
+const mockSession: Session = {
+  user: {
+    id: "user-1",
+    name: "Test User",
+    email: "test@test.com",
+    emailVerified: true,
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    image: null,
+  },
+  session: {
+    id: "sess-1",
+    token: "token-1",
+    userId: "user-1",
+    expiresAt: new Date("2026-01-01"),
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    ipAddress: null,
+    userAgent: null,
+  },
+};
+
+const existingPage: Page = {
   id: "page-1",
-  title: "Título Novo",
   slug: "meu-perfil",
-  userId: "user-1",
+  title: "Meu Perfil",
   bio: null,
   image: null,
   published: true,
   themeId: 1,
+  createdAt: BASE_DATE,
+  updatedAt: BASE_DATE,
+  userId: "user-1",
+};
+
+const updatedPage: Page = {
+  ...existingPage,
+  title: "Título Novo",
 };
 
 const validInput = {
@@ -38,9 +68,9 @@ const validInput = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(requireSession).mockResolvedValue(mockSession as any);
-  vi.mocked(prisma.page.findUnique).mockResolvedValue(existingPage as any);
-  vi.mocked(prisma.page.update).mockResolvedValue(updatedPage as any);
+  vi.mocked(requireSession).mockResolvedValue(mockSession);
+  vi.mocked(prisma.page.findUnique).mockResolvedValue(existingPage);
+  vi.mocked(prisma.page.update).mockResolvedValue(updatedPage);
 });
 
 describe("updatePage", () => {
@@ -82,7 +112,7 @@ describe("updatePage", () => {
     vi.mocked(prisma.page.findUnique).mockResolvedValue({
       ...existingPage,
       userId: "other-user",
-    } as any);
+    });
     const result = await updatePage(validInput);
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toMatch(/Página não encontrada/);

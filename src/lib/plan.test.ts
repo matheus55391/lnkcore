@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { User } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -21,6 +22,26 @@ import {
   assertCanCreateLink,
   PlanLimitError,
 } from "@/lib/plan";
+
+const BASE_DATE = new Date("2025-01-01");
+
+const mockFreeUser: User = {
+  id: "user-1",
+  name: "Test User",
+  email: "test@test.com",
+  emailVerified: true,
+  image: null,
+  createdAt: BASE_DATE,
+  updatedAt: BASE_DATE,
+  plan: "FREE",
+  stripeCustomerId: null,
+  stripeSubscriptionId: null,
+};
+
+const mockProUser: User = {
+  ...mockFreeUser,
+  plan: "PRO",
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -56,25 +77,25 @@ describe("PlanLimitError", () => {
 
 describe("assertCanCreatePage", () => {
   it("does NOT throw when FREE user has 0 pages", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "FREE" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
     vi.mocked(prisma.page.count).mockResolvedValue(0);
     await expect(assertCanCreatePage("user-1")).resolves.toBeUndefined();
   });
 
   it("throws PlanLimitError when FREE user already has 1 page", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "FREE" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
     vi.mocked(prisma.page.count).mockResolvedValue(1);
     await expect(assertCanCreatePage("user-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 
   it("does NOT throw when PRO user has 99 pages", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "PRO" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
     vi.mocked(prisma.page.count).mockResolvedValue(99);
     await expect(assertCanCreatePage("user-1")).resolves.toBeUndefined();
   });
 
   it("throws PlanLimitError when PRO user reaches 100-page limit", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "PRO" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
     vi.mocked(prisma.page.count).mockResolvedValue(100);
     await expect(assertCanCreatePage("user-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
@@ -82,31 +103,31 @@ describe("assertCanCreatePage", () => {
 
 describe("assertCanCreateLink", () => {
   it("does NOT throw when FREE user has 0 links", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "FREE" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
     vi.mocked(prisma.link.count).mockResolvedValue(0);
     await expect(assertCanCreateLink("user-1", "page-1")).resolves.toBeUndefined();
   });
 
   it("throws PlanLimitError when FREE user reaches 10-link limit", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "FREE" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
     vi.mocked(prisma.link.count).mockResolvedValue(10);
     await expect(assertCanCreateLink("user-1", "page-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 
   it("does NOT throw when PRO user has 499 links", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "PRO" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
     vi.mocked(prisma.link.count).mockResolvedValue(499);
     await expect(assertCanCreateLink("user-1", "page-1")).resolves.toBeUndefined();
   });
 
   it("throws PlanLimitError when PRO user reaches 500-link limit", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "PRO" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
     vi.mocked(prisma.link.count).mockResolvedValue(500);
     await expect(assertCanCreateLink("user-1", "page-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 
   it("error message contains the link limit", async () => {
-    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue({ plan: "FREE" } as any);
+    vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
     vi.mocked(prisma.link.count).mockResolvedValue(10);
     try {
       await assertCanCreateLink("user-1", "page-1");

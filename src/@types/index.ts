@@ -1,4 +1,5 @@
-export type { Plan } from "./plan";
+export { Plan } from "./plan";
+export type { Plan as PlanType } from "./plan";
 export type { User } from "./user";
 export type { Session } from "./session";
 export type { Account } from "./account";

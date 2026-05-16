@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Session } from "@/lib/auth";
+import type { Page, Link } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -37,9 +39,28 @@ import { requireSession } from "@/utils/session";
 import { assertCanCreateLink, PlanLimitError } from "@/lib/plan";
 import { createLink } from "@/actions/links/create-link";
 
-const mockSession = {
-  user: { id: "user-1" },
-  session: { id: "sess-1" },
+const BASE_DATE = new Date("2025-01-01");
+
+const mockSession: Session = {
+  user: {
+    id: "user-1",
+    name: "Test User",
+    email: "test@test.com",
+    emailVerified: true,
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    image: null,
+  },
+  session: {
+    id: "sess-1",
+    token: "token-1",
+    userId: "user-1",
+    expiresAt: new Date("2026-01-01"),
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    ipAddress: null,
+    userAgent: null,
+  },
 };
 
 const validInput = {
@@ -48,24 +69,38 @@ const validInput = {
   url: "https://github.com",
 };
 
-const mockPage = { id: "page-1", userId: "user-1" };
-const mockLink = {
+const mockPage: Page = {
+  id: "page-1",
+  slug: "meu-perfil",
+  title: "Meu Perfil",
+  bio: null,
+  image: null,
+  published: true,
+  themeId: 1,
+  createdAt: BASE_DATE,
+  updatedAt: BASE_DATE,
+  userId: "user-1",
+};
+
+const mockLink: Link = {
   id: "link-1",
-  pageId: "page-1",
   title: "GitHub",
   url: "https://github.com",
   image: null,
   active: true,
   position: 0,
+  createdAt: BASE_DATE,
+  updatedAt: BASE_DATE,
+  pageId: "page-1",
 };
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(requireSession).mockResolvedValue(mockSession as any);
-  vi.mocked(prisma.page.findUnique).mockResolvedValue(mockPage as any);
+  vi.mocked(requireSession).mockResolvedValue(mockSession);
+  vi.mocked(prisma.page.findUnique).mockResolvedValue(mockPage);
   vi.mocked(assertCanCreateLink).mockResolvedValue();
   vi.mocked(prisma.link.findFirst).mockResolvedValue(null);
-  vi.mocked(prisma.link.create).mockResolvedValue(mockLink as any);
+  vi.mocked(prisma.link.create).mockResolvedValue(mockLink);
 });
 
 describe("createLink", () => {
@@ -87,7 +122,7 @@ describe("createLink", () => {
   });
 
   it("assigns position after the last link", async () => {
-    vi.mocked(prisma.link.findFirst).mockResolvedValue({ position: 4 } as any);
+    vi.mocked(prisma.link.findFirst).mockResolvedValue({ ...mockLink, position: 4 });
     await createLink(validInput);
     expect(prisma.link.create).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ position: 5 }) })
@@ -116,9 +151,9 @@ describe("createLink", () => {
 
   it("returns error when page belongs to another user", async () => {
     vi.mocked(prisma.page.findUnique).mockResolvedValue({
-      id: "page-1",
+      ...mockPage,
       userId: "other-user",
-    } as any);
+    });
     const result = await createLink(validInput);
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toMatch(/Página não encontrada/);

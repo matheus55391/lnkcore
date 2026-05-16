@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
+import { Plan } from "@/@types";
 
 type UserLookup = {
   userId?: string | null;
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
         const updated = await prisma.user.update({
           where: { id: userId },
           data: {
-            plan: "PRO",
+            plan: Plan.PRO,
             stripeSubscriptionId: subscriptionId ?? undefined,
             stripeCustomerId: customerId ?? undefined,
           },
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: {
-            plan: active ? "PRO" : "FREE",
+            plan: active ? Plan.PRO : Plan.FREE,
             stripeSubscriptionId: sub.id,
             stripeCustomerId: customerId ?? undefined,
           },
@@ -163,7 +164,7 @@ export async function POST(req: NextRequest) {
         if (!userId) break;
         await prisma.user.update({
           where: { id: userId },
-          data: { plan: "FREE" },
+          data: { plan: Plan.FREE },
         });
         break;
       }

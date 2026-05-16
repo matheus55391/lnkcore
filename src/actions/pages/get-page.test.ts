@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Session } from "@/lib/auth";
+import type { Page, Link } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -16,29 +18,67 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { getPage } from "@/actions/pages/get-page";
 
-const mockSession = { user: { id: "user-1" }, session: { id: "sess-1" } };
+type PageWithLinksAndCount = Page & { links: Link[]; _count: { links: number } };
 
-const mockDbPage = {
+const BASE_DATE = new Date("2025-01-01");
+
+const mockSession: Session = {
+  user: {
+    id: "user-1",
+    name: "Test User",
+    email: "test@test.com",
+    emailVerified: true,
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    image: null,
+  },
+  session: {
+    id: "sess-1",
+    token: "token-1",
+    userId: "user-1",
+    expiresAt: new Date("2026-01-01"),
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    ipAddress: null,
+    userAgent: null,
+  },
+};
+
+const mockDbPage: PageWithLinksAndCount = {
   id: "page-1",
   slug: "meu-perfil",
   title: "Meu Perfil",
-  userId: "user-1",
   bio: null,
   image: null,
   published: true,
   themeId: 1,
-  links: [{ id: "link-1", title: "GitHub", url: "https://github.com" }],
+  createdAt: BASE_DATE,
+  updatedAt: BASE_DATE,
+  userId: "user-1",
+  links: [
+    {
+      id: "link-1",
+      title: "GitHub",
+      url: "https://github.com",
+      image: null,
+      active: true,
+      position: 0,
+      createdAt: BASE_DATE,
+      updatedAt: BASE_DATE,
+      pageId: "page-1",
+    },
+  ],
   _count: { links: 1 },
 };
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(requireSession).mockResolvedValue(mockSession as any);
+  vi.mocked(requireSession).mockResolvedValue(mockSession);
 });
 
 describe("getPage", () => {
   it("returns page with linksCount when found", async () => {
-    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage as any);
+    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage);
 
     const result = await getPage("page-1");
     expect(result).not.toBeNull();
@@ -53,7 +93,7 @@ describe("getPage", () => {
   });
 
   it("queries by pageId and userId", async () => {
-    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage as any);
+    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage);
     await getPage("page-1");
     expect(prisma.page.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -63,14 +103,14 @@ describe("getPage", () => {
   });
 
   it("includes links in the result", async () => {
-    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage as any);
+    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage);
     const result = await getPage("page-1");
     expect(result?.links).toHaveLength(1);
     expect(result?.links?.[0].title).toBe("GitHub");
   });
 
   it("strips _count from the returned object", async () => {
-    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage as any);
+    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage);
     const result = await getPage("page-1");
     expect(result).not.toHaveProperty("_count");
   });

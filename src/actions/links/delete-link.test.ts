@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Session } from "@/lib/auth";
+import type { Link } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
@@ -17,18 +19,49 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { deleteLink } from "@/actions/links/delete-link";
 
-const mockSession = { user: { id: "user-1" }, session: { id: "sess-1" } };
+type LinkWithPage = Link & { page: { userId: string } };
 
-const existingLink = {
+const BASE_DATE = new Date("2025-01-01");
+
+const mockSession: Session = {
+  user: {
+    id: "user-1",
+    name: "Test User",
+    email: "test@test.com",
+    emailVerified: true,
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    image: null,
+  },
+  session: {
+    id: "sess-1",
+    token: "token-1",
+    userId: "user-1",
+    expiresAt: new Date("2026-01-01"),
+    createdAt: BASE_DATE,
+    updatedAt: BASE_DATE,
+    ipAddress: null,
+    userAgent: null,
+  },
+};
+
+const existingLink: LinkWithPage = {
   id: "link-1",
+  title: "GitHub",
+  url: "https://github.com",
+  image: null,
+  active: true,
+  position: 0,
+  createdAt: BASE_DATE,
+  updatedAt: BASE_DATE,
+  pageId: "page-1",
   page: { userId: "user-1" },
 };
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(requireSession).mockResolvedValue(mockSession as any);
-  vi.mocked(prisma.link.findUnique).mockResolvedValue(existingLink as any);
-  vi.mocked(prisma.link.delete).mockResolvedValue({} as any);
+  vi.mocked(requireSession).mockResolvedValue(mockSession);
+  vi.mocked(prisma.link.findUnique).mockResolvedValue(existingLink);
 });
 
 describe("deleteLink", () => {
@@ -53,10 +86,8 @@ describe("deleteLink", () => {
   });
 
   it("returns error when link belongs to another user", async () => {
-    vi.mocked(prisma.link.findUnique).mockResolvedValue({
-      id: "link-1",
-      page: { userId: "other-user" },
-    } as any);
+    const otherUserLink: LinkWithPage = { ...existingLink, page: { userId: "other-user" } };
+    vi.mocked(prisma.link.findUnique).mockResolvedValue(otherUserLink);
     const result = await deleteLink({ id: "link-1" });
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toMatch(/Link não encontrado/);
