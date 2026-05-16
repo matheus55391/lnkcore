@@ -6,10 +6,34 @@ on:
       - main
 
 jobs:
+  quality:
+    name: Validar lint e testes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Testes
+        run: npm run test
+
   deploy:
     name: Deploy na VPS
     runs-on: ubuntu-latest
     environment: production
+    needs: quality
 
     steps:
       - name: Configurar SSH

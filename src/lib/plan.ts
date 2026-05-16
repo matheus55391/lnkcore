@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import type { Plan } from "@/@types";
+import { Plan } from "@/@types";
 
 export const PLAN_LIMITS = {
   FREE: { maxPages: 1, maxLinksPerPage: 10, maxStoredImages: 6 },

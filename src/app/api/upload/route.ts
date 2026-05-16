@@ -4,6 +4,7 @@ import { getSession } from "@/utils/session";
 import { getStorage } from "@/lib/storage";
 import { prisma } from "@/lib/prisma";
 import { PLAN_LIMITS } from "@/lib/plan";
+import { Plan } from "@/@types";
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          user.plan === "FREE"
+          user.plan === Plan.FREE
             ? "Limite de imagens do plano gratuito atingido. Remova alguma imagem ou faça upgrade para o PRO."
             : "Limite de imagens do plano PRO atingido.",
       },
