@@ -23,9 +23,11 @@ model User {
   stripeCustomerId     String?  @unique
   stripeSubscriptionId String?  @unique
 
-  sessions Session[]
-  accounts Account[]
-  pages    Page[]
+  sessions     Session[]
+  accounts     Account[]
+  pages        Page[]
+  subscription Subscription?
+  payments     Payment[]
 
   @@map("users")
 }
@@ -117,6 +119,52 @@ model Link {
 
   @@index([pageId])
   @@map("links")
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  stripeSubscriptionId String    @unique
+  stripeCustomerId     String
+  status               String    // active | trialing | past_due | canceled | unpaid | paused
+  priceId              String
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean   @default(false)
+  canceledAt           DateTime?
+  trialStart           DateTime?
+  trialEnd             DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id              String    @id @default(cuid())
+  userId          String
+  subscriptionId  String?
+  stripeInvoiceId String    @unique
+  stripeChargeId  String?
+  amount          Int       // em centavos
+  currency        String    @default("brl")
+  status          String    // paid | open | void | uncollectible
+  description     String?
+  periodStart     DateTime?
+  periodEnd       DateTime?
+  invoiceUrl      String?
+  invoicePdf      String?
+  paidAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("payments")
 }
 
 // Temas definidos em src/lib/themes.ts — adicione novos temas lá.
