@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { THEMES, DEFAULT_THEME, getTheme } from "@/lib/themes";
 
 describe("THEMES", () => {
-  it("has 6 themes", () => {
-    expect(THEMES).toHaveLength(6);
+  it("has 12 themes", () => {
+    expect(THEMES).toHaveLength(12);
   });
 
   it("each theme has required fields", () => {
@@ -24,7 +24,10 @@ describe("THEMES", () => {
   });
 
   it("ids are sequential starting at 1", () => {
-    expect(THEMES.map((t) => t.id)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(THEMES.map((t) => t.id)).toEqual([
+      1, 2, 3, 4, 5, 6,
+      7, 8, 9, 10, 11, 12,
+    ]);
   });
 });
 
@@ -54,11 +57,11 @@ describe("getTheme", () => {
     expect(getTheme(undefined)).toBe(DEFAULT_THEME);
   });
 
-  it("returns theme id=1 as 'Padrão'", () => {
-    expect(getTheme(1).name).toBe("Padrão");
+  it("returns theme id=1 as 'Air'", () => {
+    expect(getTheme(1).name).toBe("Air");
   });
 
-  it("returns theme id=2 as 'Meia-noite'", () => {
-    expect(getTheme(2).name).toBe("Meia-noite");
+  it("returns theme id=2 as 'Astrid'", () => {
+    expect(getTheme(2).name).toBe("Astrid");
   });
 });
