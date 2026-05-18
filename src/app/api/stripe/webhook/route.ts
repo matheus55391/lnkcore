@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
 import { Plan } from "@/@types";
+import { sendDiscordLog } from "@/lib/discord-log";
 
 type UserLookup = {
   userId?: string | null;
@@ -112,6 +113,10 @@ export async function POST(req: NextRequest) {
           userId: updated.id,
           plan: updated.plan,
         });
+        await sendDiscordLog(
+          "Pagamento confirmado",
+          `Usuário ${updated.id} agora é PRO.`
+        );
         break;
       }
 
