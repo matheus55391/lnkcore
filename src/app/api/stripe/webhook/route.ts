@@ -142,14 +142,69 @@ export async function POST(req: NextRequest) {
         if (!userId) break;
 
         const active = sub.status === "active" || sub.status === "trialing";
-        await prisma.user.update({
-          where: { id: userId },
-          data: {
-            plan: active ? Plan.PRO : Plan.FREE,
-            stripeSubscriptionId: sub.id,
-            stripeCustomerId: customerId ?? undefined,
-          },
-        });
+        const priceId = sub.items.data[0]?.price?.id ?? "";
+        const item = sub.items.data[0];
+        const periodStart = new Date((item?.current_period_start ?? 0) * 1000);
+        const periodEnd = new Date((item?.current_period_end ?? 0) * 1000);
+
+        await prisma.$transaction([
+          prisma.user.update({
+            where: { id: userId },
+            data: {
+              plan: active ? Plan.PRO : Plan.FREE,
+              stripeSubscriptionId: sub.id,
+              stripeCustomerId: customerId ?? undefined,
+            },
+          }),
+          prisma.subscription.upsert({
+            where: { stripeSubscriptionId: sub.id },
+            create: {
+              userId,
+              stripeSubscriptionId: sub.id,
+              stripeCustomerId: customerId ?? "",
+              status: sub.status,
+              priceId,
+              currentPeriodStart: periodStart,
+              currentPeriodEnd: periodEnd,
+              cancelAtPeriodEnd: sub.cancel_at_period_end,
+              canceledAt: sub.canceled_at
+                ? new Date(sub.canceled_at * 1000)
+                : null,
+              trialStart: sub.trial_start
+                ? new Date(sub.trial_start * 1000)
+                : null,
+              trialEnd: sub.trial_end
+                ? new Date(sub.trial_end * 1000)
+                : null,
+            },
+            update: {
+              userId,
+              stripeCustomerId: customerId ?? undefined,
+              status: sub.status,
+              priceId,
+              currentPeriodStart: periodStart,
+              currentPeriodEnd: periodEnd,
+              cancelAtPeriodEnd: sub.cancel_at_period_end,
+              canceledAt: sub.canceled_at
+                ? new Date(sub.canceled_at * 1000)
+                : null,
+              trialStart: sub.trial_start
+                ? new Date(sub.trial_start * 1000)
+                : null,
+              trialEnd: sub.trial_end
+                ? new Date(sub.trial_end * 1000)
+                : null,
+            },
+          }),
+        ]);
+
+        await sendDiscordLog(
+          event.type === "customer.subscription.created"
+            ? "Assinatura criada"
+            : "Assinatura atualizada",
+          `Usuário \`${userId}\` — status: **${sub.status}**${sub.cancel_at_period_end ? " (cancela ao fim do período)" : ""}`,
+          active ? "log" : "error"
+        );
         break;
       }
 
@@ -167,10 +222,111 @@ export async function POST(req: NextRequest) {
           resolvedUserId: userId,
         });
         if (!userId) break;
-        await prisma.user.update({
-          where: { id: userId },
-          data: { plan: Plan.FREE },
+        await prisma.$transaction([
+          prisma.user.update({
+            where: { id: userId },
+            data: { plan: Plan.FREE },
+          }),
+          prisma.subscription.updateMany({
+            where: { stripeSubscriptionId: sub.id },
+            data: {
+              status: sub.status,
+              canceledAt: sub.canceled_at
+                ? new Date(sub.canceled_at * 1000)
+                : new Date(),
+            },
+          }),
+        ]);
+
+        await sendDiscordLog(
+          event.type === "customer.subscription.paused"
+            ? "Assinatura pausada"
+            : "Assinatura cancelada",
+          `Usuário \`${userId}\` voltou para FREE.`,
+          "error"
+        );
+        break;
+      }
+
+      case "invoice.paid": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const customerId = extractId(invoice.customer);
+        const subscriptionId = extractId(
+          invoice.parent?.subscription_details?.subscription
+        );
+        const metaUserId = invoice.metadata?.userId;
+
+        const userId = await findUserId({
+          userId: metaUserId,
+          customerId,
+          subscriptionId,
         });
+
+        console.log("[stripe-webhook] invoice.paid", {
+          invoiceId: invoice.id,
+          amount: invoice.amount_paid,
+          currency: invoice.currency,
+          resolvedUserId: userId,
+        });
+
+        if (!userId || !invoice.id) break;
+
+        const dbSubscription = subscriptionId
+          ? await prisma.subscription.findUnique({
+              where: { stripeSubscriptionId: subscriptionId },
+            })
+          : null;
+
+        const line = invoice.lines.data[0];
+        const periodStart = line?.period?.start
+          ? new Date(line.period.start * 1000)
+          : null;
+        const periodEnd = line?.period?.end
+          ? new Date(line.period.end * 1000)
+          : null;
+        const paidAt = invoice.status_transitions?.paid_at
+          ? new Date(invoice.status_transitions.paid_at * 1000)
+          : invoice.status === "paid"
+            ? new Date()
+            : null;
+
+        const formattedAmount = new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: invoice.currency.toUpperCase(),
+        }).format(invoice.amount_paid / 100);
+
+        await prisma.payment.upsert({
+          where: { stripeInvoiceId: invoice.id },
+          create: {
+            userId,
+            subscriptionId: dbSubscription?.id ?? null,
+            stripeInvoiceId: invoice.id,
+            stripeChargeId: null,
+            amount: invoice.amount_paid,
+            currency: invoice.currency,
+            status: invoice.status ?? "paid",
+            description: invoice.description,
+            periodStart,
+            periodEnd,
+            invoiceUrl: invoice.hosted_invoice_url,
+            invoicePdf: invoice.invoice_pdf,
+            paidAt,
+          },
+          update: {
+            stripeChargeId: null,
+            amount: invoice.amount_paid,
+            status: invoice.status ?? "paid",
+            invoiceUrl: invoice.hosted_invoice_url,
+            invoicePdf: invoice.invoice_pdf,
+            paidAt,
+          },
+        });
+
+        await sendDiscordLog(
+          "Pagamento recebido",
+          `Usuário \`${userId}\` — **${formattedAmount}** (fatura \`${invoice.id}\`)`,
+          "log"
+        );
         break;
       }
 

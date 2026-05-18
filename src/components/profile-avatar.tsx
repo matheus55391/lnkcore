@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 import { useCurrentUser } from "@/queries/use-current-user-query";
-import { Loader2Icon, Moon, SettingsIcon, Sun, UserIcon, Zap } from "lucide-react";
+import { CreditCardIcon, Loader2Icon, Moon, SettingsIcon, Sun, UserIcon, Zap } from "lucide-react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -71,6 +71,15 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
                             Meu Perfil
                         </NextLink>
                     </DropdownMenuItem>
+
+                    {currentUser?.plan === "PRO" && (
+                        <DropdownMenuItem asChild>
+                            <NextLink href="/billing">
+                                <CreditCardIcon className="mr-2 h-4 w-4" />
+                                Assinatura
+                            </NextLink>
+                        </DropdownMenuItem>
+                    )}
 
                     {currentUser?.plan !== "PRO" && (
                         <DropdownMenuItem
