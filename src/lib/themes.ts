@@ -1,75 +1,137 @@
 /**
  * Sistema de temas para a página pública de links.
- *
- * Para adicionar um novo tema:
- *  1. Acrescente um objeto no array THEMES com o próximo id sequencial
- *  — não precisa de migration, temas são puramente código
+ * Compatível com a estrutura atual.
  */
 
 export interface Theme {
   id: number;
   name: string;
-  background: string; // fundo da página
-  foreground: string; // texto principal
-  accent: string;     // destaque: hover, ícones
-  cardBg: string;     // fundo do card de link
-  cardBorder: string; // borda do card de link
+  background: string;
+  foreground: string;
+  accent: string;
+  cardBg: string;
+  cardBorder: string;
 }
 
 export const THEMES: Theme[] = [
   {
     id: 1,
-    name: "Padrão",
-    background: "#ffffff",
-    foreground: "#0a0a0a",
-    accent: "#3b82f6",
-    cardBg: "#f9fafb",
-    cardBorder: "#e5e7eb",
+    name: "Air",
+    background: "#f3f4f6",
+    foreground: "#111111",
+    accent: "#111111",
+    cardBg: "#ffffff",
+    cardBorder: "#d4d4d8",
   },
+
   {
     id: 2,
-    name: "Meia-noite",
-    background: "#0f0f1a",
-    foreground: "#e2e8f0",
-    accent: "#818cf8",
-    cardBg: "#1e1e3a",
-    cardBorder: "#2d2d5e",
+    name: "Astrid",
+    background: "#111111",
+    foreground: "#ffffff",
+    accent: "#ffffff",
+    cardBg: "#1c1c1f",
+    cardBorder: "#2c2c31",
   },
+
   {
     id: 3,
-    name: "Oceano",
-    background: "#0c1a2e",
-    foreground: "#e0f2fe",
-    accent: "#38bdf8",
-    cardBg: "#0f2744",
-    cardBorder: "#1e3a5f",
+    name: "Aura",
+    background: "#ebe7df",
+    foreground: "#2c2a28",
+    accent: "#5f5a53",
+    cardBg: "#f5f2ec",
+    cardBorder: "#d6d1ca",
   },
+
   {
     id: 4,
-    name: "Floresta",
-    background: "#0d1f0f",
-    foreground: "#d1fae5",
-    accent: "#34d399",
-    cardBg: "#14291a",
-    cardBorder: "#1f4a2a",
+    name: "Bloom",
+    background: "#5b3df5",
+    foreground: "#ffffff",
+    accent: "#ff6b81",
+    cardBg: "#6d52ff",
+    cardBorder: "#8d78ff",
   },
+
   {
     id: 5,
-    name: "Pôr do sol",
-    background: "#fef3e2",
-    foreground: "#431407",
-    accent: "#f97316",
-    cardBg: "#fff7ed",
-    cardBorder: "#fed7aa",
+    name: "Blocks",
+    background: "#7c3aed",
+    foreground: "#ffffff",
+    accent: "#ff66c4",
+    cardBg: "#9333ea",
+    cardBorder: "#000000",
   },
+
   {
     id: 6,
-    name: "Rosa",
-    background: "#fff0f3",
-    foreground: "#3b0a1a",
-    accent: "#f43f5e",
-    cardBg: "#fff5f7",
-    cardBorder: "#fecdd3",
+    name: "Encore",
+    background: "#050816",
+    foreground: "#f8fafc",
+    accent: "#f5c2a8",
+    cardBg: "#0f172a",
+    cardBorder: "#f5c2a8",
+  },
+
+  {
+    id: 7,
+    name: "Groove",
+    background: "#5f27cd",
+    foreground: "#ffffff",
+    accent: "#ff9ff3",
+    cardBg: "#6c35db",
+    cardBorder: "#8c52ff",
+  },
+
+  {
+    id: 8,
+    name: "Haven",
+    background: "#b7aa95",
+    foreground: "#2c2a28",
+    accent: "#3d3b38",
+    cardBg: "#d8cfbf",
+    cardBorder: "#9e927e",
+  },
+
+  {
+    id: 9,
+    name: "Lake",
+    background: "#0f172a",
+    foreground: "#ffffff",
+    accent: "#93c5fd",
+    cardBg: "#020617",
+    cardBorder: "#1e293b",
+  },
+
+  {
+    id: 10,
+    name: "Mineral",
+    background: "#ede0d4",
+    foreground: "#111111",
+    accent: "#8d7b68",
+    cardBg: "#f5ebe0",
+    cardBorder: "#c9b8a7",
+  },
+
+  {
+    id: 11,
+    name: "Neon",
+    background: "#050816",
+    foreground: "#ffffff",
+    accent: "#00f5d4",
+    cardBg: "#0f172a",
+    cardBorder: "#00f5d4",
+  },
+
+  {
+    id: 12,
+    name: "Ocean",
+    background: "#07111f",
+    foreground: "#e0f2fe",
+    accent: "#38bdf8",
+    cardBg: "#0f1b2d",
+    cardBorder: "#1d3557",
   },
 ];
 
