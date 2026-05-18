@@ -64,7 +64,7 @@ export default function PageDetailPage({
               <div className="min-w-0">
                 <EditPageInfoDialog page={page} />
                 <p className="text-muted-foreground text-xs truncate mt-0.5">
-                  makebio.app/{page.slug}
+                  makebio.com.br/{page.slug}
                 </p>
               </div>
             </div>
