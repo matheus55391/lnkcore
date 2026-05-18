@@ -83,6 +83,9 @@ jobs:
             set -e
             cd /opt/apps/lnkcore
 
+            echo ">>> Atualizando docker-compose..."
+            git pull origin main
+
             echo ">>> Login no GHCR..."
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
