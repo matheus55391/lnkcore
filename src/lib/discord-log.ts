@@ -1,8 +1,11 @@
 export async function sendDiscordLog(
-    title: string,
-    message: string
+    title?: string,
+    message?: string,
+    type: "log" | "error" = "log"
 ) {
     try {
+        console.log("WEBHOOK:", process.env.DISCORD_WEBHOOK_URL);
+
         await fetch(process.env.DISCORD_WEBHOOK_URL!, {
             method: "POST",
             headers: {
@@ -11,9 +14,9 @@ export async function sendDiscordLog(
             body: JSON.stringify({
                 embeds: [
                     {
-                        title,
-                        description: message,
-                        color: 5763719,
+                        title: String(title ?? "Log"),
+                        description: String(message ?? "Sem descrição"),
+                        color: type === "error" ? 16711680 : 5763719,
                         timestamp: new Date().toISOString(),
                     },
                 ],
