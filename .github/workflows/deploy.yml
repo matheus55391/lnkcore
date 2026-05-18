@@ -43,8 +43,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-
-
       - name: Definir tag da imagem pela versão do package.json
         id: version
         run: echo "image_tag=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
@@ -89,6 +87,7 @@ jobs:
         run: |
           timeout 300 ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=15 "${{ secrets.SERVER_HOST }}" << ENDSSH
             set -e
+            export IMAGE_TAG=${{ needs.build.outputs.image_tag }}
             cd /opt/apps/lnkcore
 
             echo ">>> Atualizando docker-compose..."
@@ -101,7 +100,7 @@ jobs:
             docker pull ghcr.io/${{ github.repository_owner }}/lnkcore:${{ needs.build.outputs.image_tag }}
 
             echo ">>> Subindo containers..."
-            IMAGE_TAG=${{ needs.build.outputs.image_tag }} docker compose -f docker-compose.prod.yml --env-file .env up -d
+            docker compose -f docker-compose.prod.yml --env-file .env up -d
 
             echo ">>> Limpando imagens antigas..."
             docker image prune -f
