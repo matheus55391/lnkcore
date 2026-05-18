@@ -43,14 +43,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+
 
       - name: Definir tag da imagem pela versão do package.json
         id: version
-        run: echo "image_tag=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+        run: echo "image_tag=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
 
       - name: Login no GHCR
         uses: docker/login-action@v3
