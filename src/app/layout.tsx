@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "lnkcore",
+  title: "makebio",
   description: "Sua página de links, simples e rápida.",
 };
 
