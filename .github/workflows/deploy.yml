@@ -33,6 +33,8 @@ jobs:
     name: Build e publicar imagem
     runs-on: ubuntu-latest
     needs: quality
+    outputs:
+      image_tag: ${{ steps.version.outputs.image_tag }}
     permissions:
       contents: read
       packages: write
@@ -40,6 +42,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Definir tag da imagem pela versão do package.json
+        id: version
+        run: echo "image_tag=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
 
       - name: Login no GHCR
         uses: docker/login-action@v3
@@ -53,7 +64,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/lnkcore:latest
+          tags: ghcr.io/${{ github.repository_owner }}/lnkcore:${{ steps.version.outputs.image_tag }}
 
   deploy:
     name: Deploy na VPS
@@ -90,10 +101,10 @@ jobs:
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             echo ">>> Baixando nova imagem..."
-            docker pull ghcr.io/${{ github.repository_owner }}/lnkcore:latest
+            docker pull ghcr.io/${{ github.repository_owner }}/lnkcore:${{ needs.build.outputs.image_tag }}
 
             echo ">>> Subindo containers..."
-            docker compose -f docker-compose.prod.yml --env-file .env up -d
+            IMAGE_TAG=${{ needs.build.outputs.image_tag }} docker compose -f docker-compose.prod.yml --env-file .env up -d
 
             echo ">>> Limpando imagens antigas..."
             docker image prune -f
@@ -101,4 +112,3 @@ jobs:
             echo ">>> Status dos containers:"
             docker compose -f docker-compose.prod.yml ps
           ENDSSH
-
