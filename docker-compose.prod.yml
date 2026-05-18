@@ -20,9 +20,7 @@ services:
       retries: 5
 
   app:
-    image: ${DOCKER_IMAGE:-lnkcore}:${IMAGE_TAG:-latest}
-    build:
-      context: .
+    image: ghcr.io/matheus55391/lnkcore:latest
     container_name: lnkcore-app
 
     ports:

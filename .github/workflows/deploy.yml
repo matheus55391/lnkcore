@@ -29,11 +29,39 @@ jobs:
       - name: Testes
         run: npm run test
 
+  build:
+    name: Build e publicar imagem
+    runs-on: ubuntu-latest
+    needs: quality
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build e push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/lnkcore:latest
+
   deploy:
     name: Deploy na VPS
     runs-on: ubuntu-latest
     environment: production
-    needs: quality
+    needs: build
+    permissions:
+      packages: read
 
     steps:
       - name: Configurar SSH
@@ -51,15 +79,18 @@ jobs:
 
       - name: Deploy
         run: |
-          timeout 300 ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=15 "${{ secrets.SERVER_HOST }}" bash << 'ENDSSH'
+          timeout 300 ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTimeout=15 "${{ secrets.SERVER_HOST }}" << ENDSSH
             set -e
             cd /opt/apps/lnkcore
 
-            echo ">>> Atualizando código..."
-            git pull origin main
+            echo ">>> Login no GHCR..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+            echo ">>> Baixando nova imagem..."
+            docker pull ghcr.io/${{ github.repository_owner }}/lnkcore:latest
 
             echo ">>> Subindo containers..."
-            docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+            docker compose -f docker-compose.prod.yml --env-file .env up -d
 
             echo ">>> Limpando imagens antigas..."
             docker image prune -f
