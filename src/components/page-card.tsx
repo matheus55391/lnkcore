@@ -71,7 +71,7 @@ export function PageCard({ page }: PageCardProps) {
                 <div className="space-y-1">
                     <CardTitle className="truncate">{page.title}</CardTitle>
                     <CardDescription className="truncate">
-                        lnkcore.app/{page.slug}
+                        makebio.app/{page.slug}
                     </CardDescription>
                 </div>
 

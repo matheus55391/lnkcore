@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
-export const metadata = { title: "Criar conta · lnkcore" };
+export const metadata = { title: "Criar conta · makebio" };
 
 export default function SignUpPage() {
   return (

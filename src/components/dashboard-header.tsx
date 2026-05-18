@@ -12,7 +12,7 @@ export function DashboardHeader() {
     <header className="border-b bg-background sticky top-0 z-10">
       <div className="container mx-auto flex h-16 items-center justify-between px-6">
         <Link href="/dashboard" className="font-semibold tracking-tight">
-          lnkcore
+          makebio
         </Link>
         <div className="flex items-center gap-3 text-sm">
           <UpgradeButton />

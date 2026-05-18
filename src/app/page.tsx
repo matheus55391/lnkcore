@@ -13,7 +13,7 @@ export default async function Home() {
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
             <Link2 className="h-5 w-5" />
-            lnkcore
+            makebio
           </Link>
           <div className="flex items-center gap-3 text-sm">
             <span className="text-muted-foreground">
@@ -51,7 +51,7 @@ export default async function Home() {
             Um link. Todas as suas páginas.
           </h1>
           <p className="max-w-xl text-lg text-muted-foreground">
-            Crie a sua página lnkcore, reúna seus links, redes sociais e
+            Crie a sua página makebio, reúna seus links, redes sociais e
             conteúdos em um só lugar e compartilhe com o mundo.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -89,7 +89,7 @@ export default async function Home() {
 
       <footer className="border-t">
         <div className="container mx-auto flex h-14 items-center justify-between px-6 text-sm text-muted-foreground">
-          <span>© {new Date().getFullYear()} lnkcore</span>
+          <span>© {new Date().getFullYear()} makebio</span>
           <span>Feito com Next.js</span>
         </div>
       </footer>

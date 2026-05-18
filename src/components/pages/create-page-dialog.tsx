@@ -77,7 +77,7 @@ export function CreatePageDialog() {
             <Label htmlFor="slug">Slug</Label>
             <div className="flex items-center gap-1">
               <span className="text-muted-foreground text-sm shrink-0">
-                lnkcore.app/
+                makebio.app/
               </span>
               <Input
                 id="slug"
