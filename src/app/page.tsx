@@ -3,6 +3,7 @@ import { ArrowRight, Link2, ShieldCheck, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/utils/session";
+import Image from "next/image";
 
 export default async function Home() {
   const session = await getSession();
@@ -11,8 +12,8 @@ export default async function Home() {
     <div className="flex min-h-dvh flex-col">
       <header className="border-b">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
-            <Link2 className="h-5 w-5" />
+          <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, letterSpacing: '-0.025em', fontSize: '20px' }}>
+            <Image src="/mkbio.png" alt="makebio" width={32} height={32} />
             makebio
           </Link>
           <div className="flex items-center gap-3 text-sm">
