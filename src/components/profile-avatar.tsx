@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 import { useCurrentUser } from "@/queries/use-current-user-query";
-import { CreditCardIcon, Loader2Icon, Moon, SettingsIcon, Sun, UserIcon, Zap } from "lucide-react";
+import { CreditCardIcon, Loader2Icon, Moon, Sun, UserIcon, Zap } from "lucide-react";
 import NextLink from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -113,14 +113,7 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
                         Tema
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem
-                        onSelect={(e) => {
-                            e.preventDefault();
-                        }}
-                    >
-                        <SettingsIcon className="mr-2 h-4 w-4" />
-                        Configurações
-                    </DropdownMenuItem>
+
                 </DropdownMenuGroup>
 
                 {error && (

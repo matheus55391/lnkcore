@@ -8,6 +8,8 @@ import {
   ExternalLinkIcon,
   FileTextIcon,
   AlertTriangleIcon,
+  CheckIcon,
+  XIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useBillingQuery } from "@/queries/use-billing-query";
 import { useCancelSubscriptionMutation } from "@/queries/use-cancel-subscription-mutation";
+import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 import type { BillingSubscription, BillingPayment } from "@/actions/stripe/get-billing-info";
 
 // ---------------------------------------------------------------------------
@@ -90,10 +93,22 @@ export default function BillingPage() {
             Voltar
           </Link>
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Assinatura e cobrança</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Gerencie seu plano e visualize o histórico de pagamentos.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">Conta</h1>
+      </div>
+
+      <div className="flex border-b">
+        <Link
+          href="/profile"
+          className="flex-1 text-center px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Perfil
+        </Link>
+        <Link
+          href="/billing"
+          className="flex-1 text-center px-4 py-2 text-sm font-medium border-b-2 border-primary text-primary"
+        >
+          Assinatura
+        </Link>
       </div>
 
       {isLoading ? (
@@ -106,6 +121,7 @@ export default function BillingPage() {
             plan={data?.plan ?? "FREE"}
             subscription={data?.subscription ?? null}
           />
+          {(data?.plan ?? "FREE") === "FREE" && <PlanComparisonSection />}
           <PaymentsSection payments={data?.payments ?? []} />
         </>
       )}
@@ -114,8 +130,86 @@ export default function BillingPage() {
 }
 
 // ---------------------------------------------------------------------------
+// Plan comparison (shown for FREE users)
+// ---------------------------------------------------------------------------
+
+const PLAN_FEATURES = [
+  { label: "Páginas",            free: "1 página",   pro: "5 páginas" },
+  { label: "Links por página",   free: "5 links",    pro: "20 links" },
+  { label: "Imagens armazenadas",free: "10 imagens", pro: "40 imagens" },
+  { label: "Todos os temas",     free: true,         pro: true },
+  { label: "Suporte prioritário",free: false,        pro: true },
+] as const;
+
+function FeatureValue({ value }: { value: string | boolean }) {
+  if (typeof value === "boolean") {
+    return value
+      ? <CheckIcon className="h-4 w-4 text-green-500 mx-auto" />
+      : <XIcon className="h-4 w-4 text-muted-foreground/40 mx-auto" />;
+  }
+  return <span>{value}</span>;
+}
+
+function PlanComparisonSection() {
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader>
+        <CardTitle>O que muda com o PRO?</CardTitle>
+        <CardDescription>Por apenas R$&nbsp;7/mês.</CardDescription>
+      </CardHeader>
+      <CardContent className="p-0">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b">
+              <th className="px-6 py-3 text-left text-muted-foreground font-medium w-1/2">Recurso</th>
+              <th className="px-4 py-3 text-center font-medium text-muted-foreground w-1/4">FREE</th>
+              <th className="px-4 py-3 text-center font-semibold text-primary w-1/4 bg-primary/5">
+                PRO
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {PLAN_FEATURES.map((f) => (
+              <tr key={f.label} className="border-b last:border-0">
+                <td className="px-6 py-3 text-muted-foreground">{f.label}</td>
+                <td className="px-4 py-3 text-center">
+                  <FeatureValue value={f.free} />
+                </td>
+                <td className="px-4 py-3 text-center font-medium bg-primary/5">
+                  <FeatureValue value={f.pro} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="px-6 py-5">
+          <UpgradeButton />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Plan card
 // ---------------------------------------------------------------------------
+
+function UpgradeButton() {
+  const [error, setError] = useState<string | null>(null);
+  const mutation = useCreateCheckoutSessionMutation({
+    onError: (err) => setError(err.message),
+  });
+
+  return (
+    <div className="space-y-2">
+      <Button onClick={() => mutation.mutate()} disabled={mutation.isPending}>
+        {mutation.isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+        Assinar agora
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
 
 function PlanSection({
   plan,
@@ -137,9 +231,7 @@ function PlanSection({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild>
-            <Link href="/dashboard">Ver planos</Link>
-          </Button>
+          <UpgradeButton />
         </CardContent>
       </Card>
     );
