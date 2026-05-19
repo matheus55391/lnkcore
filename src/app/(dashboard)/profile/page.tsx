@@ -60,10 +60,22 @@ export default function ProfilePage() {
             Voltar
           </Link>
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Meu Perfil</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Gerencie suas informações pessoais e segurança da conta.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">Conta</h1>
+      </div>
+
+      <div className="flex border-b">
+        <Link
+          href="/profile"
+          className="px-4 py-2 text-sm font-medium border-b-2 border-primary text-primary"
+        >
+          Perfil
+        </Link>
+        <Link
+          href="/billing"
+          className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Assinatura
+        </Link>
       </div>
 
       <PersonalInfoSection currentUser={currentUser} />

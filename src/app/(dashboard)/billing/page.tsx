@@ -30,6 +30,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useBillingQuery } from "@/queries/use-billing-query";
 import { useCancelSubscriptionMutation } from "@/queries/use-cancel-subscription-mutation";
+import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 import type { BillingSubscription, BillingPayment } from "@/actions/stripe/get-billing-info";
 
 // ---------------------------------------------------------------------------
@@ -90,10 +91,22 @@ export default function BillingPage() {
             Voltar
           </Link>
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">Assinatura e cobrança</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Gerencie seu plano e visualize o histórico de pagamentos.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">Conta</h1>
+      </div>
+
+      <div className="flex border-b">
+        <Link
+          href="/profile"
+          className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Perfil
+        </Link>
+        <Link
+          href="/billing"
+          className="px-4 py-2 text-sm font-medium border-b-2 border-primary text-primary"
+        >
+          Assinatura
+        </Link>
       </div>
 
       {isLoading ? (
@@ -117,6 +130,23 @@ export default function BillingPage() {
 // Plan card
 // ---------------------------------------------------------------------------
 
+function UpgradeButton() {
+  const [error, setError] = useState<string | null>(null);
+  const mutation = useCreateCheckoutSessionMutation({
+    onError: (err) => setError(err.message),
+  });
+
+  return (
+    <div className="space-y-2">
+      <Button onClick={() => mutation.mutate()} disabled={mutation.isPending}>
+        {mutation.isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+        Assinar agora
+      </Button>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
+
 function PlanSection({
   plan,
   subscription,
@@ -137,9 +167,7 @@ function PlanSection({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button asChild>
-            <Link href="/dashboard">Ver planos</Link>
-          </Button>
+          <UpgradeButton />
         </CardContent>
       </Card>
     );
