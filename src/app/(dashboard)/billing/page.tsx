@@ -85,7 +85,7 @@ export default function BillingPage() {
   const { data, isLoading } = useBillingQuery();
 
   return (
-    <main className="container mx-auto px-4 sm:px-6 py-8 max-w-3xl space-y-6">
+    <main className="container mx-auto px-4 sm:px-6 py-8 max-w-2xl space-y-6">
       <div>
         <Button asChild variant="ghost" size="sm" className="mb-4 -ml-3">
           <Link href="/dashboard">
@@ -134,11 +134,8 @@ export default function BillingPage() {
 // ---------------------------------------------------------------------------
 
 const PLAN_FEATURES = [
-  { label: "Páginas",            free: "1 página",   pro: "5 páginas" },
-  { label: "Links por página",   free: "5 links",    pro: "20 links" },
-  { label: "Imagens armazenadas",free: "10 imagens", pro: "40 imagens" },
-  { label: "Todos os temas",     free: true,         pro: true },
-  { label: "Suporte prioritário",free: false,        pro: true },
+  { label: "Páginas", free: "1 página", pro: "5 páginas" },
+  { label: "Links por página", free: "5 links", pro: "20 links" },
 ] as const;
 
 function FeatureValue({ value }: { value: string | boolean }) {
