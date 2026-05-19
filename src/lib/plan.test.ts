@@ -48,14 +48,16 @@ beforeEach(() => {
 });
 
 describe("PLAN_LIMITS", () => {
-  it("FREE plan has maxPages=1, maxLinksPerPage=10", () => {
+  it("FREE plan has maxPages=1, maxLinksPerPage=5 and maxStoredImages=10", () => {
     expect(PLAN_LIMITS.FREE.maxPages).toBe(1);
-    expect(PLAN_LIMITS.FREE.maxLinksPerPage).toBe(10);
+    expect(PLAN_LIMITS.FREE.maxLinksPerPage).toBe(5);
+    expect(PLAN_LIMITS.FREE.maxStoredImages).toBe(10);
   });
 
-  it("PRO plan has maxPages=100, maxLinksPerPage=500", () => {
-    expect(PLAN_LIMITS.PRO.maxPages).toBe(100);
-    expect(PLAN_LIMITS.PRO.maxLinksPerPage).toBe(500);
+  it("PRO plan has maxPages=5, maxLinksPerPage=20 and maxStoredImages=40", () => {
+    expect(PLAN_LIMITS.PRO.maxPages).toBe(5);
+    expect(PLAN_LIMITS.PRO.maxLinksPerPage).toBe(20);
+    expect(PLAN_LIMITS.PRO.maxStoredImages).toBe(40);
   });
 });
 
@@ -88,15 +90,15 @@ describe("assertCanCreatePage", () => {
     await expect(assertCanCreatePage("user-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 
-  it("does NOT throw when PRO user has 99 pages", async () => {
+  it("does NOT throw when PRO user has 4 pages", async () => {
     vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
-    vi.mocked(prisma.page.count).mockResolvedValue(99);
+    vi.mocked(prisma.page.count).mockResolvedValue(4);
     await expect(assertCanCreatePage("user-1")).resolves.toBeUndefined();
   });
 
-  it("throws PlanLimitError when PRO user reaches 100-page limit", async () => {
+  it("throws PlanLimitError when PRO user reaches 5-page limit", async () => {
     vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
-    vi.mocked(prisma.page.count).mockResolvedValue(100);
+    vi.mocked(prisma.page.count).mockResolvedValue(5);
     await expect(assertCanCreatePage("user-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 });
@@ -108,31 +110,31 @@ describe("assertCanCreateLink", () => {
     await expect(assertCanCreateLink("user-1", "page-1")).resolves.toBeUndefined();
   });
 
-  it("throws PlanLimitError when FREE user reaches 10-link limit", async () => {
+  it("throws PlanLimitError when FREE user reaches 5-link limit", async () => {
     vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
-    vi.mocked(prisma.link.count).mockResolvedValue(10);
+    vi.mocked(prisma.link.count).mockResolvedValue(5);
     await expect(assertCanCreateLink("user-1", "page-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 
-  it("does NOT throw when PRO user has 499 links", async () => {
+  it("does NOT throw when PRO user has 19 links", async () => {
     vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
-    vi.mocked(prisma.link.count).mockResolvedValue(499);
+    vi.mocked(prisma.link.count).mockResolvedValue(19);
     await expect(assertCanCreateLink("user-1", "page-1")).resolves.toBeUndefined();
   });
 
-  it("throws PlanLimitError when PRO user reaches 500-link limit", async () => {
+  it("throws PlanLimitError when PRO user reaches 20-link limit", async () => {
     vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockProUser);
-    vi.mocked(prisma.link.count).mockResolvedValue(500);
+    vi.mocked(prisma.link.count).mockResolvedValue(20);
     await expect(assertCanCreateLink("user-1", "page-1")).rejects.toBeInstanceOf(PlanLimitError);
   });
 
   it("error message contains the link limit", async () => {
     vi.mocked(prisma.user.findUniqueOrThrow).mockResolvedValue(mockFreeUser);
-    vi.mocked(prisma.link.count).mockResolvedValue(10);
+    vi.mocked(prisma.link.count).mockResolvedValue(5);
     try {
       await assertCanCreateLink("user-1", "page-1");
     } catch (err) {
-      expect((err as Error).message).toMatch(/10/);
+      expect((err as Error).message).toMatch(/5/);
     }
   });
 });

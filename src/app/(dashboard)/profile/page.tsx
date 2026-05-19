@@ -66,13 +66,13 @@ export default function ProfilePage() {
       <div className="flex border-b">
         <Link
           href="/profile"
-          className="px-4 py-2 text-sm font-medium border-b-2 border-primary text-primary"
+          className="flex-1 text-center px-4 py-2 text-sm font-medium border-b-2 border-primary text-primary"
         >
           Perfil
         </Link>
         <Link
           href="/billing"
-          className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          className="flex-1 text-center px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
           Assinatura
         </Link>

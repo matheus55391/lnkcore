@@ -3,11 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { Plan } from "@/@types";
 
 export const PLAN_LIMITS = {
-  FREE: { maxPages: 1, maxLinksPerPage: 10, maxStoredImages: 6 },
+  FREE: { maxPages: 1, maxLinksPerPage: 5, maxStoredImages: 10 },
   PRO: {
-    maxPages: 100,
-    maxLinksPerPage: 500,
-    maxStoredImages: 5000,
+    maxPages: 5,
+    maxLinksPerPage: 20,
+    maxStoredImages: 40,
   },
 } as const satisfies Record<
   Plan,
@@ -44,7 +44,7 @@ export async function assertCanCreateLink(
   const count = await prisma.link.count({ where: { pageId } });
   if (count >= limit) {
     throw new PlanLimitError(
-      `Limite do plano gratuito atingido: máximo de ${limit} links por página.`
+      `Limite do plano atingido: máximo de ${limit} links por página.`
     );
   }
 }
