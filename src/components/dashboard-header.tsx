@@ -14,7 +14,7 @@ export function DashboardHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-6">
         <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, letterSpacing: '-0.025em', fontSize: '20px' }}>
           <LogoTheme />
-          makebio
+          MakeBio
         </Link>
         <div className="flex items-center gap-3 text-sm">
           <UpgradeButton />
