@@ -8,10 +8,17 @@ export function LogoTheme() {
 
     return (
         <Image
-            src={resolvedTheme === 'light' ? '/mkbioblack.png' : '/mkbio.png'}
+            src="/mkbio.png"
             alt="makebio"
             width={32}
             height={32}
+            style={{
+                filter:
+                    resolvedTheme === "light"
+                        ? "invert(1)"
+                        : "invert(0)",
+            }}
+            priority
         />
     );
 }
