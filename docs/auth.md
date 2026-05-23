@@ -15,6 +15,9 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,     // loga automaticamente após sign-up
     minPasswordLength: 8,
+    sendResetPassword: async ({ user, url }) => {
+      // envia email via SMTP (Mailpit em dev) — ver src/lib/email.ts
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7,   // 7 dias
@@ -36,6 +39,8 @@ Exporta hooks e funções para uso em Client Components:
 | `signIn(email, password)` | Autentica o usuário |
 | `signUp(name, email, password)` | Cria conta e loga |
 | `signOut()` | Encerra a sessão |
+| `requestPasswordReset({ email, redirectTo })` | Solicita link de recuperação |
+| `resetPassword({ newPassword, token })` | Define nova senha com token do email |
 | `useSession()` | Hook React com dados da sessão atual |
 | `getSession()` | Versão assíncrona sem hook |
 
@@ -49,6 +54,8 @@ Os formulários usam `react-hook-form` + `zod`:
 | ------ | ------ | ------ |
 | `signUpSchema` | `name`, `email`, `password`, `confirmPassword` | nome ≥ 2 chars, email válido, senha ≥ 8 chars, senhas iguais |
 | `signInSchema` | `email`, `password` | email válido, senha não vazia |
+| `forgotPasswordSchema` | `email` | email válido |
+| `resetPasswordSchema` | `password`, `confirmPassword` | senha ≥ 8 chars, senhas iguais |
 
 ## Handler HTTP
 
@@ -125,6 +132,27 @@ Redireciona para `/dashboard` se o usuário **já estiver** logado, evitando que
 | `sameSite` | `lax` |
 | `secure` | `true` em produção, `false` em dev |
 | `path` | `/` |
+
+## Recuperação de senha
+
+Fluxo integrado ao Better Auth:
+
+1. Usuário acessa `/forgot-password` e informa o email.
+2. `POST /api/auth/request-password-reset` envia o email com link.
+3. O link redireciona para `/reset-password?token=...`.
+4. `POST /api/auth/reset-password` grava a nova senha.
+
+### SMTP local (desenvolvimento)
+
+O `docker-compose.yml` sobe o [Mailpit](https://mailpit.axllent.org) na porta `1025` (SMTP) e `8025` (interface web). Variáveis no `.env`:
+
+| Variável | Valor local |
+| -------- | ----------- |
+| `SMTP_HOST` | `localhost` |
+| `SMTP_PORT` | `1025` |
+| `SMTP_FROM` | `makebio <no-reply@makebio.local>` |
+
+> O **MinIO** no mesmo compose é apenas para armazenamento S3 (imagens/arquivos), não para email.
 
 ## Configuração futura: provedores sociais
 

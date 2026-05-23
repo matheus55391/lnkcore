@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { signUpSchema, signInSchema } from "@/schemas/auth";
+import {
+  signUpSchema,
+  signInSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "@/schemas/auth";
 
 describe("signUpSchema", () => {
   const valid = {
@@ -99,5 +104,45 @@ describe("signInSchema", () => {
   it("rejects missing fields", () => {
     expect(signInSchema.safeParse({}).success).toBe(false);
     expect(signInSchema.safeParse({ email: valid.email }).success).toBe(false);
+  });
+});
+
+describe("forgotPasswordSchema", () => {
+  it("accepts valid email", () => {
+    expect(
+      forgotPasswordSchema.safeParse({ email: "joao@exemplo.com" }).success
+    ).toBe(true);
+  });
+
+  it("rejects invalid email", () => {
+    expect(
+      forgotPasswordSchema.safeParse({ email: "not-an-email" }).success
+    ).toBe(false);
+  });
+});
+
+describe("resetPasswordSchema", () => {
+  const valid = { password: "senha123", confirmPassword: "senha123" };
+
+  it("accepts valid input", () => {
+    expect(resetPasswordSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it("rejects short password", () => {
+    const result = resetPasswordSchema.safeParse({
+      password: "curta",
+      confirmPassword: "curta",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects mismatched passwords", () => {
+    const result = resetPasswordSchema.safeParse({
+      password: "senha123",
+      confirmPassword: "outra123",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success)
+      expect(result.error.issues[0].message).toMatch(/não conferem/);
   });
 });

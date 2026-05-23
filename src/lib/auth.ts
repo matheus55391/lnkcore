@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { prisma } from "@/lib/prisma";
+import { buildPasswordResetEmail, sendEmail } from "./email";
 import { sendDiscordLog } from "./discord-log";
 
 export const auth = betterAuth({
@@ -13,11 +14,21 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins: [
     "https://www.makebio.com.br",
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
   ],
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
     minPasswordLength: 8,
+    sendResetPassword: async ({ user, url }) => {
+      const { subject, text, html } = buildPasswordResetEmail(url);
+      void sendEmail({
+        to: user.email,
+        subject,
+        text,
+        html,
+      });
+    },
   },
 
   databaseHooks: {
