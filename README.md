@@ -83,8 +83,10 @@ This starts:
 | Postgres | `5432`       | `lnkcore` / `lnkcore`    |
 | MinIO    | `9000` (API) | `lnkcore` / `lnkcore123` |
 | MinIO UI | `9001`       | `lnkcore` / `lnkcore123` |
+| Mailpit SMTP | `1025`   | — |
+| Mailpit UI   | `8025`   | — |
 
-MinIO console: <http://localhost:9001>
+MinIO console: <http://localhost:9001> · Mailpit (emails): <http://localhost:8025>
 
 ### 4. Apply database migrations
 

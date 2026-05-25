@@ -43,13 +43,26 @@ Cole o resultado como valor de `BETTER_AUTH_SECRET` no `.env`.
 docker compose up -d
 ```
 
-Isso inicia dois serviços:
+Isso inicia três serviços:
 
 | Serviço | Porta | Usuário | Senha |
 | ------- | ----- | ------- | ----- |
 | PostgreSQL 16 | `5432` | `lnkcore` | `lnkcore` |
 | MinIO (API) | `9000` | `lnkcore` | `lnkcore123` |
 | MinIO (Console) | `9001` | `lnkcore` | `lnkcore123` |
+| Mailpit (SMTP) | `1025` | — | — |
+| Mailpit (UI) | `8025` | — | — |
+
+Configure no `.env` o SMTP local (Mailpit):
+
+```env
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_SECURE=false
+SMTP_FROM=makebio <no-reply@makebio.local>
+```
+
+Emails de recuperação de senha aparecem em <http://localhost:8025>.
 
 Verifique se os containers estão rodando:
 
