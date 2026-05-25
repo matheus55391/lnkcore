@@ -49,6 +49,12 @@ DATABASE_URL=postgresql://lnkcore:lnkcore@lnkcore-postgres:5432/lnkcore?schema=p
 BETTER_AUTH_SECRET=local-test-secret-minimum-32-characters!!
 BETTER_AUTH_URL=http://localhost:3000
 
+# Email (Mailpit local — UI em http://localhost:8025)
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_SECURE=false
+SMTP_FROM=makebio <no-reply@makebio.local>
+
 # Stripe (test keys)
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_PRO_PRICE_ID=price_...
