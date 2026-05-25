@@ -1,6 +1,7 @@
 import "server-only";
 
 import nodemailer from "nodemailer";
+import { sendDiscordLog } from "./discord-log";
 
 type SendEmailParams = {
   to: string;
@@ -41,6 +42,7 @@ export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
     text,
     html: html ?? text,
   });
+  await sendDiscordLog("Email enviado", `Assunto: ${subject}`);
 }
 
 export function buildPasswordResetEmail(url: string) {
