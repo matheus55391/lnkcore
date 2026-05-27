@@ -157,6 +157,8 @@ See [.env.example](.env.example) for the full template. Summary:
 | `STRIPE_SECRET_KEY`           |    ✅*   | Stripe secret key (`sk_test_...`/`sk_live_...`).              |
 | `STRIPE_PRO_PRICE_ID`         |    ✅*   | Price ID do plano PRO (`price_...`).                          |
 | `STRIPE_WEBHOOK_SECRET`       |    ✅*   | Webhook secret for `/api/stripe/webhook` (`whsec_...`).       |
+| `RESEND_API_KEY`              |    ❌    | Optional API key for Resend email delivery in production.     |
+| `RESEND_FROM`                 |    ❌    | Optional sender address for Resend emails.                    |
 | `S3_ENDPOINT`                 |    ❌    | S3 / MinIO endpoint URL (quando storage estiver implementado). |
 | `S3_REGION`                   |    ❌    | S3 region (use `us-east-1` for MinIO).                         |
 | `S3_ACCESS_KEY`               |    ❌    | S3 access key.                                                 |

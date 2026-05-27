@@ -64,6 +64,8 @@ SMTP_FROM=makebio <no-reply@makebio.local>
 
 Emails de recuperação de senha aparecem em <http://localhost:8025>.
 
+> Em produção, use `RESEND_API_KEY` para enviar emails via Resend. Você pode também configurar `RESEND_FROM` se quiser um remetente diferente.
+
 Verifique se os containers estão rodando:
 
 ```bash

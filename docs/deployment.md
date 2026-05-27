@@ -55,6 +55,10 @@ SMTP_PORT=1025
 SMTP_SECURE=false
 SMTP_FROM=makebio <no-reply@makebio.local>
 
+# Optional: use Resend in production instead of SMTP
+RESEND_API_KEY=
+RESEND_FROM=makebio <no-reply@makebio.local>
+
 # Stripe (test keys)
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_PRO_PRICE_ID=price_...

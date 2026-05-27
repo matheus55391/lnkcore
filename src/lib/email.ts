@@ -1,6 +1,6 @@
 import "server-only";
 
-import nodemailer from "nodemailer";
+import * as nodemailer from "nodemailer";
 import { sendDiscordLog } from "./discord-log";
 
 type SendEmailParams = {
@@ -9,6 +9,35 @@ type SendEmailParams = {
   text: string;
   html?: string;
 };
+
+async function sendViaResend({ to, subject, text, html }: SendEmailParams) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+
+  const from = process.env.RESEND_FROM ?? process.env.SMTP_FROM ?? "makebio <no-reply@makebio.local>";
+
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to: [to],
+      subject,
+      text,
+      html: html ?? text,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`[email] Resend error ${response.status}: ${body}`);
+  }
+
+  return response;
+}
 
 function getTransporter() {
   const host = process.env.SMTP_HOST;
@@ -27,21 +56,26 @@ function getTransporter() {
 }
 
 export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
-  const transporter = getTransporter();
-  if (!transporter) {
-    console.warn("[email] SMTP_HOST não configurado — email não enviado:", subject);
-    return;
+  if (process.env.RESEND_API_KEY) {
+    await sendViaResend({ to, subject, text, html });
+  } else {
+    const transporter = getTransporter();
+    if (!transporter) {
+      console.warn("[email] SMTP_HOST não configurado — email não enviado:", subject);
+      return;
+    }
+
+    const from = process.env.SMTP_FROM ?? "makebio <no-reply@makebio.local>";
+
+    await transporter.sendMail({
+      from,
+      to,
+      subject,
+      text,
+      html: html ?? text,
+    });
   }
 
-  const from = process.env.SMTP_FROM ?? "makebio <no-reply@makebio.local>";
-
-  await transporter.sendMail({
-    from,
-    to,
-    subject,
-    text,
-    html: html ?? text,
-  });
   await sendDiscordLog("Email enviado", `Assunto: ${subject}`);
 }
 
