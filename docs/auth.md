@@ -152,6 +152,8 @@ O `docker-compose.yml` sobe o [Mailpit](https://mailpit.axllent.org) na porta `1
 | `SMTP_PORT` | `1025` |
 | `SMTP_FROM` | `makebio <no-reply@makebio.local>` |
 
+Em produção você também pode usar [Resend](https://resend.com) em vez de SMTP. Defina `RESEND_API_KEY` e (opcionalmente) `RESEND_FROM`; quando `RESEND_API_KEY` estiver presente, o app envia emails pelo Resend.
+
 > O **MinIO** no mesmo compose é apenas para armazenamento S3 (imagens/arquivos), não para email.
 
 ## Configuração futura: provedores sociais
