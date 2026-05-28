@@ -9,13 +9,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { PasswordInput } from "../password-input";
 
 export function SignInForm() {
   const router = useRouter();
-  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -27,14 +26,13 @@ export function SignInForm() {
   });
 
   async function onSubmit(values: SignInInput) {
-    setServerError(null);
     const { error } = await signIn.email({
       email: values.email,
       password: values.password,
     });
 
     if (error) {
-      setServerError(error.message ?? "Não foi possível entrar.");
+      toast.error(error.message ?? "Email ou senha inválidos.");
       return;
     }
 
@@ -77,10 +75,6 @@ export function SignInForm() {
         </div>
 
       </div>
-
-      {serverError ? (
-        <p className="text-sm text-destructive">{serverError}</p>
-      ) : null}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (
