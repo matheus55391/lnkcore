@@ -1,20 +1,19 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUp } from "@/lib/auth-client";
 import { signUpSchema, type SignUpInput } from "@/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { PasswordInput } from "../password-input";
 
 export function SignUpForm() {
   const router = useRouter();
-  const [serverError, setServerError] = useState<string | null>(null);
 
 
   const {
@@ -27,7 +26,6 @@ export function SignUpForm() {
   });
 
   async function onSubmit(values: SignUpInput) {
-    setServerError(null);
     const { error } = await signUp.email({
       name: values.name,
       email: values.email,
@@ -35,7 +33,7 @@ export function SignUpForm() {
     });
 
     if (error) {
-      setServerError(error.message ?? "Não foi possível criar a conta.");
+      toast.error(error.message ?? "Não foi possível criar a conta.");
       return;
     }
 
@@ -85,10 +83,6 @@ export function SignUpForm() {
         {...register("confirmPassword")}
         error={errors.confirmPassword?.message}
       />
-
-      {serverError ? (
-        <p className="text-sm text-destructive">{serverError}</p>
-      ) : null}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (
