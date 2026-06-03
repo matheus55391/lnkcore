@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { toast } from "sonner";
 
 import { updatePage } from "@/actions/pages/update-page";
-import { pageQueryKey } from "@/queries/use-page-query";
 import type { Page } from "@/@types";
+import { pageQueryKey } from "@/queries/use-page-query";
 
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,132 +26,151 @@ const BIO_MAX = 280;
 
 type Props = {
   page: Pick<Page, "id" | "title" | "bio">;
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
 };
 
-export function EditPageInfoDialog({ page }: Props) {
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState(page.title);
-  const [bio, setBio] = useState(page.bio ?? "");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const editPageSchema = z.object({
+  title: z.string().min(1, "Título obrigatório").max(TITLE_MAX),
+  bio: z.string().max(BIO_MAX),
+});
 
+type EditPageInfoForm = z.infer<typeof editPageSchema>;
+
+export function EditPageInfoDialog({
+  page,
+  isOpen,
+  setOpen,
+}: Props) {
   const queryClient = useQueryClient();
 
-  function handleOpenChange(value: boolean) {
-    setOpen(value);
+  const form = useForm<EditPageInfoForm>({
+    resolver: zodResolver(editPageSchema),
+    defaultValues: {
+      title: page.title,
+      bio: page.bio ?? "",
+    },
+  });
 
-    // sincroniza apenas ao abrir
-    if (value) {
-      setTitle(page.title);
-      setBio(page.bio ?? "");
+  function handleOpenChange(open: boolean) {
+    setOpen(open);
+
+    if (open) {
+      form.reset({
+        title: page.title,
+        bio: page.bio ?? "",
+      });
     }
   }
 
-  async function handleSave() {
-    setError(null);
-    setSaving(true);
-
-    try {
-      const result = await updatePage({
-        id: page.id,
-        title: title.trim(),
-        bio: bio.trim() || null,
-      });
-
-      if (!result.success) {
-        setError(result.error);
-        return;
-      }
-
-      queryClient.invalidateQueries({
+  const editPageMutation = useMutation({
+    mutationFn: updatePage,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: pageQueryKey(page.id),
       });
 
+      toast.success(
+        "Informações da página atualizadas com sucesso.",
+      );
+
       setOpen(false);
-    } finally {
-      setSaving(false);
-    }
+    },
+    onError: () => {
+      toast.error(
+        "Ocorreu um erro ao atualizar as informações da página.",
+      );
+    },
+  });
+
+  function onSubmit(data: EditPageInfoForm) {
+    editPageMutation.mutate({
+      id: page.id,
+      title: data.title.trim(),
+      bio: data.bio.trim(),
+    });
   }
 
+  const title = form.watch("title");
+  const bio = form.watch("bio");
+
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className="group flex flex-col items-start min-w-0 text-left focus-visible:outline-none"
-        >
-          <span className="font-semibold truncate leading-tight hover:underline hover:cursor-pointer underline-offset-2">
-            {page.title}
-          </span>
-
-          <span className="text-muted-foreground text-sm truncate hover:underline hover:cursor-pointer underline-offset-2">
-            {page.bio ? (
-              page.bio
-            ) : (
-              <span className="italic">Adicionar bio</span>
-            )}
-          </span>
-        </button>
-      </DialogTrigger>
-
+    <Dialog
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Título e bio</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 pt-2">
+        <form
+          className="space-y-4 pt-2"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className="space-y-1.5">
-            <Label htmlFor="page-title">Título</Label>
+            <Label htmlFor="page-title">
+              Título
+            </Label>
 
             <Input
               id="page-title"
-              value={title}
               maxLength={TITLE_MAX}
-              onChange={(e) => setTitle(e.target.value)}
               placeholder="Seu nome ou marca"
+              {...form.register("title")}
             />
 
-            <p className="text-xs text-muted-foreground text-right">
-              {title.length} / {TITLE_MAX}
+            {form.formState.errors.title && (
+              <p className="text-xs text-destructive">
+                {form.formState.errors.title.message}
+              </p>
+            )}
+
+            <p className="text-right text-xs text-muted-foreground">
+              {title?.length ?? 0} / {TITLE_MAX}
             </p>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="page-bio">Bio</Label>
+            <Label htmlFor="page-bio">
+              Bio
+            </Label>
 
             <textarea
               id="page-bio"
-              value={bio}
-              maxLength={BIO_MAX}
               rows={4}
-              onChange={(e) => setBio(e.target.value)}
+              maxLength={BIO_MAX}
               placeholder="Conte um pouco sobre você..."
               className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              {...form.register("bio")}
             />
 
-            <p className="text-xs text-muted-foreground text-right">
-              {bio.length} / {BIO_MAX}
+            {form.formState.errors.bio && (
+              <p className="text-xs text-destructive">
+                {form.formState.errors.bio.message}
+              </p>
+            )}
+
+            <p className="text-right text-xs text-muted-foreground">
+              {bio?.length ?? 0} / {BIO_MAX}
             </p>
           </div>
 
-          {error && (
-            <p className="text-sm text-destructive">
-              {error}
-            </p>
-          )}
-
           <Button
+            type="submit"
             className="w-full"
-            disabled={saving || !title.trim()}
-            onClick={handleSave}
+            disabled={
+              editPageMutation.isPending ||
+              !form.formState.isValid
+            }
           >
-            {saving && (
+            {editPageMutation.isPending && (
               <Loader2Icon className="mr-2 size-4 animate-spin" />
             )}
 
             Salvar
           </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
