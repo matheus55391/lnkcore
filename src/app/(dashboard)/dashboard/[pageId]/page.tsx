@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeftIcon, ExternalLinkIcon, Loader2Icon } from "lucide-react";
-import { use } from "react";
+import { use, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { LinksManager } from "@/components/links/links-manager";
@@ -20,6 +20,8 @@ export default function PageDetailPage({
   params: Promise<Params>;
 }) {
   const { pageId } = use(params);
+
+  const [editPageDialogOpen, setEditPageDialogOpen] = useState(false);
 
   const { data: page, isLoading } = usePage(pageId);
 
@@ -62,7 +64,23 @@ export default function PageDetailPage({
             <div className="flex items-center gap-3 min-w-0">
               <ImageUpload pageId={page.id} initialImage={page.image} />
               <div className="min-w-0">
-                <EditPageInfoDialog page={page} />
+                <EditPageInfoDialog page={page} isOpen={editPageDialogOpen} setOpen={setEditPageDialogOpen} />
+                <button
+                  type="button"
+                  className="group flex flex-col items-start min-w-0 text-left focus-visible:outline-none"
+                >
+                  <span className="font-semibold truncate leading-tight hover:underline hover:cursor-pointer underline-offset-2">
+                    {page.title}
+                  </span>
+
+                  <span className="text-muted-foreground text-sm truncate hover:underline hover:cursor-pointer underline-offset-2">
+                    {page.bio ? (
+                      page.bio
+                    ) : (
+                      <span className="italic">Adicionar bio</span>
+                    )}
+                  </span>
+                </button>
                 <p className="text-muted-foreground text-xs truncate mt-0.5">
                   makebio.com.br/{page.slug}
                 </p>
