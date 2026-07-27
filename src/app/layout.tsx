@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Outfit, Syne } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner"
 
-const geistSans = Geist({
+const outfit = Outfit({
   variable: "--font-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const syne = Syne({
+  variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
 });
@@ -25,7 +31,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Crie sua página de links personalizada para Instagram, TikTok, YouTube e outras redes sociais. Simples, rápida e gratuita.",
+    "Crie seu link na bio em português para Instagram, TikTok, YouTube e WhatsApp. Temas, editor simples e plano gratuito para começar.",
 
   keywords: [
     "link na bio",
@@ -77,7 +83,7 @@ export const metadata: Metadata = {
     siteName: "MakeBio",
     title: "MakeBio - Crie sua página de links",
     description:
-      "Monte sua página de links profissional para compartilhar todas as suas redes sociais em um só lugar.",
+      "Monte seu link na bio em português para Instagram, TikTok, YouTube e WhatsApp. Temas, editor simples e plano gratuito.",
     images: [
       {
         url: "/og-image.png",
@@ -124,7 +130,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${outfit.variable} ${syne.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">

@@ -1,18 +1,8 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import { Plan } from "@/@types";
+import { PLAN_LIMITS } from "@/lib/plan-limits";
 
-export const PLAN_LIMITS = {
-  FREE: { maxPages: 1, maxLinksPerPage: 5, maxStoredImages: 10 },
-  PRO: {
-    maxPages: 5,
-    maxLinksPerPage: 20,
-    maxStoredImages: 40,
-  },
-} as const satisfies Record<
-  Plan,
-  { maxPages: number; maxLinksPerPage: number; maxStoredImages: number }
->;
+export { PLAN_LIMITS };
 
 export async function assertCanCreatePage(userId: string): Promise<void> {
   const user = await prisma.user.findUniqueOrThrow({
