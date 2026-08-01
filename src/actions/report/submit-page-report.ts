@@ -58,7 +58,7 @@ export async function submitPageReport(
   const to =
     process.env.ABUSE_EMAIL ??
     process.env.SUPPORT_EMAIL ??
-    "privacidade@makebio.com.br";
+    "matheus.felipe55391@gmail.com";
 
   try {
     await sendDiscordLog(

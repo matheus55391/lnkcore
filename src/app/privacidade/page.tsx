@@ -243,8 +243,8 @@ export default function PrivacidadePage() {
           <p>
             Dúvidas sobre privacidade ou pedidos relacionados à LGPD:
             <br />
-            <a href="mailto:privacidade@makebio.com.br">
-              privacidade@makebio.com.br
+            <a href="mailto:matheus.felipe55391@gmail.com">
+              matheus.felipe55391@gmail.com
             </a>
           </p>
           <p>
