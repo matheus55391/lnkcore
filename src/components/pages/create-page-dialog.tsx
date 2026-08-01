@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 import { createPageSchema, type CreatePageInput } from "@/schemas/pages";
 import { useCreatePageMutation } from "@/queries/use-create-page-mutation";
 
@@ -73,7 +74,7 @@ export function CreatePageDialog() {
           })}
           className="space-y-4"
         >
-          <div className="space-y-2">
+          <FormField>
             <Label htmlFor="slug">Slug</Label>
             <div className="flex items-center gap-1">
               <span className="text-muted-foreground text-sm shrink-0">
@@ -93,7 +94,7 @@ export function CreatePageDialog() {
             ) : serverError ? (
               <p className="text-destructive text-sm">{serverError}</p>
             ) : null}
-          </div>
+          </FormField>
           <DialogFooter>
             <Button
               type="submit"

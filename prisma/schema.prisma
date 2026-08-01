@@ -85,6 +85,11 @@ enum Plan {
   PRO
 }
 
+enum LinkType {
+  CLASSIC
+  SOCIAL
+}
+
 model Page {
   id        String   @id @default(cuid())
   slug      String   @unique
@@ -109,6 +114,8 @@ model Link {
   title     String
   url       String
   image     String?
+  emoji     String?
+  type      LinkType @default(CLASSIC)
   active    Boolean  @default(true)
   position  Int
   pageId    String

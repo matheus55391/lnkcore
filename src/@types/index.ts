@@ -5,4 +5,4 @@ export type { Session } from "./session";
 export type { Account } from "./account";
 export type { Verification } from "./verification";
 export type { Page } from "./page";
-export type { Link } from "./link";
+export type { Link, LinkType } from "./link";

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 import { signUp } from "@/lib/auth-client";
 import { signUpSchema, type SignUpInput } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,7 +44,7 @@ export function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
+      <FormField>
         <Label htmlFor="name">Nome</Label>
         <Input
           id="name"
@@ -54,9 +55,9 @@ export function SignUpForm() {
         {errors.name ? (
           <p className="text-sm text-destructive">{errors.name.message}</p>
         ) : null}
-      </div>
+      </FormField>
 
-      <div className="space-y-2">
+      <FormField>
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -68,7 +69,7 @@ export function SignUpForm() {
         {errors.email ? (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         ) : null}
-      </div>
+      </FormField>
 
       <PasswordInput
         id="password"

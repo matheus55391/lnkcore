@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { deleteLinkSchema, type DeleteLinkInput } from "@/schemas/links";
+import { deleteStoredImage } from "@/lib/storage-cleanup";
 import type { ActionResult } from "@/@types/action-result";
 
 export async function deleteLink(
@@ -22,5 +23,6 @@ export async function deleteLink(
   }
 
   await prisma.link.delete({ where: { id: parsed.data.id } });
+  deleteStoredImage(link.image);
   return { success: true };
 }

@@ -50,6 +50,8 @@ const existingLink: LinkWithPage = {
   title: "GitHub",
   url: "https://github.com",
   image: null,
+  emoji: null,
+  type: "CLASSIC",
   active: true,
   position: 0,
   createdAt: BASE_DATE,

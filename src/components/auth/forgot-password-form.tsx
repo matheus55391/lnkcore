@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 import { requestPasswordReset } from "@/lib/auth-client";
 import {
   forgotPasswordSchema,
@@ -49,7 +50,7 @@ export function ForgotPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
+      <FormField>
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -61,7 +62,7 @@ export function ForgotPasswordForm() {
         {errors.email ? (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         ) : null}
-      </div>
+      </FormField>
 
       {serverError ? (
         <p className="text-sm text-destructive">{serverError}</p>
