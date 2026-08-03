@@ -59,6 +59,15 @@ describe("createPageSchema — slug validation", () => {
     expect(createPageSchema.safeParse({ slug: "meu_perfil" }).success).toBe(false);
     expect(createPageSchema.safeParse({ slug: "perfil@user" }).success).toBe(false);
   });
+
+  it("rejects reserved slugs", () => {
+    expect(createPageSchema.safeParse({ slug: "privacidade" }).success).toBe(
+      false
+    );
+    expect(createPageSchema.safeParse({ slug: "dashboard" }).success).toBe(
+      false
+    );
+  });
 });
 
 describe("updatePageSchema", () => {

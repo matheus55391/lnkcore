@@ -51,6 +51,27 @@ describe("createLinkSchema", () => {
       createLinkSchema.safeParse({ ...valid, image: "not-a-url" }).success
     ).toBe(false);
   });
+
+  it("defaults type to CLASSIC when omitted", () => {
+    const result = createLinkSchema.safeParse(valid);
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.type).toBeUndefined();
+  });
+
+  it("accepts SOCIAL type and emoji", () => {
+    const result = createLinkSchema.safeParse({
+      ...valid,
+      type: "SOCIAL",
+      emoji: "📸",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects emoji longer than 32 chars", () => {
+    expect(
+      createLinkSchema.safeParse({ ...valid, emoji: "x".repeat(33) }).success
+    ).toBe(false);
+  });
 });
 
 describe("updateLinkSchema", () => {
@@ -86,6 +107,17 @@ describe("updateLinkSchema", () => {
 
   it("rejects invalid URL", () => {
     expect(updateLinkSchema.safeParse({ ...valid, url: "invalid" }).success).toBe(false);
+  });
+
+  it("accepts type and emoji updates", () => {
+    expect(
+      updateLinkSchema.safeParse({
+        ...valid,
+        type: "SOCIAL",
+        emoji: "🔥",
+        image: null,
+      }).success
+    ).toBe(true);
   });
 });
 

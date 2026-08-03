@@ -1,10 +1,14 @@
 import { z } from "zod";
 
+export const linkTypeSchema = z.enum(["CLASSIC", "SOCIAL"]);
+
 export const createLinkSchema = z.object({
   pageId: z.string().min(1),
   title: z.string().min(1, "Título obrigatório").max(80),
   url: z.string().url("URL inválida"),
   image: z.string().url().nullable().optional(),
+  emoji: z.string().max(32).nullable().optional(),
+  type: linkTypeSchema.optional(),
 });
 export type CreateLinkInput = z.infer<typeof createLinkSchema>;
 
@@ -13,6 +17,8 @@ export const updateLinkSchema = z.object({
   title: z.string().min(1, "Título obrigatório").max(80),
   url: z.string().url("URL inválida"),
   image: z.string().url().nullable().optional(),
+  emoji: z.string().max(32).nullable().optional(),
+  type: linkTypeSchema.optional(),
   active: z.boolean().optional(),
   position: z.number().int().nonnegative().optional(),
 });

@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+const RESERVED_SLUGS = new Set([
+  "privacidade",
+  "privacy",
+  "denunciar",
+  "report",
+  "dashboard",
+  "sign-in",
+  "sign-up",
+  "forgot-password",
+  "reset-password",
+  "profile",
+  "billing",
+  "api",
+  "s",
+]);
+
 const slug = z
   .string()
   .min(3, "O slug deve ter pelo menos 3 caracteres")
@@ -7,7 +23,10 @@ const slug = z
   .regex(
     /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
     "Use apenas letras minúsculas, números e hífens (sem começar ou terminar com hífen)"
-  );
+  )
+  .refine((value) => !RESERVED_SLUGS.has(value), {
+    message: "Este slug está reservado. Escolha outro.",
+  });
 
 export const createPageSchema = z.object({
   slug,

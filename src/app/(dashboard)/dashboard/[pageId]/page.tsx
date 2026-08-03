@@ -6,6 +6,7 @@ import { use, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { LinksManager } from "@/components/links/links-manager";
+import { SocialsManager } from "@/components/links/socials-manager";
 import { usePage } from "@/queries/use-page-query";
 import { SlugPageView } from "@/components/page-slug-view";
 import { ImageUpload } from "@/components/image-upload";
@@ -64,16 +65,22 @@ export default function PageDetailPage({
             <div className="flex items-center gap-3 min-w-0">
               <ImageUpload pageId={page.id} initialImage={page.image} />
               <div className="min-w-0">
-                <EditPageInfoDialog page={page} isOpen={editPageDialogOpen} setOpen={setEditPageDialogOpen} />
+                <EditPageInfoDialog
+                  page={page}
+                  isOpen={editPageDialogOpen}
+                  setOpen={setEditPageDialogOpen}
+                />
                 <button
                   type="button"
-                  className="group flex flex-col items-start min-w-0 text-left focus-visible:outline-none"
+                  onClick={() => setEditPageDialogOpen(true)}
+                  aria-label="Editar título e bio"
+                  className="group flex cursor-pointer flex-col items-start min-w-0 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                  <span className="font-semibold truncate leading-tight hover:underline hover:cursor-pointer underline-offset-2">
+                  <span className="truncate font-semibold leading-tight underline-offset-2 group-hover:underline">
                     {page.title}
                   </span>
 
-                  <span className="text-muted-foreground text-sm truncate hover:underline hover:cursor-pointer underline-offset-2">
+                  <span className="text-muted-foreground truncate text-sm underline-offset-2 group-hover:underline">
                     {page.bio ? (
                       page.bio
                     ) : (
@@ -101,14 +108,15 @@ export default function PageDetailPage({
         </div>
 
         <LinksManager pageId={page.id} />
+        <SocialsManager pageId={page.id} />
       </main>
 
       {/* Phone preview — only shown on lg+ */}
-      <aside className="hidden lg:flex lg:items-start lg:justify-center lg:px-8 lg:py-8">
-        <div
-          className="w-[320px] h-160 rounded-[2.5rem] overflow-hidden border border-border shadow-xl"
-        >
-          <SlugPageView page={page} />
+      <aside className="hidden lg:flex lg:items-start lg:justify-center lg:px-8 lg:py-8 lg:sticky lg:top-8">
+        <div className="h-160 w-[320px] overflow-hidden rounded-[2.5rem] border border-border shadow-xl">
+          <div className="h-full overflow-y-auto overscroll-contain">
+            <SlugPageView page={page} preview />
+          </div>
         </div>
       </aside>
     </div>

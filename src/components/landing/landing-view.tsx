@@ -284,6 +284,8 @@ export function LandingView({ signedIn, userLabel }: Props) {
           </div>
           <p>© {new Date().getFullYear()} MakeBio · Link na bio em português</p>
           <div className="lp-footer-links">
+            <Link href="/privacidade">Privacidade</Link>
+            <Link href="/denunciar">Denunciar</Link>
             <Link href="/sign-in">Entrar</Link>
             <Link href="/sign-up">Criar conta</Link>
           </div>

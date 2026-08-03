@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 import { signIn } from "@/lib/auth-client";
 import { signInSchema, type SignInInput } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,7 +43,7 @@ export function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
+      <FormField>
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -54,26 +55,23 @@ export function SignInForm() {
         {errors.email ? (
           <p className="text-sm text-destructive">{errors.email.message}</p>
         ) : null}
-      </div>
+      </FormField>
 
       <div className="space-y-2">
-
         <PasswordInput
           id="password"
-          autoComplete="new-password"
+          autoComplete="current-password"
           {...register("password")}
           error={errors.password?.message}
         />
-        <div className="flex items-center justify-between">
-
+        <div className="flex items-center justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs text-muted-foreground hover:text-foreground w-full text-right"
+            className="text-xs text-muted-foreground hover:text-foreground"
           >
             Esqueceu sua senha?
           </Link>
         </div>
-
       </div>
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>

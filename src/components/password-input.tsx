@@ -5,6 +5,7 @@ import { useState, forwardRef } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 
 interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -17,7 +18,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-      <div className="space-y-2">
+      <FormField>
         <Label htmlFor={props.id}>{label}</Label>
 
         <div className="relative">
@@ -42,10 +43,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           </button>
         </div>
 
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
-      </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+      </FormField>
     );
   }
 );

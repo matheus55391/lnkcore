@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 
 const TITLE_MAX = 80;
 const BIO_MAX = 280;
@@ -108,10 +109,8 @@ export function EditPageInfoDialog({
           className="space-y-4 pt-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
-          <div className="space-y-1.5">
-            <Label htmlFor="page-title">
-              Título
-            </Label>
+          <FormField>
+            <Label htmlFor="page-title">Título</Label>
 
             <Input
               id="page-title"
@@ -129,18 +128,16 @@ export function EditPageInfoDialog({
             <p className="text-right text-xs text-muted-foreground">
               {title?.length ?? 0} / {TITLE_MAX}
             </p>
-          </div>
+          </FormField>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="page-bio">
-              Bio
-            </Label>
+          <FormField>
+            <Label htmlFor="page-bio">Bio</Label>
 
             <textarea
               id="page-bio"
               rows={4}
               maxLength={BIO_MAX}
-              placeholder="Conte um pouco sobre você..."
+              placeholder="Uma frase curta sobre você"
               className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               {...form.register("bio")}
             />
@@ -154,7 +151,7 @@ export function EditPageInfoDialog({
             <p className="text-right text-xs text-muted-foreground">
               {bio?.length ?? 0} / {BIO_MAX}
             </p>
-          </div>
+          </FormField>
 
           <Button
             type="submit"

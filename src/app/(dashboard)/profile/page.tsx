@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/ui/form-field";
 import {
   Card,
   CardContent,
@@ -129,15 +130,15 @@ function PersonalInfoSection({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
+          <FormField>
             <Label htmlFor="name">Nome</Label>
             <Input id="name" autoComplete="name" {...register("name")} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
+          <FormField>
             <Label htmlFor="email" className="flex items-center gap-1.5">
               Email
               <LockIcon className="h-3 w-3 text-muted-foreground" />
@@ -152,7 +153,7 @@ function PersonalInfoSection({
             <p className="text-xs text-muted-foreground">
               O email não pode ser alterado.
             </p>
-          </div>
+          </FormField>
 
           {serverError && (
             <p className="text-sm text-destructive">{serverError}</p>

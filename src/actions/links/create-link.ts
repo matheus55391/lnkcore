@@ -16,7 +16,7 @@ export async function createLink(
   }
 
   const session = await requireSession();
-  const { pageId, title, url, image } = parsed.data;
+  const { pageId, title, url, image, emoji, type } = parsed.data;
 
   const page = await prisma.page.findUnique({ where: { id: pageId } });
   if (!page || page.userId !== session.user.id) {
@@ -34,7 +34,15 @@ export async function createLink(
     const position = (last?.position ?? -1) + 1;
 
     const link = await prisma.link.create({
-      data: { pageId, title, url, image: image ?? null, position },
+      data: {
+        pageId,
+        title,
+        url,
+        image: image ?? null,
+        emoji: emoji ?? null,
+        type: type ?? "CLASSIC",
+        position,
+      },
     });
 
     return { success: true, data: link };
