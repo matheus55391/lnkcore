@@ -1,6 +1,6 @@
 import { LinkIcon } from "lucide-react";
 import type { Link } from "@/@types/link";
-import { getLinkIconComponent, isLinkIconValue } from "@/lib/link-adornments";
+import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/link-adornments";
 
 type Props = { link: Link };
 
@@ -19,16 +19,18 @@ export function LinkManagerItemThumb({ link }: Props) {
     );
   }
 
-  const Icon = getLinkIconComponent(link.emoji);
-  if (Icon) {
+  if (isLinkIconValue(link.emoji)) {
     return (
       <span className={thumbClass}>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <LinkAdornmentIcon
+          value={link.emoji}
+          className="h-4 w-4 text-muted-foreground"
+        />
       </span>
     );
   }
 
-  if (link.emoji && !isLinkIconValue(link.emoji)) {
+  if (link.emoji) {
     return <span className={`${thumbClass} text-lg`}>{link.emoji}</span>;
   }
 

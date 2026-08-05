@@ -78,10 +78,34 @@ export function parseLinkIconId(
     : null;
 }
 
-export function getLinkIconComponent(
-  value: string | null | undefined
-): LucideIcon | null {
+const LINK_ICON_BY_ID: Record<LinkIconId, LucideIcon> = {
+  link: LinkLucide,
+  sparkles: Sparkles,
+  flame: Flame,
+  camera: Camera,
+  video: Video,
+  music: Music,
+  book: BookOpen,
+  cart: ShoppingCart,
+  briefcase: Briefcase,
+  game: Gamepad2,
+  plane: Plane,
+  home: Home,
+  heart: Heart,
+  star: Star,
+  target: Target,
+};
+
+/** Renders a Lucide link icon without assigning a component during render. */
+export function LinkAdornmentIcon({
+  value,
+  className,
+}: {
+  value: string | null | undefined;
+  className?: string;
+}) {
   const id = parseLinkIconId(value);
   if (!id) return null;
-  return LINK_ICON_PRESETS.find((p) => p.id === id)?.Icon ?? null;
+  const Icon = LINK_ICON_BY_ID[id];
+  return <Icon className={className} />;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import NextLink from "next/link";
 import { Calendar, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -127,9 +128,9 @@ function AboutAccountModalContent({
             </p>
           )}
 
-          <a href="/privacidade" className="sp-about-more">
+          <NextLink href="/privacidade" className="sp-about-more">
             Leia mais…
-          </a>
+          </NextLink>
         </div>
       </div>
     </div>
