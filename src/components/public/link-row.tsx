@@ -1,5 +1,5 @@
 import type { Link } from "@/@types";
-import { getLinkIconComponent, isLinkIconValue } from "@/lib/link-adornments";
+import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/link-adornments";
 
 type Props = {
   link: Link;
@@ -7,10 +7,10 @@ type Props = {
 };
 
 export function LinkRow({ link, className }: Props) {
-  const Icon = getLinkIconComponent(link.emoji);
-  const hasEmoji = Boolean(link.emoji) && !isLinkIconValue(link.emoji);
+  const hasIcon = isLinkIconValue(link.emoji);
+  const hasEmoji = Boolean(link.emoji) && !hasIcon;
   const hasImage = Boolean(link.image);
-  const hasLeft = hasImage || Boolean(Icon) || hasEmoji;
+  const hasLeft = hasImage || hasIcon || hasEmoji;
 
   return (
     <a
@@ -25,9 +25,9 @@ export function LinkRow({ link, className }: Props) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={link.image!} alt="" />
         </span>
-      ) : Icon ? (
+      ) : hasIcon ? (
         <span className="sp-link-thumb sp-link-thumb-icon">
-          <Icon className="sp-link-lucide" />
+          <LinkAdornmentIcon value={link.emoji} className="sp-link-lucide" />
         </span>
       ) : hasEmoji ? (
         <span className="sp-link-thumb sp-link-thumb-emoji">{link.emoji}</span>

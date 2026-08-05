@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 type Props = {
   pageUrl: string;
   onOpenAbout: () => void;
@@ -10,11 +12,11 @@ export function PublicPageFooter({ pageUrl, onOpenAbout }: Props) {
 
   return (
     <nav className="sp-footer" aria-label="Informações legais">
-      <a href="/privacidade">Privacidade</a>
+      <Link href="/privacidade">Privacidade</Link>
       <span className="sp-footer-sep" aria-hidden>
         •
       </span>
-      <a href={reportHref}>Denunciar</a>
+      <Link href={reportHref}>Denunciar</Link>
       <span className="sp-footer-sep" aria-hidden>
         •
       </span>
