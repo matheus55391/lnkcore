@@ -3,7 +3,11 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { updateLinkSchema, type UpdateLinkInput } from "@/schemas/links";
-import { deleteStoredImage } from "@/lib/storage-cleanup";
+import {
+  deleteOwnedStoredImage,
+  normalizeOwnedImageUrl,
+  OwnedImageError,
+} from "@/lib/storage-cleanup";
 import type { ActionResult } from "@/@types/action-result";
 import type { Link } from "@/@types";
 
@@ -26,15 +30,25 @@ export async function updateLink(
     return { success: false, error: "Link não encontrado." };
   }
 
-  const nextImage =
-    data.image === undefined ? link.image : data.image;
+  let nextImage: string | null | undefined;
+  try {
+    nextImage = normalizeOwnedImageUrl(data.image, session.user.id);
+  } catch (err) {
+    if (err instanceof OwnedImageError) {
+      return { success: false, error: err.message };
+    }
+    throw err;
+  }
+
+  const resolvedImage =
+    nextImage === undefined ? link.image : nextImage;
 
   const updated = await prisma.link.update({
     where: { id },
     data: {
       title: data.title,
       url: data.url,
-      image: data.image === undefined ? undefined : data.image,
+      image: nextImage === undefined ? undefined : nextImage,
       emoji: data.emoji === undefined ? undefined : data.emoji,
       type: data.type,
       active: data.active,
@@ -42,8 +56,8 @@ export async function updateLink(
     },
   });
 
-  if (link.image && link.image !== nextImage) {
-    deleteStoredImage(link.image);
+  if (link.image && link.image !== resolvedImage) {
+    deleteOwnedStoredImage(link.image, session.user.id);
   }
 
   return { success: true, data: updated };

@@ -8,6 +8,7 @@ import { signUp } from "@/lib/auth-client";
 import { signUpSchema, type SignUpInput } from "@/schemas/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -84,6 +85,18 @@ export function SignUpForm() {
         {...register("confirmPassword")}
         error={errors.confirmPassword?.message}
       />
+
+      <p className="text-muted-foreground text-center text-xs leading-relaxed">
+        Ao criar conta, você concorda com os{" "}
+        <Link href="/termos" className="underline underline-offset-2">
+          Termos de Uso
+        </Link>{" "}
+        e o{" "}
+        <Link href="/privacidade" className="underline underline-offset-2">
+          Aviso de Privacidade
+        </Link>
+        .
+      </p>
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (

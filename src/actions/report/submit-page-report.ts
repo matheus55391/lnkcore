@@ -1,8 +1,11 @@
 "use server";
 
+import { headers } from "next/headers";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email";
 import { sendDiscordLog } from "@/lib/discord-log";
+import { isRateLimited } from "@/lib/rate-limit";
+import { isAllowedReportPageUrl } from "@/lib/report-page-url";
 import type { ActionResult } from "@/@types/action-result";
 
 const reportSchema = z.object({
@@ -30,15 +33,40 @@ const REASON_LABELS: Record<ReportPageInput["reason"], string> = {
   outro: "Outro",
 };
 
+async function clientIp(): Promise<string> {
+  const h = await headers();
+  return (
+    h.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    h.get("x-real-ip") ??
+    "unknown"
+  );
+}
+
 export async function submitPageReport(
   input: ReportPageInput
 ): Promise<ActionResult> {
+  const ip = await clientIp();
+  if (isRateLimited(`report-action:${ip}`, 5, 60_000)) {
+    return {
+      success: false,
+      error: "Muitas denúncias. Aguarde um minuto e tente novamente.",
+    };
+  }
+
   const parsed = reportSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message };
   }
 
   const { pageUrl, reason, details, email } = parsed.data;
+
+  if (!isAllowedReportPageUrl(pageUrl)) {
+    return {
+      success: false,
+      error: "Informe uma URL válida de makebio.com.br.",
+    };
+  }
+
   const reasonLabel = REASON_LABELS[reason];
   const reporter = email?.trim() || "(não informado)";
   const detailText = details?.trim() || "(sem detalhes)";
@@ -60,18 +88,30 @@ export async function submitPageReport(
     process.env.SUPPORT_EMAIL ??
     "matheus.felipe55391@gmail.com";
 
-  try {
-    await sendDiscordLog(
-      "🚨 Denúncia de página",
-      `Página: ${pageUrl}\nMotivo: ${reasonLabel}\nDenunciante: ${reporter}\nDetalhes: ${detailText}`
-    );
+  const discordOk = await sendDiscordLog(
+    "🚨 Denúncia de página",
+    `Página: ${pageUrl}\nMotivo: ${reasonLabel}\nDenunciante: ${reporter}\nDetalhes: ${detailText}`
+  );
 
-    await sendEmail({ to, subject, text });
-
-    return { success: true };
-  } catch (err) {
-    console.error("[report]", err);
-    // Discord may have received it even if email failed
-    return { success: true };
+  let emailOk = false;
+  const emailConfigured = Boolean(
+    process.env.RESEND_API_KEY || process.env.SMTP_HOST
+  );
+  if (emailConfigured) {
+    try {
+      await sendEmail({ to, subject, text });
+      emailOk = true;
+    } catch (err) {
+      console.error("[report] email failed", err);
+    }
   }
+
+  if (!discordOk && !emailOk) {
+    return {
+      success: false,
+      error: "Não foi possível enviar a denúncia. Tente novamente mais tarde.",
+    };
+  }
+
+  return { success: true };
 }

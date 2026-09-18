@@ -3,6 +3,11 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { updatePageSchema, type UpdatePageInput } from "@/schemas/pages";
+import {
+  deleteOwnedStoredImage,
+  normalizeOwnedImageUrl,
+  OwnedImageError,
+} from "@/lib/storage-cleanup";
 import type { ActionResult } from "@/@types/action-result";
 import type { Page } from "@/@types";
 
@@ -22,6 +27,31 @@ export async function updatePage(
     return { success: false, error: "Página não encontrada." };
   }
 
-  const updated = await prisma.page.update({ where: { id }, data });
+  let nextImage: string | null | undefined;
+  try {
+    nextImage = normalizeOwnedImageUrl(data.image, session.user.id);
+  } catch (err) {
+    if (err instanceof OwnedImageError) {
+      return { success: false, error: err.message };
+    }
+    throw err;
+  }
+
+  const updated = await prisma.page.update({
+    where: { id },
+    data: {
+      ...data,
+      image: nextImage === undefined ? undefined : nextImage,
+    },
+  });
+
+  if (
+    nextImage !== undefined &&
+    page.image &&
+    page.image !== nextImage
+  ) {
+    deleteOwnedStoredImage(page.image, session.user.id);
+  }
+
   return { success: true, data: updated };
 }

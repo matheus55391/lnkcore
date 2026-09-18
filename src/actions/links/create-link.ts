@@ -3,6 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { assertCanCreateLink, PlanLimitError } from "@/lib/plan";
+import {
+  normalizeOwnedImageUrl,
+  OwnedImageError,
+} from "@/lib/storage-cleanup";
 import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
 import type { ActionResult } from "@/@types/action-result";
 import type { Link } from "@/@types";
@@ -23,6 +27,16 @@ export async function createLink(
     return { success: false, error: "Página não encontrada." };
   }
 
+  let ownedImage: string | null | undefined;
+  try {
+    ownedImage = normalizeOwnedImageUrl(image, session.user.id);
+  } catch (err) {
+    if (err instanceof OwnedImageError) {
+      return { success: false, error: err.message };
+    }
+    throw err;
+  }
+
   try {
     await assertCanCreateLink(session.user.id, pageId);
 
@@ -38,7 +52,7 @@ export async function createLink(
         pageId,
         title,
         url,
-        image: image ?? null,
+        image: ownedImage ?? null,
         emoji: emoji ?? null,
         type: type ?? "CLASSIC",
         position,
