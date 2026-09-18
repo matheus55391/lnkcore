@@ -12,6 +12,10 @@ export function PublicPageFooter({ pageUrl, onOpenAbout }: Props) {
 
   return (
     <nav className="sp-footer" aria-label="Informações legais">
+      <Link href="/termos">Termos</Link>
+      <span className="sp-footer-sep" aria-hidden>
+        •
+      </span>
       <Link href="/privacidade">Privacidade</Link>
       <span className="sp-footer-sep" aria-hidden>
         •

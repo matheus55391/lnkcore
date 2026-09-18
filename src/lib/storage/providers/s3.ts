@@ -5,6 +5,7 @@ import {
   HeadObjectCommand,
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
+import { keyFromPublicUrl } from "../key-from-url";
 import type { StorageProvider, UploadParams, UploadResult } from "../types";
 
 function trimTrailingSlash(value: string): string {
@@ -122,31 +123,6 @@ export class S3StorageProvider implements StorageProvider {
   }
 
   keyFromUrl(url: string): string | null {
-    const forcePathStyle =
-      (process.env.S3_FORCE_PATH_STYLE ?? "true") === "true";
-    const endpoint = process.env.S3_ENDPOINT;
-    const region = process.env.S3_REGION ?? "us-east-1";
-    const publicBase = process.env.S3_PUBLIC_URL;
-
-    try {
-      if (publicBase) {
-        // publicBase style: <publicBase>/<key>
-        const prefix = `${trimTrailingSlash(publicBase)}/`;
-        if (url.startsWith(prefix)) return url.slice(prefix.length);
-        return null;
-      }
-      if (endpoint && (forcePathStyle || endpoint)) {
-        // path-style: <endpoint>/<bucket>/<key>
-        const prefix = `${trimTrailingSlash(endpoint)}/${this.bucket}/`;
-        if (url.startsWith(prefix)) return url.slice(prefix.length);
-        return null;
-      }
-      // virtual-hosted: https://<bucket>.s3.<region>.amazonaws.com/<key>
-      const prefix = `https://${this.bucket}.s3.${region}.amazonaws.com/`;
-      if (url.startsWith(prefix)) return url.slice(prefix.length);
-      return null;
-    } catch {
-      return null;
-    }
+    return keyFromPublicUrl(url);
   }
 }

@@ -204,6 +204,8 @@ export function DenunciarPageShell({ children }: { children: React.ReactNode }) 
       <footer className="legal-footer">
         <p>© {new Date().getFullYear()} MakeBio</p>
         <div>
+          <Link href="/termos">Termos</Link>
+          <span aria-hidden> · </span>
           <Link href="/privacidade">Privacidade</Link>
           <span aria-hidden> · </span>
           <Link href="/">Início</Link>

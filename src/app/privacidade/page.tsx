@@ -257,6 +257,8 @@ export default function PrivacidadePage() {
       <footer className="legal-footer">
         <p>© {new Date().getFullYear()} MakeBio</p>
         <div>
+          <Link href="/termos">Termos</Link>
+          <span aria-hidden> · </span>
           <Link href="/">Início</Link>
           <span aria-hidden> · </span>
           <Link href="/sign-up">Criar conta</Link>

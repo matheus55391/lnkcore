@@ -64,6 +64,7 @@ describe("createPageSchema — slug validation", () => {
     expect(createPageSchema.safeParse({ slug: "privacidade" }).success).toBe(
       false
     );
+    expect(createPageSchema.safeParse({ slug: "termos" }).success).toBe(false);
     expect(createPageSchema.safeParse({ slug: "dashboard" }).success).toBe(
       false
     );

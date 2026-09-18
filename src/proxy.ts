@@ -1,37 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
-
-// In-memory rate limiter — adequate for a single VPS deployment
-const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(
-  key: string,
-  maxRequests: number,
-  windowMs: number
-): boolean {
-  const now = Date.now();
-  const entry = rateLimitStore.get(key);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitStore.set(key, { count: 1, resetAt: now + windowMs });
-    return false;
-  }
-
-  if (entry.count >= maxRequests) {
-    return true;
-  }
-
-  entry.count++;
-  return false;
-}
-
-// Purge expired entries every minute to avoid unbounded memory growth
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of rateLimitStore) {
-    if (now > value.resetAt) rateLimitStore.delete(key);
-  }
-}, 60_000);
+import { isRateLimited } from "@/lib/rate-limit";
 
 export function proxy(request: NextRequest) {
   const ip =
@@ -61,6 +30,19 @@ export function proxy(request: NextRequest) {
     }
   }
 
+  // Rate limit: denúncia (server actions POST to this page) — 5/min per IP
+  if (pathname === "/denunciar" || pathname.startsWith("/denunciar/")) {
+    if (
+      request.method === "POST" &&
+      isRateLimited(`report:${ip}`, 5, 60_000)
+    ) {
+      return NextResponse.json(
+        { error: "Too many requests. Try again in a minute." },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
+  }
+
   // Protect dashboard routes — redirect unauthenticated users to sign-in
   if (pathname.startsWith("/dashboard")) {
     const sessionCookie = getSessionCookie(request);
@@ -73,6 +55,11 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/api/auth/:path*", "/api/upload/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/api/auth/:path*",
+    "/api/upload/:path*",
+    "/denunciar",
+    "/denunciar/:path*",
+  ],
 };
-

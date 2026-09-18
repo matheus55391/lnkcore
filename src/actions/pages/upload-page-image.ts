@@ -2,7 +2,11 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
-import { getStorage } from "@/lib/storage";
+import {
+  assertOwnedImageUrl,
+  deleteOwnedStoredImage,
+  OwnedImageError,
+} from "@/lib/storage-cleanup";
 import type { ActionResult } from "@/@types/action-result";
 import type { Page } from "@/@types";
 
@@ -17,6 +21,15 @@ export async function uploadPageImage(
     return { success: false, error: "Página não encontrada." };
   }
 
+  try {
+    assertOwnedImageUrl(imageUrl, session.user.id);
+  } catch (err) {
+    if (err instanceof OwnedImageError) {
+      return { success: false, error: err.message };
+    }
+    throw err;
+  }
+
   const oldImageUrl = page.image;
 
   const updated = await prisma.page.update({
@@ -24,16 +37,8 @@ export async function uploadPageImage(
     data: { image: imageUrl },
   });
 
-  // Delete old image only after the DB update succeeds
   if (oldImageUrl && oldImageUrl !== imageUrl) {
-    const storage = getStorage();
-    const oldKey = storage.keyFromUrl(oldImageUrl);
-    if (oldKey) {
-      // Fire-and-forget — don't fail the request if deletion fails
-      storage.delete(oldKey).catch((err) =>
-        console.error("[storage] Failed to delete old page image:", oldKey, err)
-      );
-    }
+    deleteOwnedStoredImage(oldImageUrl, session.user.id);
   }
 
   return { success: true, data: updated };

@@ -119,13 +119,29 @@ describe("updatePage", () => {
   });
 
   it("accepts optional fields: bio, image, published, themeId", async () => {
+    const ownedImage = "https://cdn.example.com/user-1/pages/page-1/avatar.webp";
+    process.env.S3_PUBLIC_URL = "https://cdn.example.com";
+
     const result = await updatePage({
       ...validInput,
       bio: "Minha bio",
-      image: "https://cdn.example.com/img.jpg",
+      image: ownedImage,
       published: false,
       themeId: 3,
     });
     expect(result.success).toBe(true);
+  });
+
+  it("rejects image URLs not owned by the user", async () => {
+    process.env.S3_PUBLIC_URL = "https://cdn.example.com";
+    const result = await updatePage({
+      ...validInput,
+      image: "https://cdn.example.com/other-user/pages/x/avatar.webp",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toMatch(/não autorizada|inválida/i);
+    }
+    expect(prisma.page.update).not.toHaveBeenCalled();
   });
 });

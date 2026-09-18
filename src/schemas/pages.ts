@@ -3,6 +3,8 @@ import { z } from "zod";
 const RESERVED_SLUGS = new Set([
   "privacidade",
   "privacy",
+  "termos",
+  "terms",
   "denunciar",
   "report",
   "dashboard",

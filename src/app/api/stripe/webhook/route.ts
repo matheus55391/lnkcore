@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
+import { isProPriceId } from "@/lib/stripe-price";
 import { Plan } from "@/@types";
 import { sendDiscordLog } from "@/lib/discord-log";
 
@@ -40,6 +41,37 @@ function extractId(
 ): string | null {
   if (!value) return null;
   return typeof value === "string" ? value : value.id;
+}
+
+function subscriptionPriceId(sub: Stripe.Subscription): string | null {
+  return sub.items.data[0]?.price?.id ?? null;
+}
+
+async function resolveCheckoutPriceId(
+  session: Stripe.Checkout.Session,
+  subscriptionId: string | null
+): Promise<string | null> {
+  const line = session.line_items?.data?.[0];
+  const linePrice = line?.price;
+  if (typeof linePrice === "string") return linePrice;
+  if (linePrice && typeof linePrice === "object" && "id" in linePrice) {
+    return linePrice.id;
+  }
+
+  if (subscriptionId) {
+    try {
+      const sub = await stripe.subscriptions.retrieve(subscriptionId);
+      return subscriptionPriceId(sub);
+    } catch (err) {
+      console.error(
+        "[stripe-webhook] falha ao buscar subscription para validar price:",
+        err
+      );
+      return null;
+    }
+  }
+
+  return null;
 }
 
 export async function POST(req: NextRequest) {
@@ -101,6 +133,23 @@ export async function POST(req: NextRequest) {
           break;
         }
 
+        const priceId = await resolveCheckoutPriceId(session, subscriptionId);
+        if (!isProPriceId(priceId)) {
+          console.error(
+            "[stripe-webhook] checkout com price inválido — PRO não concedido",
+            { userId, priceId, sessionId: session.id }
+          );
+          // Still persist Stripe IDs for support/debug; do not grant PRO
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              stripeSubscriptionId: subscriptionId ?? undefined,
+              stripeCustomerId: customerId ?? undefined,
+            },
+          });
+          break;
+        }
+
         const updated = await prisma.user.update({
           where: { id: userId },
           data: {
@@ -142,7 +191,16 @@ export async function POST(req: NextRequest) {
         if (!userId) break;
 
         const active = sub.status === "active" || sub.status === "trialing";
-        const priceId = sub.items.data[0]?.price?.id ?? "";
+        const priceId = subscriptionPriceId(sub) ?? "";
+        const allowedPrice = isProPriceId(priceId);
+        if (active && !allowedPrice) {
+          console.error(
+            "[stripe-webhook] subscription com price inválido — PRO não concedido",
+            { userId, priceId, subId: sub.id }
+          );
+        }
+        const grantPro = active && allowedPrice;
+
         const item = sub.items.data[0];
         const periodStart = new Date((item?.current_period_start ?? 0) * 1000);
         const periodEnd = new Date((item?.current_period_end ?? 0) * 1000);
@@ -151,7 +209,7 @@ export async function POST(req: NextRequest) {
           prisma.user.update({
             where: { id: userId },
             data: {
-              plan: active ? Plan.PRO : Plan.FREE,
+              plan: grantPro ? Plan.PRO : Plan.FREE,
               stripeSubscriptionId: sub.id,
               stripeCustomerId: customerId ?? undefined,
             },
@@ -202,8 +260,8 @@ export async function POST(req: NextRequest) {
           event.type === "customer.subscription.created"
             ? "Assinatura criada"
             : "Assinatura atualizada",
-          `Usuário \`${userId}\` — status: **${sub.status}**${sub.cancel_at_period_end ? " (cancela ao fim do período)" : ""}`,
-          active ? "log" : "error"
+          `Usuário \`${userId}\` — status: **${sub.status}**${sub.cancel_at_period_end ? " (cancela ao fim do período)" : ""}${grantPro ? "" : " — plano FREE"}`,
+          grantPro ? "log" : "error"
         );
         break;
       }
@@ -295,6 +353,7 @@ export async function POST(req: NextRequest) {
           currency: invoice.currency.toUpperCase(),
         }).format(invoice.amount_paid / 100);
 
+        // Idempotent upsert by stripeInvoiceId (safe under Stripe retries)
         await prisma.payment.upsert({
           where: { stripeInvoiceId: invoice.id },
           create: {
