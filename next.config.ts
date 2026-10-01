@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   // Don't expose the Next.js version to clients
   poweredByHeader: false,
 
+  env: {
+    // Expose whether Google OAuth is configured (no secrets).
+    NEXT_PUBLIC_GOOGLE_AUTH_ENABLED:
+      process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+        ? "true"
+        : "",
+  },
+
   async headers() {
     return [
       {

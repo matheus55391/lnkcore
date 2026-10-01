@@ -26,10 +26,24 @@ import {
 } from "@/lib/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
 
-type Props = { link: Link; pageId: string };
+type Props = {
+  link: Link;
+  pageId: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  showTrigger?: boolean;
+};
 
-export function EditSocialDialog({ link, pageId }: Props) {
-  const [open, setOpen] = useState(false);
+export function EditSocialDialog({
+  link,
+  pageId,
+  open: openProp,
+  onOpenChange,
+  showTrigger = true,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = openProp ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [serverError, setServerError] = useState<string | null>(null);
   const [profile, setProfile] = useState(link.url);
   const [fieldError, setFieldError] = useState<string | null>(null);
@@ -82,11 +96,13 @@ export function EditSocialDialog({ link, pageId }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label="Editar rede social">
-          <PencilIcon className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
+      {showTrigger ? (
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" aria-label="Editar rede social">
+            <PencilIcon className="h-4 w-4" />
+          </Button>
+        </DialogTrigger>
+      ) : null}
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Editar {platform.label}</DialogTitle>

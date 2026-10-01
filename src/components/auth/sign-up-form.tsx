@@ -17,7 +17,6 @@ import { PasswordInput } from "../password-input";
 export function SignUpForm() {
   const router = useRouter();
 
-
   const {
     register,
     handleSubmit,
@@ -44,13 +43,14 @@ export function SignUpForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
       <FormField>
         <Label htmlFor="name">Nome</Label>
         <Input
           id="name"
           autoComplete="name"
           placeholder="Seu nome"
+          autoFocus
           {...register("name")}
         />
         {errors.name ? (
@@ -86,19 +86,27 @@ export function SignUpForm() {
         error={errors.confirmPassword?.message}
       />
 
-      <p className="text-muted-foreground text-center text-xs leading-relaxed">
+      <p className="auth-muted text-center text-xs leading-relaxed">
         Ao criar conta, você concorda com os{" "}
-        <Link href="/termos" className="underline underline-offset-2">
+        <Link href="/termos" className="auth-link underline underline-offset-2">
           Termos de Uso
         </Link>{" "}
         e o{" "}
-        <Link href="/privacidade" className="underline underline-offset-2">
+        <Link
+          href="/privacidade"
+          className="auth-link underline underline-offset-2"
+        >
           Aviso de Privacidade
         </Link>
         .
       </p>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        size="lg"
+        className="auth-btn-primary w-full"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

@@ -8,7 +8,8 @@ services:
       POSTGRES_USER: lnkcore
       POSTGRES_PASSWORD: lnkcore
     ports:
-      - "5432:5432"
+      # 5433 avoids clash with SSH tunnels / other local Postgres on 5432
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 

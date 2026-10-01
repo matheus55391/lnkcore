@@ -1271,3 +1271,146 @@
 .legal-form {
   max-width: 28rem;
 }
+
+/* ─── Auth (login / signup) — always light, LP palette ─── */
+.auth {
+  color-scheme: light;
+  /* Reset shadcn tokens so dark mode on <html> does not leak into form controls */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #12160f;
+  --primary-foreground: #c8f14a;
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: #e7ece0;
+  --muted-foreground: #5c6554;
+  --accent: #e7ece0;
+  --accent-foreground: #12160f;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: color-mix(in oklab, #12160f 12%, transparent);
+  --input: color-mix(in oklab, #12160f 12%, transparent);
+  --ring: #c8f14a;
+  --auth-ink: #12160f;
+  --auth-muted: #5c6554;
+  --auth-paper: #f3f5ef;
+  --auth-paper-2: #e7ece0;
+  --auth-lime: #c8f14a;
+  --auth-line: color-mix(in oklab, #12160f 12%, transparent);
+  --auth-danger: #b42318;
+  color: var(--auth-ink);
+  background: var(--auth-paper);
+}
+
+.auth-form-pane {
+  background:
+    radial-gradient(ellipse 70% 40% at 0% 0%, #d4f06a33, transparent 55%),
+    linear-gradient(180deg, #f7f9f2 0%, var(--auth-paper) 100%);
+}
+
+.auth h1 {
+  color: var(--auth-ink);
+}
+
+.auth .auth-subtitle,
+.auth .auth-muted,
+.auth .auth-footer,
+.auth .auth-divider {
+  color: var(--auth-muted);
+}
+
+.auth .auth-link {
+  color: var(--auth-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth .auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth label {
+  color: var(--auth-ink) !important;
+}
+
+.auth input[type="email"],
+.auth input[type="text"],
+.auth input[type="password"],
+.auth input:not([type]) {
+  height: 2.75rem !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid var(--auth-line) !important;
+  background: #fff !important;
+  color: var(--auth-ink) !important;
+  box-shadow: none !important;
+}
+
+.auth input::placeholder {
+  color: color-mix(in oklab, var(--auth-muted) 75%, transparent) !important;
+}
+
+.auth input:focus-visible {
+  outline: none !important;
+  border-color: var(--auth-ink) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--auth-lime) 45%, transparent) !important;
+}
+
+.auth .auth-eye {
+  top: 0 !important;
+  right: 0 !important;
+  height: 2.75rem !important;
+  width: 2.75rem !important;
+  color: var(--auth-muted) !important;
+}
+
+.auth .auth-eye:hover {
+  color: var(--auth-ink) !important;
+}
+
+.auth .auth-btn-primary {
+  height: 2.75rem !important;
+  border-radius: 0.75rem !important;
+  background: var(--auth-ink) !important;
+  color: var(--auth-lime) !important;
+  border: 1px solid var(--auth-ink) !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+.auth .auth-btn-primary:hover {
+  background: color-mix(in oklab, var(--auth-ink) 88%, white) !important;
+}
+
+.auth .auth-btn-primary:disabled {
+  opacity: 0.6;
+}
+
+.auth .auth-btn-outline {
+  height: 2.75rem !important;
+  border-radius: 0.75rem !important;
+  background: #fff !important;
+  color: var(--auth-ink) !important;
+  border: 1px solid var(--auth-line) !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+.auth .auth-btn-outline:hover {
+  background: var(--auth-paper-2) !important;
+}
+
+.auth .auth-divider-line {
+  background: var(--auth-line) !important;
+}
+
+.auth .text-destructive {
+  color: var(--auth-danger) !important;
+}
+
+.auth-brand {
+  background: var(--auth-ink);
+  color: var(--auth-paper);
+}

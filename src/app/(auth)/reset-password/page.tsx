@@ -1,12 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import { Loader2 } from "lucide-react";
 
@@ -15,31 +8,30 @@ export const metadata = { title: "Redefinir senha · makebio" };
 function ResetPasswordFallback() {
   return (
     <div className="flex justify-center py-8">
-      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      <Loader2 className="h-6 w-6 animate-spin text-[#5c6554]" />
     </div>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Nova senha</CardTitle>
-        <CardDescription>Defina uma nova senha para sua conta.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Suspense fallback={<ResetPasswordFallback />}>
-          <ResetPasswordForm />
-        </Suspense>
-        <p className="text-center text-sm text-muted-foreground">
-          <Link
-            href="/sign-in"
-            className="font-medium text-foreground hover:underline"
-          >
-            Voltar ao login
-          </Link>
+    <>
+      <div className="grid gap-1.5">
+        <h1 className="text-2xl font-extrabold tracking-tight">Nova senha</h1>
+        <p className="auth-subtitle text-sm">
+          Defina uma nova senha para sua conta.
         </p>
-      </CardContent>
-    </Card>
+      </div>
+
+      <Suspense fallback={<ResetPasswordFallback />}>
+        <ResetPasswordForm />
+      </Suspense>
+
+      <p className="auth-footer text-center text-sm">
+        <Link href="/sign-in" className="auth-link">
+          Voltar ao login
+        </Link>
+      </p>
+    </>
   );
 }

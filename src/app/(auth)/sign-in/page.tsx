@@ -1,31 +1,31 @@
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { SignInForm } from "@/components/auth/sign-in-form";
+import {
+  AuthDivider,
+  GoogleSignInButton,
+} from "@/components/auth/google-sign-in-button";
 
 export const metadata = { title: "Entrar · makebio" };
 
 export default function SignInPage() {
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Entrar</CardTitle>
-        <CardDescription>Acesse a sua conta makebio.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <SignInForm />
-        <p className="text-center text-sm text-muted-foreground">
-          Não tem conta?{" "}
-          <Link href="/sign-up" className="font-medium text-foreground hover:underline">
-            Criar conta
-          </Link>
-        </p>
-      </CardContent>
-    </Card>
+    <>
+      <div className="grid gap-1.5">
+        <h1 className="text-2xl font-extrabold tracking-tight">Entrar</h1>
+        <p className="auth-subtitle text-sm">Acesse a sua conta MakeBio.</p>
+      </div>
+
+      <GoogleSignInButton />
+      <AuthDivider />
+
+      <SignInForm />
+
+      <p className="auth-footer text-center text-sm">
+        Não tem conta?{" "}
+        <Link href="/sign-up" className="auth-link">
+          Criar conta
+        </Link>
+      </p>
+    </>
   );
 }
