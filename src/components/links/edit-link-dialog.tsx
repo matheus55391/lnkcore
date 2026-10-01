@@ -24,10 +24,25 @@ import { updateLinkSchema, type UpdateLinkInput } from "@/schemas/links";
 import type { Link } from "@/@types/link";
 import { LinkAdornmentField } from "./link-adornment-field";
 
-type Props = { link: Link; pageId: string };
+type Props = {
+  link: Link;
+  pageId: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** When false, only the dialog content is rendered (e.g. opened from a menu). */
+  showTrigger?: boolean;
+};
 
-export function EditLinkDialog({ link, pageId }: Props) {
-  const [open, setOpen] = useState(false);
+export function EditLinkDialog({
+  link,
+  pageId,
+  open: openProp,
+  onOpenChange,
+  showTrigger = true,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = openProp ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -84,11 +99,13 @@ export function EditLinkDialog({ link, pageId }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label="Editar link">
-          <PencilIcon className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
+      {showTrigger ? (
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" aria-label="Editar link">
+            <PencilIcon className="h-4 w-4" />
+          </Button>
+        </DialogTrigger>
+      ) : null}
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Editar link</DialogTitle>

@@ -39,7 +39,7 @@ export function ResetPasswordForm() {
         <p className="text-sm text-destructive">
           Link inválido ou expirado. Solicite um novo link de recuperação.
         </p>
-        <Button asChild variant="outline" className="w-full">
+        <Button asChild variant="outline" className="auth-btn-outline w-full">
           <Link href="/forgot-password">Solicitar novo link</Link>
         </Button>
       </div>
@@ -86,7 +86,11 @@ export function ResetPasswordForm() {
         <p className="text-sm text-destructive">{serverError}</p>
       ) : null}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        className="auth-btn-primary w-full"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

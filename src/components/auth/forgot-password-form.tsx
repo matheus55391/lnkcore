@@ -69,10 +69,14 @@ export function ForgotPasswordForm() {
       ) : null}
 
       {serverMessage ? (
-        <p className="text-sm text-muted-foreground">{serverMessage}</p>
+        <p className="auth-muted text-sm">{serverMessage}</p>
       ) : null}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        className="auth-btn-primary w-full"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

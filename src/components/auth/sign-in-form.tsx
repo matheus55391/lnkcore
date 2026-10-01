@@ -42,7 +42,7 @@ export function SignInForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
       <FormField>
         <Label htmlFor="email">Email</Label>
         <Input
@@ -50,6 +50,7 @@ export function SignInForm() {
           type="email"
           autoComplete="email"
           placeholder="voce@exemplo.com"
+          autoFocus
           {...register("email")}
         />
         {errors.email ? (
@@ -57,7 +58,7 @@ export function SignInForm() {
         ) : null}
       </FormField>
 
-      <div className="space-y-2">
+      <div className="grid gap-2">
         <PasswordInput
           id="password"
           autoComplete="current-password"
@@ -65,16 +66,18 @@ export function SignInForm() {
           error={errors.password?.message}
         />
         <div className="flex items-center justify-end">
-          <Link
-            href="/forgot-password"
-            className="text-xs text-muted-foreground hover:text-foreground"
-          >
+          <Link href="/forgot-password" className="auth-muted text-xs hover:underline">
             Esqueceu sua senha?
           </Link>
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        size="lg"
+        className="auth-btn-primary w-full"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (

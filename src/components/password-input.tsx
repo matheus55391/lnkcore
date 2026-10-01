@@ -32,7 +32,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <button
             type="button"
             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
+            className="auth-eye absolute top-0 right-0 flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
             onClick={() => setShowPassword((v) => !v)}
           >
             {showPassword ? (
