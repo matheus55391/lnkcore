@@ -5,11 +5,11 @@ export type { Session } from "./session";
 export type { Account } from "./account";
 export type { Verification } from "./verification";
 export { PageLayout } from "./page";
-export type { Page, PageLayout } from "./page";
+export type { Page } from "./page";
 export {
   LinkType,
   FeaturedSize,
   ClassicLinkStyle,
   isFeaturedLink,
 } from "./link";
-export type { Link, LinkType, FeaturedSize, ClassicLinkStyle } from "./link";
+export type { Link } from "./link";
