@@ -29,6 +29,16 @@ jobs:
       - name: Testes
         run: npm run test
 
+      - name: Generate Prisma client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://build:build@build:5432/build
+
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://build:build@build:5432/build
+
   build:
     name: Build e publicar imagem
     runs-on: ubuntu-latest
