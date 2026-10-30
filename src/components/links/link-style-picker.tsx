@@ -1,6 +1,10 @@
 "use client";
 
-import type { ClassicLinkStyle } from "@/@types/link";
+import {
+  ClassicLinkStyle,
+  FeaturedSize,
+  LinkType,
+} from "@/@types/link";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -15,21 +19,50 @@ const OPTIONS: {
   hint: string;
 }[] = [
   {
-    id: "CLASSIC",
+    id: ClassicLinkStyle.CLASSIC,
     label: "Normal",
     hint: "Imagem à esquerda",
   },
   {
-    id: "FEATURED",
-    label: "Grande",
-    hint: "Foto com o título por cima",
+    id: ClassicLinkStyle.FEATURED,
+    label: "Compacto",
+    hint: "Card mais baixo",
+  },
+  {
+    id: ClassicLinkStyle.FEATURED_TALL,
+    label: "Alto",
+    hint: "Card retrato",
   },
 ];
 
 export function resolveClassicStyle(
-  type: string | null | undefined
+  type: string | null | undefined,
+  featuredSize?: string | null
 ): ClassicLinkStyle {
-  return type === "FEATURED" ? "FEATURED" : "CLASSIC";
+  if (type !== LinkType.FEATURED) return ClassicLinkStyle.CLASSIC;
+  return featuredSize === FeaturedSize.TALL
+    ? ClassicLinkStyle.FEATURED_TALL
+    : ClassicLinkStyle.FEATURED;
+}
+
+export function styleToLinkFields(style: ClassicLinkStyle): {
+  type: typeof LinkType.CLASSIC | typeof LinkType.FEATURED;
+  featuredSize: FeaturedSize;
+} {
+  if (style === ClassicLinkStyle.CLASSIC) {
+    return { type: LinkType.CLASSIC, featuredSize: FeaturedSize.COMPACT };
+  }
+  if (style === ClassicLinkStyle.FEATURED_TALL) {
+    return { type: LinkType.FEATURED, featuredSize: FeaturedSize.TALL };
+  }
+  return { type: LinkType.FEATURED, featuredSize: FeaturedSize.COMPACT };
+}
+
+export function isFeaturedStyle(style: ClassicLinkStyle): boolean {
+  return (
+    style === ClassicLinkStyle.FEATURED ||
+    style === ClassicLinkStyle.FEATURED_TALL
+  );
 }
 
 export function LinkStylePicker({ value, onChange, disabled }: Props) {
@@ -39,7 +72,7 @@ export function LinkStylePicker({ value, onChange, disabled }: Props) {
       <div
         role="radiogroup"
         aria-label="Estilo do link"
-        className="grid grid-cols-2 gap-2"
+        className="grid grid-cols-3 gap-2"
       >
         {OPTIONS.map((option) => {
           const selected = value === option.id;
@@ -52,7 +85,7 @@ export function LinkStylePicker({ value, onChange, disabled }: Props) {
               disabled={disabled}
               onClick={() => onChange(option.id)}
               className={cn(
-                "flex flex-col gap-2 rounded-xl border p-2.5 text-left transition-colors",
+                "flex flex-col gap-2 rounded-xl border p-2 text-left transition-colors",
                 selected
                   ? "border-foreground bg-card shadow-sm"
                   : "border-border bg-muted/40 text-muted-foreground hover:border-foreground/40 hover:text-foreground"
@@ -84,25 +117,33 @@ function StylePreview({
 }) {
   const fill = selected ? "bg-foreground/15" : "bg-foreground/10";
 
-  if (styleId === "FEATURED") {
+  if (
+    styleId === ClassicLinkStyle.FEATURED ||
+    styleId === ClassicLinkStyle.FEATURED_TALL
+  ) {
     return (
       <span
-        className="relative flex h-[3.25rem] flex-col justify-end overflow-hidden rounded-lg bg-zinc-800 p-1.5"
+        className={cn(
+          "relative flex flex-col justify-end overflow-hidden rounded-lg bg-zinc-800 p-1.5",
+          styleId === ClassicLinkStyle.FEATURED_TALL
+            ? "h-[3.6rem]"
+            : "h-[2.35rem]"
+        )}
         aria-hidden
       >
         <span className={cn("absolute inset-0 opacity-60", fill)} />
-        <span className="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-black/80 to-transparent" />
-        <span className="relative z-10 mx-auto h-1.5 w-10 rounded-full bg-white/80" />
+        <span className="absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-black/80 to-transparent" />
+        <span className="relative z-10 mx-auto h-1.5 w-8 rounded-full bg-white/80" />
       </span>
     );
   }
 
   return (
     <span
-      className="flex h-[3.25rem] items-center gap-1.5 rounded-lg border border-border/80 bg-background px-2"
+      className="flex h-[2.35rem] items-center gap-1.5 rounded-lg border border-border/80 bg-background px-2"
       aria-hidden
     >
-      <span className={cn("size-4 shrink-0 rounded-full", fill)} />
+      <span className={cn("size-3.5 shrink-0 rounded-full", fill)} />
       <span className={cn("h-1.5 flex-1 rounded-full", fill)} />
     </span>
   );

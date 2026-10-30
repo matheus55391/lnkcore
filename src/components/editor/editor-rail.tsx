@@ -40,7 +40,7 @@ export function EditorRail({ section, onSectionChange }: Props) {
   return (
     <nav
       aria-label="Seções do editor"
-      className="flex shrink-0 gap-1 overflow-x-auto border-b bg-card px-3 py-2 lg:w-52 lg:flex-col lg:gap-1 lg:overflow-visible lg:border-b-0 lg:border-r lg:px-3 lg:py-6"
+      className="flex shrink-0 gap-1 overflow-x-auto border-b bg-card px-2 py-2 sm:px-3 lg:w-52 lg:flex-col lg:gap-1 lg:overflow-visible lg:border-b-0 lg:border-r lg:px-3 lg:py-6"
     >
       {ITEMS.map((item) => {
         const selected = section === item.id;

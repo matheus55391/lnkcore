@@ -91,6 +91,11 @@ enum LinkType {
   FEATURED
 }
 
+enum FeaturedSize {
+  COMPACT
+  TALL
+}
+
 enum PageLayout {
   CLASSIC
   COVER
@@ -122,8 +127,9 @@ model Link {
   url       String
   image     String?
   emoji     String?
-  type      LinkType @default(CLASSIC)
-  active    Boolean  @default(true)
+  type         LinkType     @default(CLASSIC)
+  featuredSize FeaturedSize @default(COMPACT)
+  active       Boolean      @default(true)
   position  Int
   pageId    String
   createdAt DateTime @default(now())

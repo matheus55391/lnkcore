@@ -9,7 +9,7 @@ import {
 } from "@/lib/storage-cleanup";
 import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
 import type { ActionResult } from "@/@types/action-result";
-import type { Link } from "@/@types";
+import { FeaturedSize, LinkType, type Link } from "@/@types";
 
 export async function createLink(
   input: CreateLinkInput
@@ -20,7 +20,7 @@ export async function createLink(
   }
 
   const session = await requireSession();
-  const { pageId, title, url, image, emoji, type } = parsed.data;
+  const { pageId, title, url, image, emoji, type, featuredSize } = parsed.data;
 
   const page = await prisma.page.findUnique({ where: { id: pageId } });
   if (!page || page.userId !== session.user.id) {
@@ -54,7 +54,11 @@ export async function createLink(
         url,
         image: ownedImage ?? null,
         emoji: emoji ?? null,
-        type: type ?? "CLASSIC",
+        type: type ?? LinkType.CLASSIC,
+        featuredSize:
+          (type ?? LinkType.CLASSIC) === LinkType.FEATURED
+            ? (featuredSize ?? FeaturedSize.COMPACT)
+            : FeaturedSize.COMPACT,
         position,
       },
     });

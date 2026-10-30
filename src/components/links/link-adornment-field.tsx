@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Camera, Loader2, Smile, ImageIcon, Ban } from "lucide-react";
 
+import { FeaturedSize } from "@/@types/link";
 import { Label } from "@/components/ui/label";
 import { FormField } from "@/components/ui/form-field";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ type Props = {
   disabled?: boolean;
   /** Cover layout for featured (grande) links. */
   layout?: "row" | "cover";
+  cardSize?: FeaturedSize;
 };
 
 function resolveMode(emoji: string | null, image: string | null): AdornmentMode {
@@ -41,8 +43,10 @@ export function LinkAdornmentField({
   entityId,
   disabled,
   layout = "row",
+  cardSize = FeaturedSize.COMPACT,
 }: Props) {
   const cover = layout === "cover";
+  const tall = cover && cardSize === FeaturedSize.TALL;
   const [mode, setMode] = useState<AdornmentMode>(() =>
     resolveMode(emoji, image)
   );
@@ -141,7 +145,10 @@ export function LinkAdornmentField({
             className={cn(
               "bg-muted group relative overflow-hidden border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               cover
-                ? "aspect-[16/10] w-full rounded-xl"
+                ? cn(
+                    "w-full rounded-xl",
+                    tall ? "aspect-[4/5]" : "aspect-[4/3]"
+                  )
                 : "size-16 shrink-0 rounded-full"
             )}
           >

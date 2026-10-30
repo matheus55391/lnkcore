@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { updatePage } from "@/actions/pages/update-page";
-import type { Page } from "@/@types";
+import { PageLayout, type Page } from "@/@types";
 import { pageQueryKey } from "@/queries/use-page-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -94,7 +94,7 @@ export function ProfilePanel({ page }: Props) {
       <div>
         <h2 className="text-lg font-semibold tracking-tight">Cabeçalho</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          {page.layout === "COVER"
+          {page.layout === PageLayout.COVER
             ? "Capa, nome e bio que aparecem no topo da página pública."
             : "Foto, nome e bio que aparecem no topo da página pública."}
         </p>
@@ -105,10 +105,10 @@ export function ProfilePanel({ page }: Props) {
           pageId={page.id}
           initialImage={page.image}
           size={96}
-          shape={page.layout === "COVER" ? "banner" : "circle"}
+          shape={page.layout === PageLayout.COVER ? "banner" : "circle"}
         />
         <p className="text-xs text-muted-foreground">
-          {page.layout === "COVER"
+          {page.layout === PageLayout.COVER
             ? "Clique para trocar a capa"
             : "Clique para trocar a foto"}
         </p>

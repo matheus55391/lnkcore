@@ -2,6 +2,7 @@
 
 import { Loader2Icon } from "lucide-react";
 
+import { LinkType } from "@/@types/link";
 import { useLinks } from "@/queries/use-links-query";
 import { useDeleteLinkMutation } from "@/queries/use-delete-link-mutation";
 import { CreateSocialDialog } from "./create-social-dialog";
@@ -15,7 +16,7 @@ type Props = {
 export function SocialsManager({ pageId, hideHeader }: Props) {
   const { data: links, isLoading } = useLinks(pageId);
   const deleteMutation = useDeleteLinkMutation({ pageId });
-  const socialLinks = (links ?? []).filter((l) => l.type === "SOCIAL");
+  const socialLinks = (links ?? []).filter((l) => l.type === LinkType.SOCIAL);
 
   if (isLoading) {
     return (

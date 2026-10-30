@@ -57,8 +57,15 @@ COVER    — hero 4:5, identidade sobre a imagem
 
 ```
 CLASSIC   — botão compacto (padrão)
-FEATURED  — card grande; com imagem, overlay
+FEATURED  — card com overlay; altura em FeaturedSize
 SOCIAL    — ícone na fileira de redes
+```
+
+#### `FeaturedSize` (enum)
+
+```
+COMPACT  — card 4:3 (padrão)
+TALL     — card retrato 4:5
 ```
 
 #### `Page`
@@ -91,6 +98,7 @@ Um link pertencente a uma Page.
 | `image` | `String?` | Miniatura / foto do featured |
 | `emoji` | `String?` | Emoji ou id de ícone |
 | `type` | `LinkType` | `CLASSIC`, `FEATURED` ou `SOCIAL` |
+| `featuredSize` | `FeaturedSize` | Altura do featured: `COMPACT` (4:3) ou `TALL` (4:5). Padrão `COMPACT`. Só vale quando `type` é `FEATURED`. |
 | `active` | `Boolean` | Exibido na página pública (padrão: `true`) |
 | `position` | `Int` | Ordem de exibição |
 | `pageId` | `String` FK | Página à qual pertence |

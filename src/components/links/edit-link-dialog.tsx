@@ -21,11 +21,18 @@ import {
 
 import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
 import { updateLinkSchema, type UpdateLinkInput } from "@/schemas/links";
-import type { Link } from "@/@types/link";
+import {
+  ClassicLinkStyle,
+  FeaturedSize,
+  LinkType,
+  type Link,
+} from "@/@types/link";
 import { LinkAdornmentField } from "./link-adornment-field";
 import {
   LinkStylePicker,
+  isFeaturedStyle,
   resolveClassicStyle,
+  styleToLinkFields,
 } from "./link-style-picker";
 
 type Props = {
@@ -64,13 +71,15 @@ export function EditLinkDialog({
       url: link.url,
       image: link.image,
       emoji: link.emoji,
-      type: resolveClassicStyle(link.type),
+      type:
+        link.type === LinkType.FEATURED ? LinkType.FEATURED : LinkType.CLASSIC,
+      featuredSize: link.featuredSize,
     },
   });
 
   const emoji = watch("emoji") ?? null;
   const image = watch("image") ?? null;
-  const style = resolveClassicStyle(watch("type"));
+  const style = resolveClassicStyle(watch("type"), watch("featuredSize"));
 
   const mutation = useUpdateLinkMutation({
     pageId,
@@ -88,7 +97,9 @@ export function EditLinkDialog({
         url: link.url,
         image: link.image,
         emoji: link.emoji,
-        type: resolveClassicStyle(link.type),
+        type:
+        link.type === LinkType.FEATURED ? LinkType.FEATURED : LinkType.CLASSIC,
+        featuredSize: link.featuredSize,
       });
     } else {
       reset({
@@ -97,7 +108,9 @@ export function EditLinkDialog({
         url: link.url,
         image: link.image,
         emoji: link.emoji,
-        type: resolveClassicStyle(link.type),
+        type:
+        link.type === LinkType.FEATURED ? LinkType.FEATURED : LinkType.CLASSIC,
+        featuredSize: link.featuredSize,
       });
     }
   }
@@ -123,7 +136,7 @@ export function EditLinkDialog({
             setServerError(null);
             mutation.mutate({
               ...values,
-              type: resolveClassicStyle(values.type),
+              ...styleToLinkFields(style),
               image: values.image ?? null,
               emoji: values.image ? null : (values.emoji ?? null),
             });
@@ -135,9 +148,17 @@ export function EditLinkDialog({
           <LinkStylePicker
             value={style}
             disabled={mutation.isPending}
-            onChange={(next) =>
-              setValue("type", next, { shouldDirty: true, shouldTouch: true })
-            }
+            onChange={(next) => {
+              const fields = styleToLinkFields(next);
+              setValue("type", fields.type, {
+                shouldDirty: true,
+                shouldTouch: true,
+              });
+              setValue("featuredSize", fields.featuredSize, {
+                shouldDirty: true,
+                shouldTouch: true,
+              });
+            }}
           />
 
           <FormField>
@@ -171,7 +192,12 @@ export function EditLinkDialog({
             emoji={emoji}
             image={image}
             entityId={link.id}
-            layout={style === "FEATURED" ? "cover" : "row"}
+            layout={isFeaturedStyle(style) ? "cover" : "row"}
+            cardSize={
+              style === ClassicLinkStyle.FEATURED_TALL
+                ? FeaturedSize.TALL
+                : FeaturedSize.COMPACT
+            }
             disabled={mutation.isPending}
             onChange={({ emoji: nextEmoji, image: nextImage }) => {
               setValue("emoji", nextEmoji, {

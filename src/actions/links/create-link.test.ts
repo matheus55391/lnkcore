@@ -90,6 +90,7 @@ const mockLink: Link = {
   image: null,
   emoji: null,
   type: "CLASSIC",
+  featuredSize: "COMPACT",
   active: true,
   position: 0,
   createdAt: BASE_DATE,
@@ -180,7 +181,38 @@ describe("createLink", () => {
     await createLink({ ...validInput, type: "FEATURED" });
     expect(prisma.link.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ type: "FEATURED" }),
+        data: expect.objectContaining({
+          type: "FEATURED",
+          featuredSize: "COMPACT",
+        }),
+      })
+    );
+  });
+
+  it("persists tall featured size", async () => {
+    await createLink({
+      ...validInput,
+      type: "FEATURED",
+      featuredSize: "TALL",
+    });
+    expect(prisma.link.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: "FEATURED",
+          featuredSize: "TALL",
+        }),
+      })
+    );
+  });
+
+  it("ignores tall size on classic links", async () => {
+    await createLink({ ...validInput, featuredSize: "TALL" });
+    expect(prisma.link.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: "CLASSIC",
+          featuredSize: "COMPACT",
+        }),
       })
     );
   });

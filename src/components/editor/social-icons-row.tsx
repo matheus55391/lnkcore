@@ -2,6 +2,7 @@
 
 import { PlusIcon } from "lucide-react";
 
+import { LinkType } from "@/@types/link";
 import { useLinks } from "@/queries/use-links-query";
 import { detectSocialPlatform } from "@/lib/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
@@ -15,7 +16,7 @@ type Props = {
 
 export function SocialIconsRow({ pageId, onAdd, onManage }: Props) {
   const { data: links } = useLinks(pageId);
-  const socials = (links ?? []).filter((link) => link.type === "SOCIAL");
+  const socials = (links ?? []).filter((link) => link.type === LinkType.SOCIAL);
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">

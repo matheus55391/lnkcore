@@ -52,6 +52,7 @@ const existingLink: LinkWithPage = {
   image: null,
   emoji: null,
   type: "CLASSIC",
+  featuredSize: "COMPACT",
   active: true,
   position: 0,
   createdAt: BASE_DATE,
@@ -67,6 +68,7 @@ const updatedLink: Link = {
   image: null,
   emoji: null,
   type: "CLASSIC",
+  featuredSize: "COMPACT",
   active: true,
   position: 0,
   createdAt: BASE_DATE,
@@ -137,6 +139,22 @@ describe("updateLink", () => {
     expect(prisma.link.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ active: false, position: 3 }),
+      })
+    );
+  });
+
+  it("persists featuredSize on featured updates", async () => {
+    await updateLink({
+      ...validInput,
+      type: "FEATURED",
+      featuredSize: "TALL",
+    });
+    expect(prisma.link.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          type: "FEATURED",
+          featuredSize: "TALL",
+        }),
       })
     );
   });

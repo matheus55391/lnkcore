@@ -64,6 +64,7 @@ const mockDbPage: PageWithLinksAndCount = {
       image: null,
       emoji: null,
       type: "CLASSIC",
+      featuredSize: "COMPACT",
       active: true,
       position: 0,
       createdAt: BASE_DATE,
