@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ArrowLeftIcon, Loader2Icon, PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -45,9 +45,17 @@ export function CreateSocialDialog({
   const open = openProp ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [serverError, setServerError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<SelectableSocial | null>(null);
+  const [picked, setPicked] = useState<SelectableSocial | null | undefined>(
+    undefined
+  );
   const [profile, setProfile] = useState("");
   const [fieldError, setFieldError] = useState<string | null>(null);
+  const selected =
+    picked !== undefined
+      ? picked
+      : open && initialPlatformId
+        ? (getSelectableSocial(initialPlatformId) ?? null)
+        : null;
 
   const mutation = useCreateLinkMutation({
     pageId,
@@ -61,17 +69,9 @@ export function CreateSocialDialog({
   function resetState() {
     setServerError(null);
     setFieldError(null);
-    setSelected(null);
+    setPicked(undefined);
     setProfile("");
   }
-
-  useEffect(() => {
-    if (!open) return;
-    if (initialPlatformId) {
-      const platform = getSelectableSocial(initialPlatformId);
-      setSelected(platform ?? null);
-    }
-  }, [open, initialPlatformId]);
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -136,7 +136,7 @@ export function CreateSocialDialog({
               <button
                 key={platform.id}
                 type="button"
-                onClick={() => setSelected(platform)}
+                onClick={() => setPicked(platform)}
                 className={cn(
                   "flex flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center transition-colors hover:bg-accent"
                 )}
@@ -159,7 +159,7 @@ export function CreateSocialDialog({
               type="button"
               className="text-muted-foreground inline-flex items-center gap-1 text-xs hover:underline"
               onClick={() => {
-                setSelected(null);
+                setPicked(null);
                 setProfile("");
                 setFieldError(null);
                 setServerError(null);

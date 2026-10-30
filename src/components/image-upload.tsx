@@ -1,7 +1,7 @@
 "use client";
 
 import { Camera, Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { uploadPageImage } from "@/actions/pages/upload-page-image";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -19,21 +19,18 @@ export function ImageUpload({
     shape = "circle",
 }: ImageUploadProps) {
     const banner = shape === "banner";
-    const [preview, setPreview] = useState(initialImage ?? "");
+    const [localPreview, setLocalPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient();
-
-    useEffect(() => {
-        setPreview(initialImage ?? "");
-    }, [initialImage]);
+    const preview = localPreview ?? initialImage ?? "";
 
     async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
         if (!file) return;
 
         const localUrl = URL.createObjectURL(file);
-        setPreview(localUrl);
+        setLocalPreview(localUrl);
         setUploading(true);
 
         try {
@@ -56,10 +53,11 @@ export function ImageUpload({
             const result = await uploadPageImage(pageId, url);
             if (!result.success) throw new Error(result.error);
 
+            setLocalPreview(url);
             queryClient.invalidateQueries({ queryKey: ["page", pageId] });
         } catch (err) {
             console.error(err);
-            setPreview(initialImage ?? "");
+            setLocalPreview(null);
         } finally {
             setUploading(false);
             URL.revokeObjectURL(localUrl);
