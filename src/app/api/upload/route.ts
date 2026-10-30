@@ -5,6 +5,7 @@ import { getStorage } from "@/lib/storage";
 import { prisma } from "@/lib/prisma";
 import { PLAN_LIMITS } from "@/lib/plan";
 import { Plan } from "@/@types";
+import { buildUploadObjectKey } from "@/lib/storage/upload-key";
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -61,10 +62,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // New key structure: {userId}/{folder}/{entityId}/avatar.webp
-  const key = entityId
-    ? `${session.user.id}/${folder}/${entityId}/avatar.webp`
-    : `${session.user.id}/${folder}/avatar.webp`;
+  const key = buildUploadObjectKey(session.user.id, folder, entityId);
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

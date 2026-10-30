@@ -162,18 +162,25 @@ export function LinkManagerItem({
           !link.active && "opacity-60"
         )}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={link.image}
-          alt=""
-          className="aspect-[4/5] w-full object-cover"
-        />
-        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/80 to-transparent px-3 pb-3 pt-12">
+        <button
+          type="button"
+          onClick={() => setEditOpen(true)}
+          aria-label={`Editar ${link.title}`}
+          className="block w-full cursor-pointer"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={link.image}
+            alt=""
+            className="aspect-[4/5] w-full object-cover"
+          />
+        </button>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/80 to-transparent px-3 pb-3 pt-12">
           <div className="min-w-0 text-white">
             <p className="truncate font-medium">{link.title}</p>
             <p className="truncate text-xs text-white/70">{link.url}</p>
           </div>
-          <div className="text-white">{menu}</div>
+          <div className="pointer-events-auto text-white">{menu}</div>
         </div>
         {dialog}
       </li>
