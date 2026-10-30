@@ -12,7 +12,7 @@ export async function getPage(pageId: string): Promise<PageDetail | null> {
   const page = await prisma.page.findFirst({
     where: { id: pageId, userId: session.user.id },
     include: {
-      links: true,
+      links: { orderBy: { position: "asc" } },
       _count: {
         select: { links: true }
       }

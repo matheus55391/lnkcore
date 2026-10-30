@@ -11,5 +11,6 @@ export {
   FeaturedSize,
   ClassicLinkStyle,
   isFeaturedLink,
+  sortLinksByPosition,
 } from "./link";
 export type { Link } from "./link";

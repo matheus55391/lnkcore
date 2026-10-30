@@ -2,7 +2,12 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { getTheme } from "@/lib/themes";
-import { LinkType, PageLayout, type Page } from "@/@types";
+import {
+  LinkType,
+  PageLayout,
+  sortLinksByPosition,
+  type Page,
+} from "@/@types";
 import {
   getSlugPageStyles,
   slugLayoutAttr,
@@ -39,12 +44,9 @@ export function SlugPageView({ page, preview = false }: Props) {
 
   const pageUrl = usePageUrl(page.slug);
 
-  const classicLinks = (page.links ?? []).filter(
-    (l) => l.type !== LinkType.SOCIAL
-  );
-  const socialLinks = (page.links ?? []).filter(
-    (l) => l.type === LinkType.SOCIAL
-  );
+  const orderedLinks = sortLinksByPosition(page.links);
+  const classicLinks = orderedLinks.filter((l) => l.type !== LinkType.SOCIAL);
+  const socialLinks = orderedLinks.filter((l) => l.type === LinkType.SOCIAL);
 
   const socials = (
     <PublicSocialRow

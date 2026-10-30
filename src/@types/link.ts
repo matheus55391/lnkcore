@@ -40,3 +40,9 @@ export type Link = {
 export function isFeaturedLink(link: Pick<Link, "type">): boolean {
   return link.type === LinkType.FEATURED;
 }
+
+export function sortLinksByPosition<T extends Pick<Link, "position">>(
+  links: T[] | null | undefined
+): T[] {
+  return [...(links ?? [])].sort((a, b) => a.position - b.position);
+}
