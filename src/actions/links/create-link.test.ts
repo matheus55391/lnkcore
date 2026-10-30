@@ -77,6 +77,7 @@ const mockPage: Page = {
   image: null,
   published: true,
   themeId: 1,
+  layout: "CLASSIC",
   createdAt: BASE_DATE,
   updatedAt: BASE_DATE,
   userId: "user-1",
@@ -173,5 +174,14 @@ describe("createLink", () => {
   it("re-throws unexpected errors", async () => {
     vi.mocked(assertCanCreateLink).mockRejectedValue(new Error("DB crash"));
     await expect(createLink(validInput)).rejects.toThrow("DB crash");
+  });
+
+  it("persists FEATURED type", async () => {
+    await createLink({ ...validInput, type: "FEATURED" });
+    expect(prisma.link.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ type: "FEATURED" }),
+      })
+    );
   });
 });

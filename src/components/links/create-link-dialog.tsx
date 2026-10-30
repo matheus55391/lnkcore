@@ -22,11 +22,27 @@ import {
 import { useCreateLinkMutation } from "@/queries/use-create-link-mutation";
 import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
 import { LinkAdornmentField } from "./link-adornment-field";
+import {
+  LinkStylePicker,
+  resolveClassicStyle,
+} from "./link-style-picker";
 
-type Props = { pageId: string };
+type Props = {
+  pageId: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  showTrigger?: boolean;
+};
 
-export function CreateLinkDialog({ pageId }: Props) {
-  const [open, setOpen] = useState(false);
+export function CreateLinkDialog({
+  pageId,
+  open: openProp,
+  onOpenChange,
+  showTrigger = true,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = openProp ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [serverError, setServerError] = useState<string | null>(null);
   const [uploadEntityId, setUploadEntityId] = useState(() =>
     crypto.randomUUID()
@@ -53,6 +69,7 @@ export function CreateLinkDialog({ pageId }: Props) {
 
   const emoji = watch("emoji") ?? null;
   const image = watch("image") ?? null;
+  const style = resolveClassicStyle(watch("type"));
 
   const mutation = useCreateLinkMutation({
     pageId,
@@ -89,17 +106,19 @@ export function CreateLinkDialog({ pageId }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button size="sm">
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Novo link
-        </Button>
-      </DialogTrigger>
+      {showTrigger ? (
+        <DialogTrigger asChild>
+          <Button size="sm">
+            <PlusIcon className="mr-2 h-4 w-4" />
+            Novo link
+          </Button>
+        </DialogTrigger>
+      ) : null}
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Adicionar link</DialogTitle>
           <DialogDescription>
-            Informe o título, a URL e, se quiser, um emoji ou uma imagem.
+            Escolha o estilo, informe o título, a URL e, se quiser, uma imagem.
           </DialogDescription>
         </DialogHeader>
         <form
@@ -107,7 +126,7 @@ export function CreateLinkDialog({ pageId }: Props) {
             setServerError(null);
             mutation.mutate({
               ...values,
-              type: "CLASSIC",
+              type: resolveClassicStyle(values.type),
               image: values.image ?? null,
               emoji: values.image ? null : (values.emoji ?? null),
             });
@@ -115,6 +134,14 @@ export function CreateLinkDialog({ pageId }: Props) {
           className="space-y-4"
         >
           <input type="hidden" {...register("pageId")} />
+
+          <LinkStylePicker
+            value={style}
+            disabled={mutation.isPending}
+            onChange={(next) =>
+              setValue("type", next, { shouldDirty: true, shouldTouch: true })
+            }
+          />
 
           <FormField>
             <Label htmlFor="title">Título</Label>
@@ -147,6 +174,7 @@ export function CreateLinkDialog({ pageId }: Props) {
             emoji={emoji}
             image={image}
             entityId={uploadEntityId}
+            layout={style === "FEATURED" ? "cover" : "row"}
             disabled={mutation.isPending}
             onChange={({ emoji: nextEmoji, image: nextImage }) => {
               setValue("emoji", nextEmoji, {

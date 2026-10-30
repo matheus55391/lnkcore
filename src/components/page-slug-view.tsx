@@ -32,27 +32,59 @@ export function SlugPageView({ page, preview = false }: Props) {
   const scope = `sp-${page.id}`;
   const [shareOpen, setShareOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const cover = (page.layout ?? "CLASSIC") === "COVER";
 
   const pageUrl = usePageUrl(page.slug);
 
   const classicLinks = (page.links ?? []).filter((l) => l.type !== "SOCIAL");
   const socialLinks = (page.links ?? []).filter((l) => l.type === "SOCIAL");
 
+  const socials = (
+    <PublicSocialRow
+      links={socialLinks}
+      color={theme.foreground}
+      variant={cover ? "brand" : "plain"}
+    />
+  );
+
   return (
-    <div id={scope} data-preview={preview ? "true" : undefined}>
+    <div
+      id={scope}
+      data-preview={preview ? "true" : undefined}
+      data-layout={page.layout ?? "CLASSIC"}
+    >
       <style>{getSlugPageStyles(scope, theme)}</style>
 
       <PublicShareButton onClick={() => setShareOpen(true)} />
 
-      <div className="sp-inner">
-        <PublicPageHeader
-          title={page.title}
-          bio={page.bio}
-          image={page.image}
-        />
-        <PublicSocialRow links={socialLinks} color={theme.foreground} />
-        <PublicLinksList links={classicLinks} />
-      </div>
+      {cover ? (
+        <>
+          <PublicPageHeader
+            title={page.title}
+            bio={page.bio}
+            image={page.image}
+            slug={page.slug}
+            layout="COVER"
+            socials={socials}
+          />
+          <div className="sp-inner">
+            {page.bio ? <p className="sp-bio">{page.bio}</p> : null}
+            <PublicLinksList links={classicLinks} />
+          </div>
+        </>
+      ) : (
+        <div className="sp-inner">
+          <PublicPageHeader
+            title={page.title}
+            bio={page.bio}
+            image={page.image}
+            slug={page.slug}
+            layout="CLASSIC"
+          />
+          {socials}
+          <PublicLinksList links={classicLinks} />
+        </div>
+      )}
 
       <PublicPageFooter
         pageUrl={pageUrl}

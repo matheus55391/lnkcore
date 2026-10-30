@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   detectSocialPlatform,
   platformLabelFromUrl,
+  SOCIAL_BRAND,
 } from "@/lib/social-platforms";
 
 describe("detectSocialPlatform", () => {
@@ -26,6 +27,12 @@ describe("detectSocialPlatform", () => {
 
   it("returns label helper", () => {
     expect(platformLabelFromUrl("https://tiktok.com/@x")).toBe("TikTok");
+  });
+
+  it("has brand colors for every platform id", () => {
+    expect(SOCIAL_BRAND.instagram.icon).toBe("#ffffff");
+    expect(SOCIAL_BRAND.twitch.background).toBe("#9146ff");
+    expect(SOCIAL_BRAND.snapchat.icon).toBe("#111111");
   });
 
   it("builds profile URLs from handles", async () => {

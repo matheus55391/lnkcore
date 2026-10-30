@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const linkTypeSchema = z.enum(["CLASSIC", "SOCIAL"]);
+export const linkTypeSchema = z.enum(["CLASSIC", "SOCIAL", "FEATURED"]);
 
 export const createLinkSchema = z.object({
   pageId: z.string().min(1),

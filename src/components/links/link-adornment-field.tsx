@@ -18,6 +18,8 @@ type Props = {
   /** Used as storage entityId: `{userId}/links/{entityId}/avatar.webp` */
   entityId: string;
   disabled?: boolean;
+  /** Cover layout for featured (grande) links. */
+  layout?: "row" | "cover";
 };
 
 function resolveMode(emoji: string | null, image: string | null): AdornmentMode {
@@ -38,7 +40,9 @@ export function LinkAdornmentField({
   onChange,
   entityId,
   disabled,
+  layout = "row",
 }: Props) {
+  const cover = layout === "cover";
   const [mode, setMode] = useState<AdornmentMode>(() =>
     resolveMode(emoji, image)
   );
@@ -91,9 +95,11 @@ export function LinkAdornmentField({
 
   return (
     <FormField>
-      <Label className="mb-0">Ícone</Label>
+      <Label className="mb-0">{cover ? "Imagem" : "Ícone"}</Label>
       <p className="text-muted-foreground text-xs">
-        Opcional. Emoji/ícone ou foto — aparece à esquerda do link.
+        {cover
+          ? "Opcional. A foto fica em cima do título no link grande."
+          : "Opcional. Emoji/ícone ou foto — aparece à esquerda do link."}
       </p>
 
       <div className="bg-muted grid grid-cols-3 gap-1 rounded-md p-1">
@@ -126,19 +132,24 @@ export function LinkAdornmentField({
       )}
 
       {mode === "image" && (
-        <div className="flex items-center gap-3">
+        <div className={cover ? "flex flex-col gap-2" : "flex items-center gap-3"}>
           <button
             type="button"
             aria-label="Enviar imagem do link"
             disabled={disabled || uploading}
             onClick={() => inputRef.current?.click()}
-            className="bg-muted group relative size-16 shrink-0 overflow-hidden rounded-full border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className={cn(
+              "bg-muted group relative overflow-hidden border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              cover
+                ? "aspect-[16/10] w-full rounded-xl"
+                : "size-16 shrink-0 rounded-full"
+            )}
           >
             {preview ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={preview}
-                alt="Prévia do ícone"
+                alt="Prévia da imagem"
                 className="size-full object-cover"
               />
             ) : (

@@ -1,20 +1,32 @@
 "use client";
 
 import { Camera, Loader2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadPageImage } from "@/actions/pages/upload-page-image";
 import { useQueryClient } from "@tanstack/react-query";
 
 type ImageUploadProps = {
     pageId: string;
     initialImage?: string | null;
+    size?: number;
+    shape?: "circle" | "banner";
 };
 
-export function ImageUpload({ pageId, initialImage }: ImageUploadProps) {
+export function ImageUpload({
+    pageId,
+    initialImage,
+    size = 72,
+    shape = "circle",
+}: ImageUploadProps) {
+    const banner = shape === "banner";
     const [preview, setPreview] = useState(initialImage ?? "");
     const [uploading, setUploading] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient();
+
+    useEffect(() => {
+        setPreview(initialImage ?? "");
+    }, [initialImage]);
 
     async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
@@ -61,8 +73,12 @@ export function ImageUpload({ pageId, initialImage }: ImageUploadProps) {
                 aria-label="Alterar imagem da página"
                 disabled={uploading}
                 onClick={() => inputRef.current?.click()}
-                style={{ width: 72, height: 72 }}
-                className="group relative rounded-full overflow-hidden bg-muted border border-border shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                style={banner ? undefined : { width: size, height: size }}
+                className={
+                    banner
+                        ? "group relative aspect-[4/5] w-full max-w-[14rem] overflow-hidden rounded-2xl bg-muted border border-border shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        : "group relative rounded-full overflow-hidden bg-muted border border-border shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                }
             >
                 {/* Image or empty state */}
                 {preview ? (
@@ -80,7 +96,7 @@ export function ImageUpload({ pageId, initialImage }: ImageUploadProps) {
 
                 {/* Hover / loading overlay */}
                 <span
-                    className={`absolute inset-0 flex items-center justify-center rounded-full bg-black/50 transition-opacity ${uploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                    className={`absolute inset-0 flex items-center justify-center bg-black/50 transition-opacity ${banner ? "" : "rounded-full"} ${uploading ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                     aria-hidden
                 >
                     {uploading

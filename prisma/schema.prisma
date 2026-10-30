@@ -88,19 +88,26 @@ enum Plan {
 enum LinkType {
   CLASSIC
   SOCIAL
+  FEATURED
+}
+
+enum PageLayout {
+  CLASSIC
+  COVER
 }
 
 model Page {
-  id        String   @id @default(cuid())
-  slug      String   @unique
+  id        String     @id @default(cuid())
+  slug      String     @unique
   title     String
   bio       String?
   image     String?
-  published Boolean  @default(true)
-  themeId   Int      @default(1)
+  published Boolean    @default(true)
+  themeId   Int        @default(1)
+  layout    PageLayout @default(CLASSIC)
   userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   links Link[]

@@ -67,6 +67,15 @@ describe("createLinkSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts FEATURED type", () => {
+    const result = createLinkSchema.safeParse({
+      ...valid,
+      type: "FEATURED",
+      image: "https://cdn.exemplo.com/cover.png",
+    });
+    expect(result.success).toBe(true);
+  });
+
   it("rejects emoji longer than 32 chars", () => {
     expect(
       createLinkSchema.safeParse({ ...valid, emoji: "x".repeat(33) }).success
@@ -116,6 +125,15 @@ describe("updateLinkSchema", () => {
         type: "SOCIAL",
         emoji: "🔥",
         image: null,
+      }).success
+    ).toBe(true);
+  });
+
+  it("accepts FEATURED type updates", () => {
+    expect(
+      updateLinkSchema.safeParse({
+        ...valid,
+        type: "FEATURED",
       }).success
     ).toBe(true);
   });

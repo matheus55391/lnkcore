@@ -124,6 +124,18 @@ describe("updatePageSchema", () => {
     expect(updatePageSchema.safeParse({ ...valid, themeId: 0 }).success).toBe(false);
   });
 
+  it("accepts COVER layout", () => {
+    expect(
+      updatePageSchema.safeParse({ ...valid, layout: "COVER" }).success
+    ).toBe(true);
+  });
+
+  it("rejects unknown layout", () => {
+    expect(
+      updatePageSchema.safeParse({ ...valid, layout: "WIDE" }).success
+    ).toBe(false);
+  });
+
   it("rejects empty title", () => {
     const result = updatePageSchema.safeParse({ ...valid, title: "" });
     expect(result.success).toBe(false);

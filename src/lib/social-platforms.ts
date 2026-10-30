@@ -16,6 +16,34 @@ export type SocialPlatformId =
   | "spotify"
   | "link";
 
+export type SocialBrand = {
+  background: string;
+  icon: string;
+};
+
+export const SOCIAL_BRAND: Record<SocialPlatformId, SocialBrand> = {
+  instagram: {
+    background:
+      "radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%)",
+    icon: "#ffffff",
+  },
+  tiktok: { background: "#111111", icon: "#ffffff" },
+  youtube: { background: "#ff0000", icon: "#ffffff" },
+  x: { background: "#000000", icon: "#ffffff" },
+  facebook: { background: "#1877f2", icon: "#ffffff" },
+  linkedin: { background: "#0a66c2", icon: "#ffffff" },
+  whatsapp: { background: "#25d366", icon: "#ffffff" },
+  github: { background: "#181717", icon: "#ffffff" },
+  discord: { background: "#5865f2", icon: "#ffffff" },
+  pinterest: { background: "#e60023", icon: "#ffffff" },
+  snapchat: { background: "#fffc00", icon: "#111111" },
+  telegram: { background: "#229ed9", icon: "#ffffff" },
+  threads: { background: "#000000", icon: "#ffffff" },
+  twitch: { background: "#9146ff", icon: "#ffffff" },
+  spotify: { background: "#1db954", icon: "#ffffff" },
+  link: { background: "#52525b", icon: "#ffffff" },
+};
+
 export type SocialPlatform = {
   id: SocialPlatformId;
   label: string;

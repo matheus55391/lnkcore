@@ -65,6 +65,7 @@ const mockPage: Page = {
   image: null,
   published: true,
   themeId: 1,
+  layout: "CLASSIC",
   createdAt: BASE_DATE,
   updatedAt: BASE_DATE,
   userId: "user-1",

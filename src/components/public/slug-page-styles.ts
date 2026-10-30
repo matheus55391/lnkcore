@@ -21,7 +21,7 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
     #${scope}[data-preview="true"] {
       min-height: 100%;
       box-sizing: border-box;
-      padding-bottom: 1.25rem;
+      padding: 1.25rem 1.5rem 1.5rem;
     }
     #${scope} .sp-topbar {
       width: 100%;
@@ -166,26 +166,223 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    #${scope} .sp-footer {
+    #${scope} .sp-link-featured {
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-end;
+      gap: 0;
+      min-height: 4.5rem;
+      padding: 0.85rem 1rem;
+      overflow: hidden;
+    }
+    #${scope} .sp-link-featured-photo {
+      aspect-ratio: 4 / 5;
+      min-height: 0;
+      padding: 0;
+      border: none;
+      background: #111;
+      color: #fff;
+    }
+    #${scope} .sp-link-featured-photo:hover {
+      border-color: transparent;
+      background: #111;
+    }
+    #${scope} .sp-link-featured-photo .sp-link-cover img {
+      transition: transform 0.35s ease;
+    }
+    #${scope} .sp-link-featured-photo:hover .sp-link-cover img {
+      transform: scale(1.04);
+    }
+    #${scope} .sp-link-featured .sp-link-cover {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      background: color-mix(in srgb, var(--sp-fg) 8%, transparent);
+    }
+    #${scope} .sp-link-featured-photo .sp-link-cover {
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+    }
+    #${scope} .sp-link-featured-photo .sp-link-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.72) 0%,
+        rgba(0, 0, 0, 0.18) 42%,
+        transparent 68%
+      );
+      pointer-events: none;
+    }
+    #${scope} .sp-link-featured .sp-link-cover img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #${scope} .sp-link-featured .sp-link-cover-symbol {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.35rem;
+      min-height: 6rem;
+    }
+    #${scope} .sp-link-featured .sp-link-cover-symbol .sp-link-lucide {
+      width: 2rem;
+      height: 2rem;
+    }
+    #${scope} .sp-link-featured-photo .sp-link-label {
+      position: relative;
+      z-index: 1;
+      padding: 1.15rem 1rem 1rem;
+      font-weight: 600;
+      text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+    }
+    #${scope} .sp-link-chip {
+      position: absolute;
+      top: 0.7rem;
+      left: 0.7rem;
+      z-index: 2;
+      width: 1.85rem;
+      height: 1.85rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.45);
+      color: #fff;
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+    #${scope} .sp-link-chip .sp-link-lucide {
+      width: 0.95rem;
+      height: 0.95rem;
+    }
+    #${scope} .sp-social-brand {
+      width: 2.55rem;
+      height: 2.55rem;
+      border-radius: 9999px;
+      padding: 0.58rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+    }
+    #${scope} .sp-social-brand .sp-social-svg {
+      width: 100%;
+      height: 100%;
+    }
+    #${scope}[data-layout="cover"] {
+      padding: 0 0 2.25rem;
+    }
+    #${scope}[data-layout="cover"][data-preview="true"] {
+      padding: 0 0 1.5rem;
+    }
+    #${scope}[data-layout="cover"] .sp-topbar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 4;
+      width: auto;
+      max-width: none;
+      margin: 0;
+      padding: 3.35rem 0.85rem 0 0;
+    }
+    #${scope}[data-layout="cover"][data-preview="true"] .sp-topbar {
+      padding-top: 3.5rem;
+    }
+    #${scope}[data-layout="cover"] .sp-icon-btn {
+      width: 2.35rem;
+      height: 2.35rem;
+      border-radius: 9999px;
+      border-color: transparent;
+      background: rgba(0, 0, 0, 0.38);
+      color: #fff;
+      backdrop-filter: blur(8px);
+    }
+    #${scope}[data-layout="cover"] .sp-hero {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: color-mix(in srgb, var(--sp-fg) 10%, var(--sp-bg));
+    }
+    #${scope}[data-layout="cover"] .sp-cover,
+    #${scope}[data-layout="cover"] .sp-cover-empty {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #${scope}[data-layout="cover"] .sp-hero-fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        var(--sp-bg) 0%,
+        color-mix(in srgb, var(--sp-bg) 35%, transparent) 42%,
+        transparent 70%
+      );
+      pointer-events: none;
+    }
+    #${scope}[data-layout="cover"] .sp-hero-meta {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0 1.1rem 1.15rem;
+      text-align: center;
+    }
+    #${scope}[data-layout="cover"] .sp-handle {
+      margin: -0.25rem 0 0;
+      font-size: 0.82rem;
+      opacity: 0.72;
+    }
+    #${scope}[data-layout="cover"] .sp-inner {
       width: 100%;
       max-width: 28rem;
+      padding: 0.35rem 1.1rem 0;
+      gap: 0.9rem;
+    }
+    #${scope}[data-layout="cover"] .sp-bio {
+      margin: 0;
+      opacity: 0.78;
+    }
+    #${scope}[data-layout="cover"] .sp-socials {
+      gap: 0.55rem;
+      padding: 0.15rem 0 0;
+    }
+    #${scope}[data-layout="cover"] .sp-links {
+      gap: 0.7rem;
+    }
+    #${scope}[data-layout="cover"] .sp-link-featured-photo {
+      border-radius: 1rem;
+    }
+    #${scope}[data-layout="cover"] .sp-footer {
+      padding-left: 1.1rem;
+      padding-right: 1.1rem;
+    }
+    #${scope} .sp-footer {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
       margin-top: auto;
-      padding-top: 1.5rem;
+      padding: 1.5rem 0.75rem 0;
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
-      gap: 0.35rem;
-      font-size: 0.65rem;
-      line-height: 1.2;
-      white-space: nowrap;
+      column-gap: 0.75rem;
+      row-gap: 0.35rem;
+      font-size: 0.7rem;
+      line-height: 1.35;
+      text-align: center;
       opacity: 0.55;
-    }
-    @media (min-width: 380px) {
-      #${scope} .sp-footer {
-        font-size: 0.7rem;
-        gap: 0.45rem;
-      }
     }
     #${scope} .sp-footer button,
     #${scope} .sp-footer a {
@@ -196,15 +393,12 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       font: inherit;
       padding: 0;
       text-decoration: none;
+      white-space: nowrap;
     }
     #${scope} .sp-footer button:hover,
     #${scope} .sp-footer a:hover {
       opacity: 1;
       text-decoration: underline;
-    }
-    #${scope} .sp-footer-sep {
-      opacity: 0.5;
-      user-select: none;
     }
 
     #${scope} .sp-modal-root {
