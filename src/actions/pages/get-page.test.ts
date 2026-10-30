@@ -113,6 +113,18 @@ describe("getPage", () => {
     expect(result?.links?.[0].title).toBe("GitHub");
   });
 
+  it("asks prisma for links ordered by position", async () => {
+    vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage);
+    await getPage("page-1");
+    expect(prisma.page.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        include: expect.objectContaining({
+          links: { orderBy: { position: "asc" } },
+        }),
+      })
+    );
+  });
+
   it("strips _count from the returned object", async () => {
     vi.mocked(prisma.page.findFirst).mockResolvedValue(mockDbPage);
     const result = await getPage("page-1");
