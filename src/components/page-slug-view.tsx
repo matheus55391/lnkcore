@@ -65,10 +65,9 @@ export function SlugPageView({ page, preview = false }: Props) {
         </div>
       ) : null}
 
-      <PublicShareButton onClick={() => setShareOpen(true)} />
-
       {cover ? (
-        <>
+        <div className="sp-device">
+          <PublicShareButton onClick={() => setShareOpen(true)} />
           <PublicPageHeader
             title={page.title}
             bio={page.bio}
@@ -80,25 +79,31 @@ export function SlugPageView({ page, preview = false }: Props) {
           <div className="sp-inner">
             <PublicLinksList links={classicLinks} />
           </div>
-        </>
-      ) : (
-        <div className="sp-inner">
-          <PublicPageHeader
-            title={page.title}
-            bio={page.bio}
-            image={page.image}
-            slug={page.slug}
-            layout="CLASSIC"
+          <PublicPageFooter
+            pageUrl={pageUrl}
+            onOpenAbout={() => setAboutOpen(true)}
           />
-          {socials}
-          <PublicLinksList links={classicLinks} />
         </div>
+      ) : (
+        <>
+          <PublicShareButton onClick={() => setShareOpen(true)} />
+          <div className="sp-inner">
+            <PublicPageHeader
+              title={page.title}
+              bio={page.bio}
+              image={page.image}
+              slug={page.slug}
+              layout="CLASSIC"
+            />
+            {socials}
+            <PublicLinksList links={classicLinks} />
+          </div>
+          <PublicPageFooter
+            pageUrl={pageUrl}
+            onOpenAbout={() => setAboutOpen(true)}
+          />
+        </>
       )}
-
-      <PublicPageFooter
-        pageUrl={pageUrl}
-        onOpenAbout={() => setAboutOpen(true)}
-      />
 
       <ShareModal
         open={shareOpen}

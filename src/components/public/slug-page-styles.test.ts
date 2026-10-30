@@ -11,5 +11,9 @@ describe("slugLayoutAttr", () => {
     const css = getSlugPageStyles("sp-test", THEMES[0]);
     expect(css).toContain('[data-layout="cover"]');
     expect(css).not.toContain('[data-layout="COVER"]');
+    expect(css).toContain("var(--sp-bg) 0%");
+    expect(css).toContain("var(--sp-bg) 24%");
+    expect(css).toContain("border-radius: 2.15rem");
+    expect(css).toContain(".sp-device");
   });
 });

@@ -280,12 +280,22 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       height: 100%;
     }
     #${scope}[data-layout="cover"] {
-      padding: 0 0 2.25rem;
+      padding: 0;
       overflow-x: hidden;
+      justify-content: flex-start;
     }
     #${scope}[data-layout="cover"][data-preview="true"] {
-      padding: 0 0 1.5rem;
+      padding: 0;
       overflow-x: visible;
+    }
+    #${scope}[data-layout="cover"] .sp-device {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      background: var(--sp-bg);
     }
     #${scope}[data-layout="cover"] .sp-backdrop {
       display: none;
@@ -293,13 +303,12 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
     #${scope}[data-layout="cover"] .sp-topbar {
       position: absolute;
       top: 0;
-      left: 50%;
+      right: 0;
       z-index: 4;
-      width: 100%;
-      max-width: 28rem;
+      width: auto;
+      max-width: none;
       margin: 0;
       padding: 0.85rem 0.85rem 0 0;
-      transform: translateX(-50%);
     }
     #${scope}[data-layout="cover"][data-preview="true"] .sp-topbar {
       padding-top: 3.5rem;
@@ -317,7 +326,6 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 28rem;
       aspect-ratio: 4 / 5;
       overflow: hidden;
       background: color-mix(in srgb, var(--sp-fg) 10%, var(--sp-bg));
@@ -337,8 +345,10 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       background: linear-gradient(
         to top,
         var(--sp-bg) 0%,
-        color-mix(in srgb, var(--sp-bg) 42%, transparent) 38%,
-        transparent 68%
+        var(--sp-bg) 24%,
+        color-mix(in srgb, var(--sp-bg) 92%, transparent) 38%,
+        color-mix(in srgb, var(--sp-bg) 42%, transparent) 58%,
+        transparent 82%
       );
       pointer-events: none;
     }
@@ -352,7 +362,7 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       flex-direction: column;
       align-items: center;
       gap: 0.4rem;
-      padding: 0 1.1rem 2.35rem;
+      padding: 0 1.1rem 1.35rem;
       text-align: center;
     }
     #${scope}[data-layout="cover"] .sp-handle {
@@ -370,8 +380,7 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 28rem;
-      margin-top: -1.6rem;
+      margin-top: -0.35rem;
       padding: 0 1.1rem 0;
       gap: 0.9rem;
     }
@@ -392,11 +401,15 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
     #${scope}[data-layout="cover"] .sp-footer {
       position: relative;
       z-index: 1;
-      max-width: 28rem;
-      padding-left: 1.1rem;
-      padding-right: 1.1rem;
+      margin-top: 0.35rem;
+      padding: 1rem 1.1rem 1.35rem;
     }
     @media (min-width: 40rem) {
+      #${scope}[data-layout="cover"]:not([data-preview="true"]) {
+        justify-content: center;
+        padding: 2.75rem 1.25rem 3rem;
+        background-color: color-mix(in srgb, var(--sp-bg) 55%, #111 45%);
+      }
       #${scope}[data-layout="cover"]:not([data-preview="true"]) .sp-backdrop {
         display: block;
         position: fixed;
@@ -409,9 +422,18 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: blur(52px) saturate(1.08);
-        transform: scale(1.14);
-        opacity: 0.32;
+        filter: blur(48px) saturate(1.12);
+        transform: scale(1.16);
+        opacity: 0.45;
+      }
+      #${scope}[data-layout="cover"]:not([data-preview="true"]) .sp-device {
+        width: min(100%, 24.75rem);
+        border-radius: 2.15rem;
+        overflow: hidden;
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--sp-fg) 12%, transparent),
+          0 28px 64px -18px rgb(0 0 0 / 0.5),
+          0 10px 24px -10px rgb(0 0 0 / 0.28);
       }
     }
     #${scope} .sp-footer {

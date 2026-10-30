@@ -46,9 +46,24 @@ FREE   — plano gratuito (padrão)
 PRO    — plano pago
 ```
 
+#### `PageLayout` (enum)
+
+```
+CLASSIC  — avatar redondo e links em botão (padrão)
+COVER    — hero 4:5, identidade sobre a imagem
+```
+
+#### `LinkType` (enum)
+
+```
+CLASSIC   — botão compacto (padrão)
+FEATURED  — card grande; com imagem, overlay
+SOCIAL    — ícone na fileira de redes
+```
+
 #### `Page`
 
-Representa uma página pública do usuário (ex: `lnkcore.com/p/username`).
+Página pública em `makebio.com.br/{slug}`.
 
 | Campo | Tipo | Descrição |
 | ----- | ---- | --------- |
@@ -56,11 +71,13 @@ Representa uma página pública do usuário (ex: `lnkcore.com/p/username`).
 | `slug` | `String` unique | Identificador na URL |
 | `title` | `String` | Título da página |
 | `bio` | `String?` | Descrição/bio |
-| `image` | `String?` | URL da imagem de capa |
+| `image` | `String?` | Avatar (Clássico) ou capa (Capa) |
 | `published` | `Boolean` | Visível publicamente (padrão: `true`) |
+| `themeId` | `Int` | Tema visual (padrão: `1` Air) |
+| `layout` | `PageLayout` | `CLASSIC` ou `COVER` (padrão: `CLASSIC`) |
 | `userId` | `String` FK | Dono da página |
 
-Índice em `userId` para buscas eficientes por usuário.
+Índice em `userId`.
 
 #### `Link`
 
@@ -71,12 +88,14 @@ Um link pertencente a uma Page.
 | `id` | `String` PK cuid | ID único |
 | `title` | `String` | Texto exibido |
 | `url` | `String` | URL de destino |
-| `image` | `String?` | Ícone/miniatura opcional |
+| `image` | `String?` | Miniatura / foto do featured |
+| `emoji` | `String?` | Emoji ou id de ícone |
+| `type` | `LinkType` | `CLASSIC`, `FEATURED` ou `SOCIAL` |
 | `active` | `Boolean` | Exibido na página pública (padrão: `true`) |
 | `position` | `Int` | Ordem de exibição |
 | `pageId` | `String` FK | Página à qual pertence |
 
-Índice em `pageId` para buscas eficientes por página.
+Índice em `pageId`.
 
 ---
 

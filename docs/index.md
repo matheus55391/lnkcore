@@ -1,35 +1,37 @@
-# lnkcore — Documentação
+# MakeBio (lnkcore) — Documentação
 
-Bem-vindo à documentação do **lnkcore**, uma plataforma de link-in-bio construída com Next.js 16, Better Auth, Prisma 7, TanStack Query e Stripe.
+Plataforma de link-in-bio em português (`makebio.com.br`), construída com Next.js 16, Better Auth, Prisma 7, TanStack Query e Stripe.
 
 ## Índice
 
 | Documento | Conteúdo |
 | --------- | -------- |
-| [Arquitetura](./ARCHITECTURE.md) | Stack, estrutura de pastas, padrões (Server Actions, TanStack Query, RHF) |
-| [Getting Started](./getting-started.md) | Pré-requisitos, configuração do ambiente e execução local |
-| [Autenticação](./auth.md) | Better Auth, sessão no server, proteção de rotas |
-| [Banco de Dados](./database.md) | Schema Prisma, modelos e comandos de migração |
+| [Arquitetura](./ARCHITECTURE.md) | Stack, pastas, Server Actions, TanStack Query |
+| [Página pública e editor](./public-page.md) | Layouts Clássico/Capa, tipos de link, preview |
+| [Getting Started](./getting-started.md) | Ambiente local |
+| [Autenticação](./auth.md) | Better Auth, sessão, rotas |
+| [Banco de Dados](./database.md) | Schema Prisma, `PageLayout`, `LinkType` |
 | [Billing (Stripe)](./billing.md) | Planos FREE/PRO, checkout e webhook |
-| [Storage](./storage.md) | Configuração do MinIO / S3 para arquivos e imagens |
-| [Deploy](./deployment.md) | Guia de implantação em produção |
+| [Storage](./storage.md) | MinIO / S3 |
+| [Deploy](./deployment.md) | Produção (GHCR + VPS) |
 
-## Visão Geral
+## Visão geral
 
-O lnkcore permite que usuários criem páginas públicas com múltiplos links (estilo Linktree). Cada usuário pode ter uma ou mais **Pages** (conforme o plano), cada página possui um **slug** único e uma lista de **Links** ordenados.
+Cada conta tem **Pages** com slug único. A pública vive em `/{slug}`. Uma page tem layout, tema, cabeçalho e **Links** de três tipos.
 
 ```
 User
- └── Page (slug único, título, bio, imagem)
-      └── Link (título, URL, posição, ativo/inativo)
+ └── Page (slug, título, bio, imagem, themeId, layout CLASSIC|COVER)
+      └── Link (CLASSIC | FEATURED | SOCIAL)
 ```
 
 ## Planos
 
-| Plano | Páginas | Links por página |
-| ----- | :-----: | :--------------: |
-| FREE  | 1 | 10 |
-| PRO (R$10) | ilimitado | ilimitado |
+Fonte: [`src/lib/plan-limits.ts`](../src/lib/plan-limits.ts). O painel anuncia PRO a **R$ 7/mês**; o valor cobrado é o Price ID do Stripe.
 
-As regras são validadas **no server**, dentro das Server Actions, via [src/lib/plan.ts](../src/lib/plan.ts).
+| Plano | Páginas | Links por página | Imagens |
+| ----- | :-----: | :--------------: | :-----: |
+| FREE | 1 | 5 | 10 |
+| PRO | 5 | 20 | 40 |
 
+Regras validadas **no server** via [`src/lib/plan.ts`](../src/lib/plan.ts).

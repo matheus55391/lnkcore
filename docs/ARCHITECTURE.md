@@ -31,90 +31,32 @@
 
 ```
 lnkcore/
-├── prisma/
-│   ├── schema.prisma
-│   └── migrations/
-│
+├── prisma/schema.prisma + migrations/
+├── docs/                             # Este conjunto
 ├── src/
-│   ├── app/                          # Next.js App Router
-│   │   ├── layout.tsx                # Root (fonte Geist, ThemeProvider)
-│   │   ├── page.tsx                  # Landing pública
-│   │   ├── globals.css
-│   │   │
-│   │   ├── (auth)/                   # sign-in, sign-up
-│   │   │   ├── layout.tsx
-│   │   │   ├── sign-in/page.tsx
-│   │   │   └── sign-up/page.tsx
-│   │   │
-│   │   ├── (dashboard)/              # rotas privadas — CLIENT + React Query
-│   │   │   ├── layout.tsx            # QueryProvider + requireSession
-│   │   │   └── dashboard/
-│   │   │       ├── page.tsx          # Lista de páginas (useQuery)
-│   │   │       └── [pageId]/page.tsx # Detalhe + LinksManager
-│   │   │
-│   │   ├── [slug]/page.tsx           # Página pública — SSR + Prisma
-│   │   │
-│   │   └── api/
-│   │       ├── auth/[...all]/route.ts
-│   │       └── stripe/webhook/route.ts
-│   │
-│   ├── actions/                      # Server Actions (1 arquivo por função)
-│   │   ├── pages/
-│   │   │   ├── create-page.ts
-│   │   │   ├── update-page.ts
-│   │   │   ├── delete-page.ts
-│   │   │   └── list-pages.ts
-│   │   ├── links/
-│   │   │   ├── create-link.ts
-│   │   │   ├── update-link.ts
-│   │   │   ├── delete-link.ts
-│   │   │   └── list-links.ts
-│   │   └── stripe/
-│   │       └── create-checkout-session.ts
-│   │
+│   ├── app/
+│   │   ├── page.tsx                  # Landing
+│   │   ├── (auth)/                   # sign-in, sign-up, reset
+│   │   ├── (dashboard)/dashboard/
+│   │   │   ├── page.tsx              # Lista de páginas
+│   │   │   └── [pageId]/page.tsx     # Editor (trilho + preview)
+│   │   ├── [slug]/page.tsx           # Pública: Prisma + SlugPageView
+│   │   └── api/                      # auth, stripe, upload
+│   ├── actions/                      # Server Actions (1 arquivo = 1 função)
 │   ├── components/
-│   │   ├── auth/                     # sign-in-form, sign-up-form, sign-out-button
-│   │   ├── billing/
-│   │   │   └── upgrade-button.tsx
-│   │   ├── links/
-│   │   │   └── links-manager.tsx     # Lista + CreateLinkDialog (RHF + mutations)
-│   │   ├── pages/
-│   │   │   └── create-page-dialog.tsx
-│   │   └── ui/                       # shadcn primitives
-│   │
-│   ├── hooks/                        # TanStack Query hooks
-│   │   ├── use-pages.ts              # usePages() + pagesQueryKey
-│   │   └── use-links.ts              # useLinks(pageId) + linksQueryKey
-│   │
-│   ├── schemas/                      # Zod — compartilhados client/server
-│   │   ├── auth.ts
-│   │   ├── pages.ts                  # create/update/delete
-│   │   └── links.ts                  # create/update/delete
-│   │
-│   ├── @types/                       # DTOs desacoplados do Prisma
-│   │   ├── page.ts, link.ts, user.ts, plan.ts, session.ts...
-│   │   └── action-result.ts          # ActionResult<T>
-│   │
-│   ├── lib/                          # Integrações e clientes
-│   │   ├── prisma.ts                 # PrismaClient singleton
-│   │   ├── auth.ts                   # Better Auth (server)
-│   │   ├── auth-client.ts            # Better Auth (browser)
-│   │   ├── stripe.ts                 # Stripe client [server-only]
-│   │   ├── plan.ts                   # assertCanCreatePage/Link [server-only]
-│   │   ├── query-provider.tsx        # QueryClientProvider + Devtools
-│   │   └── utils.ts                  # cn()
-│   │
-│   ├── utils/
-│   │   └── session.ts                # getSession(), requireSession() [server-only]
-│   │
-│   ├── generated/prisma/             # Cliente Prisma gerado (gitignored)
-│   └── proxy.ts                      # Middleware de proteção (edge)
-│
-├── docker-compose.yml
-├── next.config.ts
-├── prisma.config.ts
-└── tsconfig.json
+│   │   ├── editor/                   # PageEditor, phone, rail, painéis
+│   │   ├── public/                   # header, links, estilos da /{slug}
+│   │   ├── links/                    # dialogs CLASSIC / FEATURED / SOCIAL
+│   │   └── ui/
+│   ├── queries/                      # TanStack Query (usePages, useLinks, …)
+│   ├── schemas/                      # Zod compartilhado
+│   ├── @types/                       # DTOs (nunca importar generated/prisma)
+│   ├── lib/                          # prisma, auth, stripe, plan, themes, discord-log
+│   └── proxy.ts
+└── docker-compose.yml
 ```
+
+Layouts e tipos de link: [Página pública e editor](./public-page.md).
 
 ## Fluxos
 
@@ -131,18 +73,21 @@ Browser (Client Component)
 ```
 
 - `src/app/(dashboard)/layout.tsx` chama `requireSession()` no server e envolve os filhos com `QueryProvider`.
-- As pages são `"use client"` e consomem hooks de [src/hooks](../src/hooks).
+- Páginas do dashboard são `"use client"` e consomem hooks em [src/queries](../src/queries).
+- `/dashboard/[pageId]` monta o [`PageEditor`](../src/components/editor/page-editor.tsx) (Links / Cabeçalho / Aparência + preview iPhone). O header do shell some nessa rota.
 
-### Página pública (SSR)
+### Página pública
 
 ```
 GET /[slug]
   └── Server Component
-        └── prisma.page.findUnique({ where: { slug } })
-              └── render HTML
+        └── prisma.page.findUnique({ slug, published, links active })
+              └── SlugPageView (client)
+                    CLASSIC → avatar + bio + sociais + botões
+                    COVER   → hero 4:5 + fade do tema + card “celular” no desktop
 ```
 
-Sem React Query, sem client.
+Fetch no server; hidratação no client só para share/modais. Estilos em [`slug-page-styles.ts`](../src/components/public/slug-page-styles.ts) (`data-layout="cover"|"classic"`). Detalhe visual: [public-page.md](./public-page.md).
 
 ### Mutations (Server Actions)
 
