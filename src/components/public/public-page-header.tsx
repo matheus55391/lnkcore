@@ -32,6 +32,7 @@ export function PublicPageHeader({
           <h1 className="sp-name">{title}</h1>
           <p className="sp-handle">@{slug}</p>
           {socials}
+          {bio ? <p className="sp-bio">{bio}</p> : null}
         </div>
       </header>
     );

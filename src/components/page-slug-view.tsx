@@ -3,7 +3,10 @@
 import { useState, useSyncExternalStore } from "react";
 import { getTheme } from "@/lib/themes";
 import type { Page } from "@/@types";
-import { getSlugPageStyles } from "@/components/public/slug-page-styles";
+import {
+  getSlugPageStyles,
+  slugLayoutAttr,
+} from "@/components/public/slug-page-styles";
 import { PublicShareButton } from "@/components/public/public-share-button";
 import { PublicPageHeader } from "@/components/public/public-page-header";
 import { PublicSocialRow } from "@/components/public/public-social-row";
@@ -51,9 +54,16 @@ export function SlugPageView({ page, preview = false }: Props) {
     <div
       id={scope}
       data-preview={preview ? "true" : undefined}
-      data-layout={page.layout ?? "CLASSIC"}
+      data-layout={slugLayoutAttr(page.layout)}
     >
       <style>{getSlugPageStyles(scope, theme)}</style>
+
+      {cover && page.image ? (
+        <div className="sp-backdrop" aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={page.image} alt="" />
+        </div>
+      ) : null}
 
       <PublicShareButton onClick={() => setShareOpen(true)} />
 
@@ -68,7 +78,6 @@ export function SlugPageView({ page, preview = false }: Props) {
             socials={socials}
           />
           <div className="sp-inner">
-            {page.bio ? <p className="sp-bio">{page.bio}</p> : null}
             <PublicLinksList links={classicLinks} />
           </div>
         </>

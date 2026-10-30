@@ -1,4 +1,12 @@
+import type { PageLayout } from "@/@types";
 import type { Theme } from "@/lib/themes";
+
+/** CSS/HTML hook. Must stay lowercase — `[data-layout="COVER"]` never matches. */
+export function slugLayoutAttr(
+  layout: PageLayout | null | undefined
+): "cover" | "classic" {
+  return layout === "COVER" ? "cover" : "classic";
+}
 
 export function getSlugPageStyles(scope: string, theme: Theme): string {
   return `
@@ -273,19 +281,25 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
     }
     #${scope}[data-layout="cover"] {
       padding: 0 0 2.25rem;
+      overflow-x: hidden;
     }
     #${scope}[data-layout="cover"][data-preview="true"] {
       padding: 0 0 1.5rem;
+      overflow-x: visible;
+    }
+    #${scope}[data-layout="cover"] .sp-backdrop {
+      display: none;
     }
     #${scope}[data-layout="cover"] .sp-topbar {
       position: absolute;
       top: 0;
-      right: 0;
+      left: 50%;
       z-index: 4;
-      width: auto;
-      max-width: none;
+      width: 100%;
+      max-width: 28rem;
       margin: 0;
-      padding: 3.35rem 0.85rem 0 0;
+      padding: 0.85rem 0.85rem 0 0;
+      transform: translateX(-50%);
     }
     #${scope}[data-layout="cover"][data-preview="true"] .sp-topbar {
       padding-top: 3.5rem;
@@ -301,7 +315,9 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
     }
     #${scope}[data-layout="cover"] .sp-hero {
       position: relative;
+      z-index: 1;
       width: 100%;
+      max-width: 28rem;
       aspect-ratio: 4 / 5;
       overflow: hidden;
       background: color-mix(in srgb, var(--sp-fg) 10%, var(--sp-bg));
@@ -313,6 +329,7 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
     }
     #${scope}[data-layout="cover"] .sp-hero-fade {
       position: absolute;
@@ -320,8 +337,8 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       background: linear-gradient(
         to top,
         var(--sp-bg) 0%,
-        color-mix(in srgb, var(--sp-bg) 35%, transparent) 42%,
-        transparent 70%
+        color-mix(in srgb, var(--sp-bg) 42%, transparent) 38%,
+        transparent 68%
       );
       pointer-events: none;
     }
@@ -334,19 +351,28 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.55rem;
-      padding: 0 1.1rem 1.15rem;
+      gap: 0.4rem;
+      padding: 0 1.1rem 2.35rem;
       text-align: center;
     }
     #${scope}[data-layout="cover"] .sp-handle {
-      margin: -0.25rem 0 0;
+      margin: -0.15rem 0 0;
       font-size: 0.82rem;
       opacity: 0.72;
     }
+    #${scope}[data-layout="cover"] .sp-hero-meta .sp-bio {
+      margin: 0.15rem 0 0;
+      max-width: 22rem;
+      opacity: 0.82;
+      line-height: 1.4;
+    }
     #${scope}[data-layout="cover"] .sp-inner {
+      position: relative;
+      z-index: 2;
       width: 100%;
       max-width: 28rem;
-      padding: 0.35rem 1.1rem 0;
+      margin-top: -1.6rem;
+      padding: 0 1.1rem 0;
       gap: 0.9rem;
     }
     #${scope}[data-layout="cover"] .sp-bio {
@@ -355,7 +381,7 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
     }
     #${scope}[data-layout="cover"] .sp-socials {
       gap: 0.55rem;
-      padding: 0.15rem 0 0;
+      padding: 0.2rem 0 0;
     }
     #${scope}[data-layout="cover"] .sp-links {
       gap: 0.7rem;
@@ -364,8 +390,29 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       border-radius: 1rem;
     }
     #${scope}[data-layout="cover"] .sp-footer {
+      position: relative;
+      z-index: 1;
+      max-width: 28rem;
       padding-left: 1.1rem;
       padding-right: 1.1rem;
+    }
+    @media (min-width: 40rem) {
+      #${scope}[data-layout="cover"]:not([data-preview="true"]) .sp-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      #${scope}[data-layout="cover"]:not([data-preview="true"]) .sp-backdrop img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: blur(52px) saturate(1.08);
+        transform: scale(1.14);
+        opacity: 0.32;
+      }
     }
     #${scope} .sp-footer {
       width: 100%;
