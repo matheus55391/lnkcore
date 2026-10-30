@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
-import type { Link } from "@/@types/link";
+import { LinkType, type Link } from "@/@types/link";
 import {
   detectSocialPlatform,
   getSelectableSocial,
@@ -88,7 +88,7 @@ export function EditSocialDialog({
       id: link.id,
       url,
       title: selectable?.label ?? platformLabelFromUrl(url) ?? link.title,
-      type: "SOCIAL",
+      type: LinkType.SOCIAL,
       image: null,
       emoji: null,
     });

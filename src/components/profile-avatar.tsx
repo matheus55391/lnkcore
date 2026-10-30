@@ -4,6 +4,7 @@ import { CurrentUser } from "@/actions/user/get-current-user";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -21,9 +22,10 @@ import { useState } from "react";
 
 type ProfileAvatarProps = {
     user: CurrentUser;
+    className?: string;
 };
 
-export function ProfileAvatar({ user }: ProfileAvatarProps) {
+export function ProfileAvatar({ user, className }: ProfileAvatarProps) {
     const [error, setError] = useState<string | null>(null);
     const { data: currentUser } = useCurrentUser();
     const { theme, setTheme } = useTheme();
@@ -38,7 +40,10 @@ export function ProfileAvatar({ user }: ProfileAvatarProps) {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full border border-border bg-background"
+                    className={cn(
+                        "rounded-full border border-border bg-background",
+                        className
+                    )}
                 >
                     <Avatar>
                         <AvatarImage src={undefined} alt="" />

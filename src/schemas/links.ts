@@ -1,6 +1,16 @@
 import { z } from "zod";
 
-export const linkTypeSchema = z.enum(["CLASSIC", "SOCIAL", "FEATURED"]);
+import { FeaturedSize, LinkType } from "@/@types/link";
+
+export const linkTypeSchema = z.enum([
+  LinkType.CLASSIC,
+  LinkType.SOCIAL,
+  LinkType.FEATURED,
+]);
+export const featuredSizeSchema = z.enum([
+  FeaturedSize.COMPACT,
+  FeaturedSize.TALL,
+]);
 
 export const createLinkSchema = z.object({
   pageId: z.string().min(1),
@@ -9,6 +19,7 @@ export const createLinkSchema = z.object({
   image: z.string().url().nullable().optional(),
   emoji: z.string().max(32).nullable().optional(),
   type: linkTypeSchema.optional(),
+  featuredSize: featuredSizeSchema.optional(),
 });
 export type CreateLinkInput = z.infer<typeof createLinkSchema>;
 
@@ -19,6 +30,7 @@ export const updateLinkSchema = z.object({
   image: z.string().url().nullable().optional(),
   emoji: z.string().max(32).nullable().optional(),
   type: linkTypeSchema.optional(),
+  featuredSize: featuredSizeSchema.optional(),
   active: z.boolean().optional(),
   position: z.number().int().nonnegative().optional(),
 });

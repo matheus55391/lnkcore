@@ -19,7 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Link } from "@/@types/link";
+import { FeaturedSize, isFeaturedLink, type Link } from "@/@types/link";
 import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
 import { cn } from "@/lib/utils";
 import { EditLinkDialog } from "./edit-link-dialog";
@@ -41,7 +41,8 @@ export function LinkManagerItem({
 }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const updateMutation = useUpdateLinkMutation({ pageId });
-  const featured = link.type === "FEATURED";
+  const featured = isFeaturedLink(link);
+  const tall = featured && link.featuredSize === FeaturedSize.TALL;
 
   async function handleShare() {
     if (navigator.share) {
@@ -141,7 +142,7 @@ export function LinkManagerItem({
         {link.title}
         {featured ? (
           <span className="text-muted-foreground ml-2 text-xs font-normal">
-            Grande
+            {tall ? "Alto" : "Compacto"}
           </span>
         ) : null}
         {!link.active ? (
@@ -172,7 +173,10 @@ export function LinkManagerItem({
           <img
             src={link.image}
             alt=""
-            className="aspect-[4/5] w-full object-cover"
+            className={cn(
+              "w-full object-cover",
+              tall ? "aspect-[4/5]" : "aspect-[4/3]"
+            )}
           />
         </button>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/80 to-transparent px-3 pb-3 pt-12">
@@ -228,6 +232,9 @@ export function LinkManagerItem({
 }
 
 function FeaturedCover({ link }: { link: Link }) {
+  const aspect =
+    link.featuredSize === FeaturedSize.TALL ? "aspect-[4/5]" : "aspect-[4/3]";
+
   if (link.image) {
     return (
       <div className="overflow-hidden rounded-xl">
@@ -235,7 +242,7 @@ function FeaturedCover({ link }: { link: Link }) {
         <img
           src={link.image}
           alt=""
-          className="aspect-[16/10] w-full object-cover"
+          className={cn("w-full object-cover", aspect)}
         />
       </div>
     );
@@ -243,7 +250,12 @@ function FeaturedCover({ link }: { link: Link }) {
 
   if (isLinkIconValue(link.emoji)) {
     return (
-      <div className="bg-muted flex aspect-[16/9] items-center justify-center rounded-xl">
+      <div
+        className={cn(
+          "bg-muted flex items-center justify-center rounded-xl",
+          aspect
+        )}
+      >
         <LinkAdornmentIcon
           value={link.emoji}
           className="h-8 w-8 text-muted-foreground"
@@ -254,7 +266,12 @@ function FeaturedCover({ link }: { link: Link }) {
 
   if (link.emoji) {
     return (
-      <div className="bg-muted flex aspect-[16/9] items-center justify-center rounded-xl text-3xl">
+      <div
+        className={cn(
+          "bg-muted flex items-center justify-center rounded-xl text-3xl",
+          aspect
+        )}
+      >
         {link.emoji}
       </div>
     );

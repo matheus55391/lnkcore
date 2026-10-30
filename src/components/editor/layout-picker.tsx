@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { updatePage } from "@/actions/pages/update-page";
 import { pageQueryKey } from "@/queries/use-page-query";
-import type { Page, PageLayout } from "@/@types";
+import { PageLayout, type Page } from "@/@types";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -19,12 +19,12 @@ const OPTIONS: {
   hint: string;
 }[] = [
   {
-    id: "CLASSIC",
+    id: PageLayout.CLASSIC,
     label: "Clássico",
     hint: "Foto redonda e links em botão",
   },
   {
-    id: "COVER",
+    id: PageLayout.COVER;
     label: "Capa",
     hint: "Foto em tela cheia, no estilo feed",
   },
@@ -72,7 +72,7 @@ export function LayoutPicker({ page }: Props) {
         className="grid grid-cols-2 gap-2"
       >
         {OPTIONS.map((option) => {
-          const selected = (page.layout ?? "CLASSIC") === option.id;
+          const selected = (page.layout ?? PageLayout.CLASSIC) === option.id;
           return (
             <button
               key={option.id}
@@ -116,7 +116,7 @@ function LayoutPreview({
 }) {
   const fill = selected ? "bg-foreground/20" : "bg-foreground/10";
 
-  if (layout === "COVER") {
+  if (layout === PageLayout.COVER) {
     return (
       <span
         className="relative flex h-24 flex-col justify-end overflow-hidden rounded-lg bg-zinc-800"

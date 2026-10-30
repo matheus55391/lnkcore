@@ -1,4 +1,4 @@
-import type { Link } from "@/@types";
+import { FeaturedSize, isFeaturedLink, type Link } from "@/@types";
 import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/link-adornments";
 
 type Props = {
@@ -7,14 +7,14 @@ type Props = {
 };
 
 export function LinkRow({ link, className }: Props) {
-  const featured = link.type === "FEATURED";
+  const featured = isFeaturedLink(link);
   const hasIcon = isLinkIconValue(link.emoji);
   const hasEmoji = Boolean(link.emoji) && !hasIcon;
   const hasImage = Boolean(link.image);
   const hasMedia = hasImage || hasIcon || hasEmoji;
   const featuredClass = featured
     ? hasImage
-      ? " sp-link-featured sp-link-featured-photo"
+      ? ` sp-link-featured sp-link-featured-photo${link.featuredSize === FeaturedSize.TALL ? " sp-link-featured-tall" : ""}`
       : " sp-link-featured"
     : "";
 

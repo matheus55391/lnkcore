@@ -1,11 +1,11 @@
-import type { PageLayout } from "@/@types";
+import { PageLayout } from "@/@types";
 import type { Theme } from "@/lib/themes";
 
 /** CSS/HTML hook. Must stay lowercase — `[data-layout="COVER"]` never matches. */
 export function slugLayoutAttr(
   layout: PageLayout | null | undefined
 ): "cover" | "classic" {
-  return layout === "COVER" ? "cover" : "classic";
+  return layout === PageLayout.COVER ? "cover" : "classic";
 }
 
 export function getSlugPageStyles(scope: string, theme: Theme): string {
@@ -184,12 +184,15 @@ export function getSlugPageStyles(scope: string, theme: Theme): string {
       overflow: hidden;
     }
     #${scope} .sp-link-featured-photo {
-      aspect-ratio: 4 / 5;
+      aspect-ratio: 4 / 3;
       min-height: 0;
       padding: 0;
       border: none;
       background: #111;
       color: #fff;
+    }
+    #${scope} .sp-link-featured-tall {
+      aspect-ratio: 4 / 5;
     }
     #${scope} .sp-link-featured-photo:hover {
       border-color: transparent;

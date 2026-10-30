@@ -76,6 +76,32 @@ describe("createLinkSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("accepts featuredSize COMPACT and TALL", () => {
+    expect(
+      createLinkSchema.safeParse({
+        ...valid,
+        type: "FEATURED",
+        featuredSize: "COMPACT",
+      }).success
+    ).toBe(true);
+    expect(
+      createLinkSchema.safeParse({
+        ...valid,
+        type: "FEATURED",
+        featuredSize: "TALL",
+      }).success
+    ).toBe(true);
+  });
+
+  it("rejects unknown featuredSize", () => {
+    expect(
+      createLinkSchema.safeParse({
+        ...valid,
+        featuredSize: "WIDE",
+      }).success
+    ).toBe(false);
+  });
+
   it("rejects emoji longer than 32 chars", () => {
     expect(
       createLinkSchema.safeParse({ ...valid, emoji: "x".repeat(33) }).success
@@ -134,6 +160,16 @@ describe("updateLinkSchema", () => {
       updateLinkSchema.safeParse({
         ...valid,
         type: "FEATURED",
+      }).success
+    ).toBe(true);
+  });
+
+  it("accepts featuredSize updates", () => {
+    expect(
+      updateLinkSchema.safeParse({
+        ...valid,
+        type: "FEATURED",
+        featuredSize: "TALL",
       }).success
     ).toBe(true);
   });

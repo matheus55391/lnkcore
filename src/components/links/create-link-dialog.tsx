@@ -19,12 +19,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { ClassicLinkStyle, FeaturedSize, LinkType } from "@/@types/link";
 import { useCreateLinkMutation } from "@/queries/use-create-link-mutation";
 import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
 import { LinkAdornmentField } from "./link-adornment-field";
 import {
   LinkStylePicker,
+  isFeaturedStyle,
   resolveClassicStyle,
+  styleToLinkFields,
 } from "./link-style-picker";
 
 type Props = {
@@ -63,13 +66,14 @@ export function CreateLinkDialog({
       url: "",
       image: null,
       emoji: null,
-      type: "CLASSIC",
+      type: LinkType.CLASSIC,
+      featuredSize: FeaturedSize.COMPACT,
     },
   });
 
   const emoji = watch("emoji") ?? null;
   const image = watch("image") ?? null;
-  const style = resolveClassicStyle(watch("type"));
+  const style = resolveClassicStyle(watch("type"), watch("featuredSize"));
 
   const mutation = useCreateLinkMutation({
     pageId,
@@ -80,7 +84,8 @@ export function CreateLinkDialog({
         url: "",
         image: null,
         emoji: null,
-        type: "CLASSIC",
+        type: LinkType.CLASSIC,
+        featuredSize: FeaturedSize.COMPACT,
       });
       setUploadEntityId(crypto.randomUUID());
       setOpen(false);
@@ -98,7 +103,8 @@ export function CreateLinkDialog({
         url: "",
         image: null,
         emoji: null,
-        type: "CLASSIC",
+        type: LinkType.CLASSIC,
+        featuredSize: FeaturedSize.COMPACT,
       });
       setUploadEntityId(crypto.randomUUID());
     }
@@ -126,7 +132,7 @@ export function CreateLinkDialog({
             setServerError(null);
             mutation.mutate({
               ...values,
-              type: resolveClassicStyle(values.type),
+              ...styleToLinkFields(style),
               image: values.image ?? null,
               emoji: values.image ? null : (values.emoji ?? null),
             });
@@ -138,9 +144,17 @@ export function CreateLinkDialog({
           <LinkStylePicker
             value={style}
             disabled={mutation.isPending}
-            onChange={(next) =>
-              setValue("type", next, { shouldDirty: true, shouldTouch: true })
-            }
+            onChange={(next) => {
+              const fields = styleToLinkFields(next);
+              setValue("type", fields.type, {
+                shouldDirty: true,
+                shouldTouch: true,
+              });
+              setValue("featuredSize", fields.featuredSize, {
+                shouldDirty: true,
+                shouldTouch: true,
+              });
+            }}
           />
 
           <FormField>
@@ -174,7 +188,12 @@ export function CreateLinkDialog({
             emoji={emoji}
             image={image}
             entityId={uploadEntityId}
-            layout={style === "FEATURED" ? "cover" : "row"}
+            layout={isFeaturedStyle(style) ? "cover" : "row"}
+            cardSize={
+              style === ClassicLinkStyle.FEATURED_TALL
+                ? FeaturedSize.TALL
+                : FeaturedSize.COMPACT
+            }
             disabled={mutation.isPending}
             onChange={({ emoji: nextEmoji, image: nextImage }) => {
               setValue("emoji", nextEmoji, {

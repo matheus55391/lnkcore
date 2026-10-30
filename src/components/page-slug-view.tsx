@@ -2,7 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { getTheme } from "@/lib/themes";
-import type { Page } from "@/@types";
+import { LinkType, PageLayout, type Page } from "@/@types";
 import {
   getSlugPageStyles,
   slugLayoutAttr,
@@ -35,12 +35,16 @@ export function SlugPageView({ page, preview = false }: Props) {
   const scope = `sp-${page.id}`;
   const [shareOpen, setShareOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
-  const cover = (page.layout ?? "CLASSIC") === "COVER";
+  const cover = (page.layout ?? PageLayout.CLASSIC) === PageLayout.COVER;
 
   const pageUrl = usePageUrl(page.slug);
 
-  const classicLinks = (page.links ?? []).filter((l) => l.type !== "SOCIAL");
-  const socialLinks = (page.links ?? []).filter((l) => l.type === "SOCIAL");
+  const classicLinks = (page.links ?? []).filter(
+    (l) => l.type !== LinkType.SOCIAL
+  );
+  const socialLinks = (page.links ?? []).filter(
+    (l) => l.type === LinkType.SOCIAL
+  );
 
   const socials = (
     <PublicSocialRow
@@ -73,7 +77,7 @@ export function SlugPageView({ page, preview = false }: Props) {
             bio={page.bio}
             image={page.image}
             slug={page.slug}
-            layout="COVER"
+            layout={PageLayout.COVER}
             socials={socials}
           />
           <div className="sp-inner">
@@ -93,7 +97,7 @@ export function SlugPageView({ page, preview = false }: Props) {
               bio={page.bio}
               image={page.image}
               slug={page.slug}
-              layout="CLASSIC"
+              layout={PageLayout.CLASSIC}
             />
             {socials}
             <PublicLinksList links={classicLinks} />

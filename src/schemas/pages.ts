@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { PageLayout } from "@/@types/page";
+
 const RESERVED_SLUGS = new Set([
   "privacidade",
   "privacy",
@@ -35,7 +37,10 @@ export const createPageSchema = z.object({
 });
 export type CreatePageInput = z.infer<typeof createPageSchema>;
 
-export const pageLayoutSchema = z.enum(["CLASSIC", "COVER"]);
+export const pageLayoutSchema = z.enum([
+  PageLayout.CLASSIC,
+  PageLayout.COVER,
+]);
 
 export const updatePageSchema = z.object({
   id: z.string().min(1),

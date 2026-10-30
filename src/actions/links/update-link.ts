@@ -51,6 +51,7 @@ export async function updateLink(
       image: nextImage === undefined ? undefined : nextImage,
       emoji: data.emoji === undefined ? undefined : data.emoji,
       type: data.type,
+      featuredSize: data.featuredSize,
       active: data.active,
       position: data.position,
     },

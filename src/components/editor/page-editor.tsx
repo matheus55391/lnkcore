@@ -73,7 +73,7 @@ export function PageEditor({ page }: Props) {
         <EditorRail section={section} onSectionChange={setSection} />
 
         <main className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-2xl px-6 py-8 lg:px-10 lg:py-10">
+          <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
             {section === "content" ? (
               <ContentPanel
                 page={page}

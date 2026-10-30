@@ -22,8 +22,10 @@ Troca de layout: Aparência → Layout, persistido por `updatePage`.
 | Tipo | Aparência | Onde |
 | ---- | --------- | ---- |
 | `CLASSIC` | Botão com miniatura à esquerda (imagem, ícone ou emoji) | Lista principal |
-| `FEATURED` | Card grande; com imagem, overlay 4:5 com título por cima | Lista principal |
+| `FEATURED` | Card com foto overlay. `featuredSize`: **Compacto** (4:3) ou **Alto** (4:5). Sem imagem, o card grande continua. | Lista principal |
 | `SOCIAL` | Só ícone da rede | Fileira de ícones (no Capa, sobre o hero) |
+
+No editor, o estilo do link tem 3 opções: **Normal**, **Compacto** e **Alto**. Compacto e Alto gravam `type: FEATURED` e só mudam `featuredSize`.
 
 Redes sociais não entram na lista de botões. Links inativos (`active: false`) não aparecem na pública.
 
@@ -49,6 +51,8 @@ O preview à direita é um iPhone (393×852, scaled) com `SlugPageView` em modo 
 - [ ] `/seu-slug` em **Capa** no **mobile**: foto 4:5, texto sobre o degradê (não “flutuando” na foto crua), links colados no hero
 - [ ] **Capa** no **desktop**: card arredondado com sombra, laterais com a capa borrada
 - [ ] Preview do editor igual à pública (mesmas cores e recorte)
-- [ ] Link **featured** com imagem: card overlay; sem imagem: card grande
+- [ ] Link **featured compacto** com imagem: overlay 4:3
+- [ ] Link **featured alto** com imagem: overlay 4:5
+- [ ] Editor: estilo Normal / Compacto / Alto persiste e o preview muda
 - [ ] Adicionar Instagram/TikTok: some da lista e aparece como ícone
 - [ ] Tema claro vs escuro: o fade do Capa acompanha o fundo do tema

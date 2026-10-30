@@ -4,5 +4,12 @@ export type { User } from "./user";
 export type { Session } from "./session";
 export type { Account } from "./account";
 export type { Verification } from "./verification";
+export { PageLayout } from "./page";
 export type { Page, PageLayout } from "./page";
-export type { Link, LinkType, ClassicLinkStyle } from "./link";
+export {
+  LinkType,
+  FeaturedSize,
+  ClassicLinkStyle,
+  isFeaturedLink,
+} from "./link";
+export type { Link, LinkType, FeaturedSize, ClassicLinkStyle } from "./link";

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { PageLayout } from "@/@types";
+import { PageLayout } from "@/@types";
 
 type Props = {
   title: string;
@@ -18,7 +18,7 @@ export function PublicPageHeader({
   layout,
   socials,
 }: Props) {
-  if (layout === "COVER") {
+  if (layout === PageLayout.COVER) {
     return (
       <header className="sp-hero">
         {image ? (

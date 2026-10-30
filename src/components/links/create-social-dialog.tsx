@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import { LinkType } from "@/@types/link";
 import { useCreateLinkMutation } from "@/queries/use-create-link-mutation";
 import {
   SELECTABLE_SOCIALS,
@@ -102,7 +103,7 @@ export function CreateSocialDialog({
       pageId,
       url,
       title: selected.label,
-      type: "SOCIAL",
+      type: LinkType.SOCIAL,
       image: null,
       emoji: null,
     });
