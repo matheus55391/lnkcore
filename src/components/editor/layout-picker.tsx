@@ -24,7 +24,7 @@ const OPTIONS: {
     hint: "Foto redonda e links em botão",
   },
   {
-    id: PageLayout.COVER;
+    id: PageLayout.COVER,
     label: "Capa",
     hint: "Foto em tela cheia, no estilo feed",
   },
