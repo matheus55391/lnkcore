@@ -10,7 +10,7 @@ export function DashboardHeader() {
   const { data: currentUser } = useCurrentUser();
 
   return (
-    <header className="border-b bg-background sticky top-0 z-10">
+    <header className="sticky top-0 z-10 border-b bg-card">
       <div className="container mx-auto flex h-16 items-center justify-between px-6">
         <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, letterSpacing: '-0.025em', fontSize: '20px' }}>
           <LogoTheme />

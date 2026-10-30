@@ -23,6 +23,10 @@ import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
 import { updateLinkSchema, type UpdateLinkInput } from "@/schemas/links";
 import type { Link } from "@/@types/link";
 import { LinkAdornmentField } from "./link-adornment-field";
+import {
+  LinkStylePicker,
+  resolveClassicStyle,
+} from "./link-style-picker";
 
 type Props = {
   link: Link;
@@ -60,12 +64,13 @@ export function EditLinkDialog({
       url: link.url,
       image: link.image,
       emoji: link.emoji,
-      type: "CLASSIC",
+      type: resolveClassicStyle(link.type),
     },
   });
 
   const emoji = watch("emoji") ?? null;
   const image = watch("image") ?? null;
+  const style = resolveClassicStyle(watch("type"));
 
   const mutation = useUpdateLinkMutation({
     pageId,
@@ -83,7 +88,7 @@ export function EditLinkDialog({
         url: link.url,
         image: link.image,
         emoji: link.emoji,
-        type: "CLASSIC",
+        type: resolveClassicStyle(link.type),
       });
     } else {
       reset({
@@ -92,7 +97,7 @@ export function EditLinkDialog({
         url: link.url,
         image: link.image,
         emoji: link.emoji,
-        type: "CLASSIC",
+        type: resolveClassicStyle(link.type),
       });
     }
   }
@@ -110,7 +115,7 @@ export function EditLinkDialog({
         <DialogHeader>
           <DialogTitle>Editar link</DialogTitle>
           <DialogDescription>
-            Atualize o título, a URL ou o ícone (emoji ou imagem).
+            Atualize o estilo, o título, a URL ou a imagem.
           </DialogDescription>
         </DialogHeader>
         <form
@@ -118,7 +123,7 @@ export function EditLinkDialog({
             setServerError(null);
             mutation.mutate({
               ...values,
-              type: "CLASSIC",
+              type: resolveClassicStyle(values.type),
               image: values.image ?? null,
               emoji: values.image ? null : (values.emoji ?? null),
             });
@@ -126,6 +131,14 @@ export function EditLinkDialog({
           className="space-y-4"
         >
           <input type="hidden" {...register("id")} />
+
+          <LinkStylePicker
+            value={style}
+            disabled={mutation.isPending}
+            onChange={(next) =>
+              setValue("type", next, { shouldDirty: true, shouldTouch: true })
+            }
+          />
 
           <FormField>
             <Label htmlFor="edit-title">Título</Label>
@@ -158,6 +171,7 @@ export function EditLinkDialog({
             emoji={emoji}
             image={image}
             entityId={link.id}
+            layout={style === "FEATURED" ? "cover" : "row"}
             disabled={mutation.isPending}
             onChange={({ emoji: nextEmoji, image: nextImage }) => {
               setValue("emoji", nextEmoji, {

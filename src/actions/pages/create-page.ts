@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { assertCanCreatePage, PlanLimitError } from "@/lib/plan";
 import { createPageSchema, type CreatePageInput } from "@/schemas/pages";
+import { publicPageUrl, sendDiscordLog } from "@/lib/discord-log";
 import type { ActionResult } from "@/@types/action-result";
 import type { Page } from "@/@types";
 
@@ -28,6 +29,31 @@ export async function createPage(
 
     const page = await prisma.page.create({
       data: { slug, title: slug, userId: session.user.id },
+    });
+
+    const pageUrl = publicPageUrl(page.slug);
+    await sendDiscordLog({
+      title: "Nova página criada",
+      description: "Um perfil novo entrou no ar.",
+      kind: "success",
+      url: pageUrl,
+      fields: [
+        {
+          name: "Página",
+          value: `[${pageUrl.replace(/^https:\/\//, "")}](${pageUrl})`,
+        },
+        {
+          name: "Usuário",
+          value: session.user.name || "—",
+          inline: true,
+        },
+        {
+          name: "Email",
+          value: session.user.email || "—",
+          inline: true,
+        },
+      ],
+      footer: `id ${session.user.id}`,
     });
 
     return { success: true, data: page };

@@ -89,7 +89,7 @@ export function SocialManagerItem({
   return (
     <li
       className={cn(
-        "flex items-center justify-between rounded-lg border bg-background px-4 py-3",
+        "flex items-center justify-between rounded-2xl border bg-card px-4 py-3.5 shadow-sm",
         !link.active && "opacity-60"
       )}
     >

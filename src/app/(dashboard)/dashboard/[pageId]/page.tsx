@@ -1,17 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftIcon, ExternalLinkIcon, Loader2Icon } from "lucide-react";
-import { use, useState } from "react";
+import { ArrowLeftIcon, Loader2Icon } from "lucide-react";
+import { use } from "react";
 
 import { Button } from "@/components/ui/button";
-import { LinksManager } from "@/components/links/links-manager";
-import { SocialsManager } from "@/components/links/socials-manager";
 import { usePage } from "@/queries/use-page-query";
-import { SlugPageView } from "@/components/page-slug-view";
-import { ImageUpload } from "@/components/image-upload";
-import { EditPageInfoDialog } from "@/components/pages/edit-page-info-dialog";
-import { ThemePickerDialog } from "@/components/pages/theme-picker-dialog";
+import { PageEditor } from "@/components/editor/page-editor";
 
 type Params = { pageId: string };
 
@@ -21,9 +16,6 @@ export default function PageDetailPage({
   params: Promise<Params>;
 }) {
   const { pageId } = use(params);
-
-  const [editPageDialogOpen, setEditPageDialogOpen] = useState(false);
-
   const { data: page, isLoading } = usePage(pageId);
 
   if (isLoading) {
@@ -48,77 +40,5 @@ export default function PageDetailPage({
     );
   }
 
-  return (
-    <div className="flex flex-col lg:flex-row min-h-0">
-      {/* Main content */}
-      <main className="flex-1 min-w-0 container mx-auto px-4 sm:px-6 py-8 space-y-8">
-        <div>
-          <Button asChild variant="ghost" size="sm" className="mb-4 -ml-3">
-            <Link href="/dashboard">
-              <ArrowLeftIcon className="h-4 w-4 mr-1" />
-              Voltar
-            </Link>
-          </Button>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            {/* Profile row */}
-            <div className="flex items-center gap-3 min-w-0">
-              <ImageUpload pageId={page.id} initialImage={page.image} />
-              <div className="min-w-0">
-                <EditPageInfoDialog
-                  page={page}
-                  isOpen={editPageDialogOpen}
-                  setOpen={setEditPageDialogOpen}
-                />
-                <button
-                  type="button"
-                  onClick={() => setEditPageDialogOpen(true)}
-                  aria-label="Editar título e bio"
-                  className="group flex cursor-pointer flex-col items-start min-w-0 rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  <span className="truncate font-semibold leading-tight underline-offset-2 group-hover:underline">
-                    {page.title}
-                  </span>
-
-                  <span className="text-muted-foreground truncate text-sm underline-offset-2 group-hover:underline">
-                    {page.bio ? (
-                      page.bio
-                    ) : (
-                      <span className="italic">Adicionar bio</span>
-                    )}
-                  </span>
-                </button>
-                <p className="text-muted-foreground text-xs truncate mt-0.5">
-                  makebio.com.br/{page.slug}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1 shrink-0">
-              <ThemePickerDialog page={page} />
-
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/${page.slug}`} target="_blank">
-                  <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
-                  Ver página
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <LinksManager pageId={page.id} />
-        <SocialsManager pageId={page.id} />
-      </main>
-
-      {/* Phone preview — only shown on lg+ */}
-      <aside className="hidden lg:flex lg:items-start lg:justify-center lg:px-8 lg:py-8 lg:sticky lg:top-8">
-        <div className="h-160 w-[320px] overflow-hidden rounded-[2.5rem] border border-border shadow-xl">
-          <div className="h-full overflow-y-auto overscroll-contain">
-            <SlugPageView page={page} preview />
-          </div>
-        </div>
-      </aside>
-    </div>
-  );
+  return <PageEditor page={page} />;
 }

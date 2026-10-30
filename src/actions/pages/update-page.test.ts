@@ -51,6 +51,7 @@ const existingPage: Page = {
   image: null,
   published: true,
   themeId: 1,
+  layout: "CLASSIC",
   createdAt: BASE_DATE,
   updatedAt: BASE_DATE,
   userId: "user-1",
@@ -118,7 +119,7 @@ describe("updatePage", () => {
     if (!result.success) expect(result.error).toMatch(/Página não encontrada/);
   });
 
-  it("accepts optional fields: bio, image, published, themeId", async () => {
+  it("accepts optional fields: bio, image, published, themeId, layout", async () => {
     const ownedImage = "https://cdn.example.com/user-1/pages/page-1/avatar.webp";
     process.env.S3_PUBLIC_URL = "https://cdn.example.com";
 
@@ -128,6 +129,7 @@ describe("updatePage", () => {
       image: ownedImage,
       published: false,
       themeId: 3,
+      layout: "COVER",
     });
     expect(result.success).toBe(true);
   });

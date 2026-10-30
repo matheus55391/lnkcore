@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeftIcon, Loader2Icon, PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,30 @@ import {
 import { useCreateLinkMutation } from "@/queries/use-create-link-mutation";
 import {
   SELECTABLE_SOCIALS,
+  getSelectableSocial,
   type SelectableSocial,
 } from "@/lib/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
 import { cn } from "@/lib/utils";
 
-type Props = { pageId: string };
+type Props = {
+  pageId: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  showTrigger?: boolean;
+  initialPlatformId?: SelectableSocial["id"] | null;
+};
 
-export function CreateSocialDialog({ pageId }: Props) {
-  const [open, setOpen] = useState(false);
+export function CreateSocialDialog({
+  pageId,
+  open: openProp,
+  onOpenChange,
+  showTrigger = true,
+  initialPlatformId = null,
+}: Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = openProp ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [serverError, setServerError] = useState<string | null>(null);
   const [selected, setSelected] = useState<SelectableSocial | null>(null);
   const [profile, setProfile] = useState("");
@@ -49,6 +64,14 @@ export function CreateSocialDialog({ pageId }: Props) {
     setSelected(null);
     setProfile("");
   }
+
+  useEffect(() => {
+    if (!open) return;
+    if (initialPlatformId) {
+      const platform = getSelectableSocial(initialPlatformId);
+      setSelected(platform ?? null);
+    }
+  }, [open, initialPlatformId]);
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -87,12 +110,14 @@ export function CreateSocialDialog({ pageId }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button size="sm">
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Nova rede
-        </Button>
-      </DialogTrigger>
+      {showTrigger ? (
+        <DialogTrigger asChild>
+          <Button size="sm">
+            <PlusIcon className="mr-2 h-4 w-4" />
+            Nova rede
+          </Button>
+        </DialogTrigger>
+      ) : null}
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>

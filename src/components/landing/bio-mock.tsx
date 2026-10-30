@@ -3,10 +3,16 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { THEMES, type Theme } from "@/lib/themes";
 
+type DemoLink =
+  | { style: "featured"; title: string }
+  | { style: "classic"; title: string };
+
 type DemoProfile = {
   name: string;
+  handle: string;
   bio: string;
-  links: string[];
+  links: DemoLink[];
+  socials: string[];
   theme: Theme;
   avatar: string;
 };
@@ -18,46 +24,76 @@ function themeByName(name: string): Theme {
 const PROFILES: DemoProfile[] = [
   {
     name: "ana.cria",
-    bio: "conteúdo, cursos e o que estou lançando",
-    links: ["Portfólio", "Curso novo", "Loja", "Contato"],
-    theme: themeByName("Mineral"),
+    handle: "anacria",
+    bio: "cursos, portfólio e o que estou lançando",
+    links: [
+      { style: "featured", title: "Curso novo" },
+      { style: "classic", title: "Portfólio" },
+      { style: "classic", title: "WhatsApp" },
+    ],
+    socials: ["#e1306c", "#000000", "#ff0000"],
+    theme: themeByName("Astrid"),
     avatar: "/lp-avatar.jpg",
   },
   {
     name: "studio.mx",
+    handle: "studiomx",
     bio: "design, branding e cases recentes",
-    links: ["Behance", "Cases", "Orçamento", "Sobre"],
-    theme: themeByName("Astrid"),
+    links: [
+      { style: "featured", title: "Cases 2026" },
+      { style: "classic", title: "Behance" },
+      { style: "classic", title: "Orçamento" },
+    ],
+    socials: ["#0a66c2", "#181717", "#e60023"],
+    theme: themeByName("Lake"),
     avatar: "/lp-avatar-2.jpg",
   },
   {
     name: "lua.fit",
+    handle: "luafit",
     bio: "treino, rotina e o que uso no dia a dia",
-    links: ["Plano", "YouTube", "App", "Parceiros"],
+    links: [
+      { style: "featured", title: "Plano da semana" },
+      { style: "classic", title: "YouTube" },
+      { style: "classic", title: "App" },
+    ],
+    socials: ["#ff0000", "#000000", "#25d366"],
     theme: themeByName("Neon"),
     avatar: "/lp-avatar-3.jpg",
   },
   {
     name: "cafe.norte",
+    handle: "cafenorte",
     bio: "cardápio, delivery e eventos da semana",
-    links: ["Cardápio", "Delivery", "Reservas", "Menu"],
-    theme: themeByName("Aura"),
+    links: [
+      { style: "featured", title: "Cardápio de outubro" },
+      { style: "classic", title: "Delivery" },
+      { style: "classic", title: "Reservas" },
+    ],
+    socials: ["#e1306c", "#25d366", "#1877f2"],
+    theme: themeByName("Encore"),
     avatar: "/lp-avatar-4.jpg",
   },
   {
     name: "dj.pulse",
+    handle: "djpulse",
     bio: "sets, agenda e links das noites",
-    links: ["Agenda", "Spotify", "Ingressos", "Booking"],
+    links: [
+      { style: "featured", title: "Próxima festa" },
+      { style: "classic", title: "Spotify" },
+      { style: "classic", title: "Booking" },
+    ],
+    socials: ["#1db954", "#9146ff", "#000000"],
     theme: themeByName("Bloom"),
     avatar: "/lp-avatar-5.jpg",
   },
 ];
 
-const INTERVAL_MS = 3200;
+const INTERVAL_MS = 3800;
 
 /**
  * Decorative iPhone mock with auto-rotating demo profiles
- * using real page themes from the product.
+ * using the cover layout from the product.
  */
 export function BioMock({ className = "" }: { className?: string }) {
   const [index, setIndex] = useState(0);
@@ -81,7 +117,7 @@ export function BioMock({ className = "" }: { className?: string }) {
 
   const profile = PROFILES[index];
   const { theme } = profile;
-  const statusStyle = { "--lp-status": theme.foreground } as CSSProperties;
+  const statusStyle = { "--lp-status": "#ffffff" } as CSSProperties;
 
   return (
     <div className={`lp-phone ${className}`} aria-hidden="true">
@@ -113,31 +149,61 @@ export function BioMock({ className = "" }: { className?: string }) {
           </div>
 
           <div
-            className={`lp-phone-content ${visible ? "lp-slide-in" : "lp-slide-out"}`}
+            className={`lp-phone-content lp-phone-content-cover ${visible ? "lp-slide-in" : "lp-slide-out"}`}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={profile.avatar}
-              alt=""
-              className="lp-mock-avatar"
-              width={88}
-              height={88}
-            />
-            <p className="lp-mock-name">{profile.name}</p>
-            <p className="lp-mock-bio">{profile.bio}</p>
-            <div className="lp-mock-links">
-              {profile.links.map((link) => (
-                <span
-                  key={link}
-                  style={{
-                    background: theme.cardBg,
-                    borderColor: theme.cardBorder,
-                    color: theme.foreground,
-                  }}
-                >
-                  {link}
-                </span>
-              ))}
+            <div className="lp-mock-hero">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={profile.avatar} alt="" />
+              <span
+                className="lp-mock-hero-fade"
+                style={{
+                  background: `linear-gradient(to top, ${theme.background} 0%, transparent 62%)`,
+                }}
+              />
+              <div className="lp-mock-hero-meta">
+                <p className="lp-mock-name">{profile.name}</p>
+                <p className="lp-mock-handle">@{profile.handle}</p>
+                <div className="lp-mock-socials">
+                  {profile.socials.map((color, socialIndex) => (
+                    <span
+                      key={`${profile.handle}-${socialIndex}`}
+                      style={{ background: color }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="lp-mock-body">
+              <p className="lp-mock-bio">{profile.bio}</p>
+              <div className="lp-mock-links">
+                {profile.links.map((link) =>
+                  link.style === "featured" ? (
+                    <span
+                      key={link.title}
+                      className="lp-mock-featured"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={profile.avatar} alt="" />
+                      <span className="lp-mock-featured-label">
+                        {link.title}
+                      </span>
+                    </span>
+                  ) : (
+                    <span
+                      key={link.title}
+                      className="lp-mock-classic"
+                      style={{
+                        background: theme.cardBg,
+                        borderColor: theme.cardBorder,
+                        color: theme.foreground,
+                      }}
+                    >
+                      {link.title}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
           </div>
 

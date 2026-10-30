@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/utils/session";
 import { QueryProvider } from "@/providers/query-provider";
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardShell } from "@/components/dashboard-shell";
 
 export default async function DashboardLayout({
   children,
@@ -13,10 +13,7 @@ export default async function DashboardLayout({
 
   return (
     <QueryProvider>
-      <div className="min-h-dvh bg-muted/30 flex flex-col">
-        <DashboardHeader />
-        {children}
-      </div>
+      <DashboardShell>{children}</DashboardShell>
     </QueryProvider>
   );
 }

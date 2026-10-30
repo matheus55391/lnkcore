@@ -88,10 +88,18 @@ export async function submitPageReport(
     process.env.SUPPORT_EMAIL ??
     "matheus.felipe55391@gmail.com";
 
-  const discordOk = await sendDiscordLog(
-    "🚨 Denúncia de página",
-    `Página: ${pageUrl}\nMotivo: ${reasonLabel}\nDenunciante: ${reporter}\nDetalhes: ${detailText}`
-  );
+  const discordOk = await sendDiscordLog({
+    title: "Denúncia de página",
+    description: "Alguém reportou um perfil público.",
+    kind: "error",
+    url: pageUrl,
+    fields: [
+      { name: "Página", value: pageUrl },
+      { name: "Motivo", value: reasonLabel, inline: true },
+      { name: "Denunciante", value: reporter, inline: true },
+      { name: "Detalhes", value: detailText },
+    ],
+  });
 
   let emailOk = false;
   const emailConfigured = Boolean(

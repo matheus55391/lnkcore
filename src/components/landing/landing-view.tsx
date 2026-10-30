@@ -27,7 +27,7 @@ const HOW_STEPS = [
     step: "02",
     title: "Monte sua página",
     description:
-      "Escolha um tema, adicione foto, bio e os links que importam — Instagram, loja, WhatsApp.",
+      "Escolha capa ou clássico, tema, bio e os links — botão simples ou card grande com foto.",
   },
   {
     step: "03",
@@ -40,15 +40,15 @@ const HOW_STEPS = [
 const FEATURES = [
   {
     icon: <Palette className="h-5 w-5" />,
-    title: "Temas prontos",
+    title: "Capa e links grandes",
     description:
-      "Doze estilos — claro, escuro, neon, editorial. Troque com um clique e sua página pública acompanha na hora.",
+      "Foto em tela cheia, ícones coloridos e cards com o título por cima — no estilo feed, sem código.",
   },
   {
     icon: <GripVertical className="h-5 w-5" />,
     title: "Editor direto",
     description:
-      "Arraste para reordenar, ative ou desative links, suba imagens. Sem código, sem planilha.",
+      "Preview ao vivo no celular. Reordene, esconda links e troque o layout na hora.",
   },
   {
     icon: <Layers className="h-5 w-5" />,
@@ -69,7 +69,7 @@ const FAQS = [
   },
   {
     q: "Posso personalizar a aparência?",
-    a: "Sim. Cada página tem tema próprio (cores de fundo, cartões e acentos). Você também define título, bio e foto de perfil.",
+    a: "Sim. Você escolhe o layout clássico ou capa em tela cheia, o tema, título, bio e links grandes com imagem.",
   },
   {
     q: "Como coloco na bio do Instagram?",

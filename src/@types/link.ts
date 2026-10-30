@@ -1,4 +1,6 @@
-export type LinkType = "CLASSIC" | "SOCIAL";
+export type LinkType = "CLASSIC" | "SOCIAL" | "FEATURED";
+
+export type ClassicLinkStyle = "CLASSIC" | "FEATURED";
 
 export type Link = {
   id: string;

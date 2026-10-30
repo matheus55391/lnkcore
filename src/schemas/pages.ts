@@ -35,6 +35,8 @@ export const createPageSchema = z.object({
 });
 export type CreatePageInput = z.infer<typeof createPageSchema>;
 
+export const pageLayoutSchema = z.enum(["CLASSIC", "COVER"]);
+
 export const updatePageSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1, "Título obrigatório").max(80),
@@ -42,6 +44,7 @@ export const updatePageSchema = z.object({
   image: z.string().url("URL inválida").nullable().optional(),
   published: z.boolean().optional(),
   themeId: z.number().int().min(1).optional(),
+  layout: pageLayoutSchema.optional(),
 });
 export type UpdatePageInput = z.infer<typeof updatePageSchema>;
 

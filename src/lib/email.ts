@@ -36,18 +36,40 @@ async function sendViaResend({ to, subject, text, html }: SendEmailParams) {
       const body = await response.text();
       const error = `Resend error ${response.status}: ${body}`;
       console.error("[email]", error);
-      await sendDiscordLog("❌ Email não enviado (Resend)", `Assunto: ${subject}\nErro: ${error}`);
+      await sendDiscordLog({
+        title: "Email não enviado (Resend)",
+        kind: "error",
+        fields: [
+          { name: "Assunto", value: subject },
+          { name: "Erro", value: error },
+        ],
+      });
       throw new Error(error);
     }
 
     const data = await response.json() as { id?: string };
     console.log("[email] Resend sent successfully:", data.id);
-    await sendDiscordLog("✅ Email enviado via Resend", `Assunto: ${subject}\nPara: ${to}\nID: ${data.id}`);
+    await sendDiscordLog({
+      title: "Email enviado (Resend)",
+      kind: "success",
+      fields: [
+        { name: "Assunto", value: subject },
+        { name: "Para", value: to, inline: true },
+        { name: "ID", value: data.id ?? "—", inline: true },
+      ],
+    });
     return response;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     console.error("[email] Resend send failed:", errorMsg);
-    await sendDiscordLog("❌ Falha ao enviar email (Resend)", `Assunto: ${subject}\nErro: ${errorMsg}`);
+    await sendDiscordLog({
+      title: "Falha ao enviar email (Resend)",
+      kind: "error",
+      fields: [
+        { name: "Assunto", value: subject },
+        { name: "Erro", value: errorMsg },
+      ],
+    });
     throw error;
   }
 }
@@ -78,7 +100,14 @@ export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
       if (!transporter) {
         const msg = `[email] SMTP_HOST não configurado — email não enviado: ${subject}`;
         console.warn(msg);
-        await sendDiscordLog("⚠️ Email não configurado (SMTP)", `Assunto: ${subject}\nMotivo: SMTP_HOST ausente`);
+        await sendDiscordLog({
+          title: "Email não configurado (SMTP)",
+          kind: "warn",
+          fields: [
+            { name: "Assunto", value: subject },
+            { name: "Motivo", value: "SMTP_HOST ausente" },
+          ],
+        });
         return;
       }
 
@@ -92,14 +121,28 @@ export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
         text,
         html: html ?? text,
       });
-      await sendDiscordLog("✅ Email enviado via SMTP", `Assunto: ${subject}\nPara: ${to}`);
+      await sendDiscordLog({
+        title: "Email enviado (SMTP)",
+        kind: "success",
+        fields: [
+          { name: "Assunto", value: subject },
+          { name: "Para", value: to },
+        ],
+      });
     }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     console.error("[email] Send failed:", errorMsg);
     // Error was already logged to Discord in sendViaResend if using Resend
     if (!process.env.RESEND_API_KEY) {
-      await sendDiscordLog("❌ Falha ao enviar email (SMTP)", `Assunto: ${subject}\nErro: ${errorMsg}`);
+      await sendDiscordLog({
+        title: "Falha ao enviar email (SMTP)",
+        kind: "error",
+        fields: [
+          { name: "Assunto", value: subject },
+          { name: "Erro", value: errorMsg },
+        ],
+      });
     }
     throw error;
   }
