@@ -1,11 +1,11 @@
 # Billing (Stripe)
 
-O lnkcore tem dois planos:
+O MakeBio tem dois planos. Limites em [`src/lib/plan-limits.ts`](../src/lib/plan-limits.ts). O painel anuncia PRO a **R$ 7/mês**; o valor cobrado é o Price ID do Stripe.
 
-| Plano | Preço | Páginas | Links por página |
-| ----- | ----- | :-----: | :--------------: |
-| FREE  | grátis (padrão ao cadastrar) | 1 | 10 |
-| PRO   | R$10 / mês | ilimitado | ilimitado |
+| Plano | Preço | Páginas | Links por página | Imagens |
+| ----- | ----- | :-----: | :--------------: | :-----: |
+| FREE  | grátis (padrão ao cadastrar) | 1 | 5 | 10 |
+| PRO   | R$ 7 / mês (UI) | 5 | 20 | 40 |
 
 ## Configuração
 
@@ -17,7 +17,7 @@ STRIPE_PRO_PRICE_ID=price_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-- `STRIPE_PRO_PRICE_ID` → crie um produto no dashboard do Stripe com preço recorrente mensal (R$10 BRL) e copie o **Price ID**.
+- `STRIPE_PRO_PRICE_ID` → produto no Stripe com preço recorrente mensal (o anúncio no app é R$ 7 BRL) e copie o **Price ID**.
 - `STRIPE_WEBHOOK_SECRET` → gerado ao cadastrar o endpoint `/api/stripe/webhook` (ou via `stripe listen --forward-to localhost:3000/api/stripe/webhook` em dev).
 
 ## Fluxo de upgrade
@@ -63,8 +63,8 @@ Arquivo: [src/lib/plan.ts](../src/lib/plan.ts) (marcado com `server-only`).
 
 ```ts
 export const PLAN_LIMITS = {
-  FREE: { maxPages: 1, maxLinksPerPage: 10 },
-  PRO:  { maxPages: Infinity, maxLinksPerPage: Infinity },
+  FREE: { maxPages: 1, maxLinksPerPage: 5, maxStoredImages: 10 },
+  PRO:  { maxPages: 5, maxLinksPerPage: 20, maxStoredImages: 40 },
 };
 
 export async function assertCanCreatePage(userId: string): Promise<void>
