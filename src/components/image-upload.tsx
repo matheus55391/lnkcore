@@ -2,6 +2,7 @@
 
 import { Camera, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { uploadPageImage } from "@/actions/pages/upload-page-image";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -27,6 +28,7 @@ export function ImageUpload({
 
     async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0];
+        event.target.value = "";
         if (!file) return;
 
         const localUrl = URL.createObjectURL(file);
@@ -46,7 +48,7 @@ export function ImageUpload({
 
             if (!res.ok) {
                 const { error } = await res.json();
-                throw new Error(error ?? "Upload failed.");
+                throw new Error(error ?? "Falha no upload.");
             }
 
             const { url } = await res.json();
@@ -58,6 +60,9 @@ export function ImageUpload({
         } catch (err) {
             console.error(err);
             setLocalPreview(null);
+            toast.error(
+                err instanceof Error ? err.message : "Não foi possível alterar a foto."
+            );
         } finally {
             setUploading(false);
             URL.revokeObjectURL(localUrl);

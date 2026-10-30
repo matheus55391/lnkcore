@@ -15,7 +15,7 @@ type Props = {
   emoji: string | null;
   image: string | null;
   onChange: (next: { emoji: string | null; image: string | null }) => void;
-  /** Used as storage entityId: `{userId}/links/{entityId}/avatar.webp` */
+  /** Used as storage entityId: `{userId}/links/{entityId}/{uuid}.webp` */
   entityId: string;
   disabled?: boolean;
   /** Cover layout for featured (grande) links. */
