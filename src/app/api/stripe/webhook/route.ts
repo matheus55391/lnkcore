@@ -12,6 +12,18 @@ type UserLookup = {
   subscriptionId?: string | null;
 };
 
+async function userLogFields(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, email: true },
+  });
+  return [
+    { name: "Nome", value: user?.name || "—", inline: true },
+    { name: "Email", value: user?.email || "—", inline: true },
+    { name: "User ID", value: `\`${userId}\``, inline: false },
+  ];
+}
+
 async function findUserId({
   userId,
   customerId,
@@ -162,10 +174,12 @@ export async function POST(req: NextRequest) {
           userId: updated.id,
           plan: updated.plan,
         });
-        await sendDiscordLog(
-          "Pagamento confirmado",
-          `Usuário ${updated.id} agora é PRO.`
-        );
+        await sendDiscordLog({
+          title: "Pagamento confirmado",
+          description: "A conta passou para o plano PRO.",
+          kind: "success",
+          fields: await userLogFields(updated.id),
+        });
         break;
       }
 
@@ -256,13 +270,25 @@ export async function POST(req: NextRequest) {
           }),
         ]);
 
-        await sendDiscordLog(
-          event.type === "customer.subscription.created"
-            ? "Assinatura criada"
-            : "Assinatura atualizada",
-          `Usuário \`${userId}\` — status: **${sub.status}**${sub.cancel_at_period_end ? " (cancela ao fim do período)" : ""}${grantPro ? "" : " — plano FREE"}`,
-          grantPro ? "log" : "error"
-        );
+        await sendDiscordLog({
+          title:
+            event.type === "customer.subscription.created"
+              ? "Assinatura criada"
+              : "Assinatura atualizada",
+          description: grantPro
+            ? "Assinatura ativa no plano PRO."
+            : "Assinatura sem PRO — conta permanece FREE.",
+          kind: grantPro ? "success" : "warn",
+          fields: [
+            ...(await userLogFields(userId)),
+            { name: "Status", value: sub.status, inline: true },
+            {
+              name: "Cancela no fim",
+              value: sub.cancel_at_period_end ? "sim" : "não",
+              inline: true,
+            },
+          ],
+        });
         break;
       }
 
@@ -296,13 +322,15 @@ export async function POST(req: NextRequest) {
           }),
         ]);
 
-        await sendDiscordLog(
-          event.type === "customer.subscription.paused"
-            ? "Assinatura pausada"
-            : "Assinatura cancelada",
-          `Usuário \`${userId}\` voltou para FREE.`,
-          "error"
-        );
+        await sendDiscordLog({
+          title:
+            event.type === "customer.subscription.paused"
+              ? "Assinatura pausada"
+              : "Assinatura cancelada",
+          description: "A conta voltou para o plano FREE.",
+          kind: "error",
+          fields: await userLogFields(userId),
+        });
         break;
       }
 
@@ -381,11 +409,17 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        await sendDiscordLog(
-          "Pagamento recebido",
-          `Usuário \`${userId}\` — **${formattedAmount}** (fatura \`${invoice.id}\`)`,
-          "log"
-        );
+        await sendDiscordLog({
+          title: "Pagamento recebido",
+          description: `Fatura paga no valor de **${formattedAmount}**.`,
+          kind: "success",
+          url: invoice.hosted_invoice_url ?? undefined,
+          fields: [
+            ...(await userLogFields(userId)),
+            { name: "Valor", value: formattedAmount, inline: true },
+            { name: "Fatura", value: `\`${invoice.id}\``, inline: true },
+          ],
+        });
         break;
       }
 

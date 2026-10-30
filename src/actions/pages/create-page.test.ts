@@ -15,6 +15,11 @@ vi.mock("@/utils/session", () => ({
   requireSession: vi.fn(),
 }));
 
+vi.mock("@/lib/discord-log", () => ({
+  publicPageUrl: (slug: string) => `https://www.makebio.com.br/${slug}`,
+  sendDiscordLog: vi.fn().mockResolvedValue(true),
+}));
+
 vi.mock("@/lib/plan", () => {
   class PlanLimitError extends Error {
     constructor(message: string) {
@@ -31,6 +36,7 @@ vi.mock("@/lib/plan", () => {
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { assertCanCreatePage, PlanLimitError } from "@/lib/plan";
+import { sendDiscordLog } from "@/lib/discord-log";
 import { createPage } from "@/actions/pages/create-page";
 
 const BASE_DATE = new Date("2025-01-01");
@@ -84,6 +90,23 @@ describe("createPage", () => {
     const result = await createPage({ slug: "meu-perfil" });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.slug).toBe("meu-perfil");
+  });
+
+  it("logs the public page URL to Discord", async () => {
+    await createPage({ slug: "meu-perfil" });
+    expect(sendDiscordLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: "Nova página criada",
+        url: "https://www.makebio.com.br/meu-perfil",
+        fields: expect.arrayContaining([
+          expect.objectContaining({
+            name: "Página",
+            value: expect.stringContaining("makebio.com.br/meu-perfil"),
+          }),
+          expect.objectContaining({ name: "Email", value: "test@test.com" }),
+        ]),
+      })
+    );
   });
 
   it("sets title equal to slug on creation", async () => {

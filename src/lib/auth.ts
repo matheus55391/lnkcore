@@ -34,11 +34,17 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        after: async () => {
-          await sendDiscordLog(
-            "Nova conta criada",
-            `Horário: ${new Date().toLocaleString("pt-BR")}`
-          );
+        after: async (user) => {
+          await sendDiscordLog({
+            title: "Nova conta criada",
+            description: "Alguém acabou de entrar no MakeBio.",
+            kind: "success",
+            fields: [
+              { name: "Nome", value: user.name || "—", inline: true },
+              { name: "Email", value: user.email || "—", inline: true },
+            ],
+            footer: `id ${user.id}`,
+          });
         },
       },
     },
