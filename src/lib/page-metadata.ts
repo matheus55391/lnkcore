@@ -10,6 +10,14 @@ export type PublicPageMetaInput = {
   published: boolean;
 };
 
+export function buildPublicPageDescription(
+  page: Pick<PublicPageMetaInput, "slug" | "title" | "bio">
+): string {
+  const bio = page.bio?.trim();
+  if (bio) return `${page.title} (@${page.slug}) — ${bio}`;
+  return `${page.title} (@${page.slug}) no MakeBio`;
+}
+
 export function buildPublicPageMetadata(
   page: PublicPageMetaInput | null
 ): Metadata {
@@ -20,13 +28,20 @@ export function buildPublicPageMetadata(
     };
   }
 
-  const description =
-    page.bio?.trim() || `${page.title} (@${page.slug}) no MakeBio`;
+  const description = buildPublicPageDescription(page);
   const url = `${SITE_URL}/${page.slug}`;
-  const images = page.image
-    ? [{ url: page.image, alt: page.title }]
+  const imageUrl = page.image?.trim() || null;
+  const images = imageUrl
+    ? [
+        {
+          url: imageUrl,
+          alt: page.title,
+        },
+      ]
     : [];
 
+  // openGraph/twitter replace the root layout objects entirely (shallow merge),
+  // so every field Discord needs must be set here — including images.
   return {
     title: { absolute: page.title },
     description,
@@ -41,10 +56,10 @@ export function buildPublicPageMetadata(
       images,
     },
     twitter: {
-      card: page.image ? "summary_large_image" : "summary",
+      card: imageUrl ? "summary_large_image" : "summary",
       title: page.title,
       description,
-      images: page.image ? [page.image] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
   };
 }
