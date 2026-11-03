@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { Plan } from "@/@types";
 import type { User } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
@@ -21,7 +22,7 @@ import {
   assertCanCreatePage,
   assertCanCreateLink,
   PlanLimitError,
-} from "@/lib/plan";
+} from "@/lib/billing/plan";
 
 const BASE_DATE = new Date("2025-01-01");
 
@@ -33,14 +34,14 @@ const mockFreeUser: User = {
   image: null,
   createdAt: BASE_DATE,
   updatedAt: BASE_DATE,
-  plan: "FREE",
+  plan: Plan.FREE,
   stripeCustomerId: null,
   stripeSubscriptionId: null,
 };
 
 const mockProUser: User = {
   ...mockFreeUser,
-  plan: "PRO",
+  plan: Plan.PRO,
 };
 
 beforeEach(() => {
@@ -49,15 +50,15 @@ beforeEach(() => {
 
 describe("PLAN_LIMITS", () => {
   it("FREE plan has maxPages=1, maxLinksPerPage=5 and maxStoredImages=10", () => {
-    expect(PLAN_LIMITS.FREE.maxPages).toBe(1);
-    expect(PLAN_LIMITS.FREE.maxLinksPerPage).toBe(5);
-    expect(PLAN_LIMITS.FREE.maxStoredImages).toBe(10);
+    expect(PLAN_LIMITS[Plan.FREE].maxPages).toBe(1);
+    expect(PLAN_LIMITS[Plan.FREE].maxLinksPerPage).toBe(5);
+    expect(PLAN_LIMITS[Plan.FREE].maxStoredImages).toBe(10);
   });
 
   it("PRO plan has maxPages=5, maxLinksPerPage=20 and maxStoredImages=40", () => {
-    expect(PLAN_LIMITS.PRO.maxPages).toBe(5);
-    expect(PLAN_LIMITS.PRO.maxLinksPerPage).toBe(20);
-    expect(PLAN_LIMITS.PRO.maxStoredImages).toBe(40);
+    expect(PLAN_LIMITS[Plan.PRO].maxPages).toBe(5);
+    expect(PLAN_LIMITS[Plan.PRO].maxLinksPerPage).toBe(20);
+    expect(PLAN_LIMITS[Plan.PRO].maxStoredImages).toBe(40);
   });
 });
 

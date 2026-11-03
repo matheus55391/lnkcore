@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import { PLAN_LIMITS } from "@/lib/plan-limits";
+import { PLAN_LIMITS } from "@/lib/billing/plan-limits";
 
 export { PLAN_LIMITS };
 

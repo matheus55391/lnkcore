@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Session } from "@/lib/auth";
+import type { Session } from "@/lib/auth/auth";
 import type { Page, Link } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
@@ -17,7 +17,7 @@ vi.mock("@/utils/session", () => ({
   requireSession: vi.fn(),
 }));
 
-vi.mock("@/lib/plan", () => {
+vi.mock("@/lib/billing/plan", () => {
   class PlanLimitError extends Error {
     constructor(message: string) {
       super(message);
@@ -36,7 +36,7 @@ vi.mock("@/lib/plan", () => {
 
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
-import { assertCanCreateLink, PlanLimitError } from "@/lib/plan";
+import { assertCanCreateLink, PlanLimitError } from "@/lib/billing/plan";
 import { createLink } from "@/actions/links/create-link";
 
 const BASE_DATE = new Date("2025-01-01");

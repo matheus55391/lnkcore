@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import type { ActionResult } from "@/@types/action-result";
+import { Plan } from "@/@types";
 
 export type BillingPayment = {
   id: string;
@@ -30,7 +31,7 @@ export type BillingSubscription = {
 };
 
 export type BillingInfo = {
-  plan: "FREE" | "PRO";
+  plan: Plan;
   subscription: BillingSubscription | null;
   payments: BillingPayment[];
 };
@@ -77,7 +78,7 @@ export async function getBillingInfo(): Promise<ActionResult<BillingInfo>> {
   return {
     success: true,
     data: {
-      plan: user.plan as "FREE" | "PRO",
+      plan: user.plan === Plan.PRO ? Plan.PRO : Plan.FREE,
       subscription: user.subscription,
       payments: user.payments,
     },

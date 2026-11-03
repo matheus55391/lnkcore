@@ -2,7 +2,14 @@ const SITE_ORIGIN =
   process.env.BETTER_AUTH_URL?.replace(/\/$/, "") ??
   "https://www.makebio.com.br";
 
-export type DiscordKind = "info" | "success" | "warn" | "error";
+export const DiscordKind = {
+  INFO: "info",
+  SUCCESS: "success",
+  WARN: "warn",
+  ERROR: "error",
+} as const;
+
+export type DiscordKind = (typeof DiscordKind)[keyof typeof DiscordKind];
 
 export type DiscordField = {
   name: string;
@@ -20,10 +27,10 @@ export type DiscordLogPayload = {
 };
 
 const KIND_COLOR: Record<DiscordKind, number> = {
-  info: 0x5865f2,
-  success: 0x57f287,
-  warn: 0xfee75c,
-  error: 0xed4245,
+  [DiscordKind.INFO]: 0x5865f2,
+  [DiscordKind.SUCCESS]: 0x57f287,
+  [DiscordKind.WARN]: 0xfee75c,
+  [DiscordKind.ERROR]: 0xed4245,
 };
 
 function clip(value: string, max: number): string {
@@ -37,7 +44,7 @@ export function publicPageUrl(slug: string): string {
 }
 
 export function buildDiscordEmbed(payload: DiscordLogPayload) {
-  const kind = payload.kind ?? "info";
+  const kind = payload.kind ?? DiscordKind.INFO;
   const fields = (payload.fields ?? [])
     .filter((field) => field.name && field.value)
     .slice(0, 25)
@@ -101,6 +108,6 @@ export async function sendDiscordError(
     title,
     description,
     fields,
-    kind: "error",
+    kind: DiscordKind.ERROR,
   });
 }

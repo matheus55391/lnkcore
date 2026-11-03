@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
-import { THEMES, type Theme } from "@/lib/themes";
+import { THEMES, type Theme } from "@/lib/themes/themes";
 
 type DemoLink =
   | { style: "featured"; title: string }

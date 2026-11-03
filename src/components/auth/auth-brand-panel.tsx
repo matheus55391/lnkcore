@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Link2, Palette, Share2 } from "lucide-react";
-import { LogoTheme } from "@/components/logo-theme";
+import { LogoTheme } from "@/components/brand/logo-theme";
 
 const HIGHLIGHTS = [
   {

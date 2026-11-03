@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2Icon } from "lucide-react";
+import { Plan } from "@/@types";
 import { useCurrentUser } from "@/queries/use-current-user-query";
 import { useCreateCheckoutSessionMutation } from "@/queries/use-create-checkout-session-mutation";
 
@@ -17,7 +18,7 @@ export function UpgradeButton() {
     return <div className="h-6 w-12 rounded-full bg-muted" aria-hidden="true" />;
   }
 
-  if (currentUser?.plan === "PRO") {
+  if (currentUser?.plan === Plan.PRO) {
     return (
       <span className="rounded-full bg-muted px-2 py-1 text-xs font-medium text-foreground/80">
         PRO

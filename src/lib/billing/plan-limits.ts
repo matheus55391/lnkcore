@@ -1,8 +1,8 @@
-import type { Plan } from "@/@types";
+import { Plan } from "@/@types";
 
 export const PLAN_LIMITS = {
-  FREE: { maxPages: 1, maxLinksPerPage: 5, maxStoredImages: 10 },
-  PRO: {
+  [Plan.FREE]: { maxPages: 1, maxLinksPerPage: 5, maxStoredImages: 10 },
+  [Plan.PRO]: {
     maxPages: 5,
     maxLinksPerPage: 20,
     maxStoredImages: 40,

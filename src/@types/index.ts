@@ -1,5 +1,4 @@
 export { Plan } from "./plan";
-export type { Plan as PlanType } from "./plan";
 export type { User } from "./user";
 export type { Session } from "./session";
 export type { Account } from "./account";
@@ -14,3 +13,6 @@ export {
   sortLinksByPosition,
 } from "./link";
 export type { Link } from "./link";
+export { SubscriptionStatus, PaymentStatus } from "./billing";
+export { ReportReason, REPORT_REASON_LABELS } from "./report";
+export { AdornmentMode } from "./adornment";

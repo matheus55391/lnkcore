@@ -2,8 +2,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { prisma } from "@/lib/prisma";
-import { buildPasswordResetEmail, sendEmail } from "./email";
-import { sendDiscordLog } from "./discord-log";
+import { buildPasswordResetEmail, sendEmail } from "@/lib/email/email";
+import { DiscordKind, sendDiscordLog } from "@/lib/logging/discord-log";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -38,7 +38,7 @@ export const auth = betterAuth({
           await sendDiscordLog({
             title: "Nova conta criada",
             description: "Alguém acabou de entrar no MakeBio.",
-            kind: "success",
+            kind: DiscordKind.SUCCESS,
             fields: [
               { name: "Nome", value: user.name || "—", inline: true },
               { name: "Email", value: user.email || "—", inline: true },

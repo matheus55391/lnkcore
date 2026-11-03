@@ -1,3 +1,15 @@
-export type EditorSection = "content" | "profile" | "appearance";
+export const EditorSection = {
+  CONTENT: "content",
+  PROFILE: "profile",
+  APPEARANCE: "appearance",
+} as const;
 
-export type ContentTab = "links" | "socials";
+export type EditorSection =
+  (typeof EditorSection)[keyof typeof EditorSection];
+
+export const ContentTab = {
+  LINKS: "links",
+  SOCIALS: "socials",
+} as const;
+
+export type ContentTab = (typeof ContentTab)[keyof typeof ContentTab];

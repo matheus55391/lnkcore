@@ -4,7 +4,7 @@ O lnkcore usa [Better Auth](https://www.better-auth.com) com o adaptador Prisma 
 
 ## Configuração do servidor
 
-Arquivo: `src/lib/auth.ts`
+Arquivo: `src/lib/auth/auth.ts`
 
 ```ts
 export const auth = betterAuth({
@@ -16,7 +16,7 @@ export const auth = betterAuth({
     autoSignIn: true,     // loga automaticamente após sign-up
     minPasswordLength: 8,
     sendResetPassword: async ({ user, url }) => {
-      // envia email via SMTP (Mailpit em dev) — ver src/lib/email.ts
+      // envia email via SMTP (Mailpit em dev) — ver src/lib/email/email.ts
     },
   },
   session: {
@@ -30,7 +30,7 @@ export const auth = betterAuth({
 
 ## Client (browser)
 
-Arquivo: `src/lib/auth-client.ts`
+Arquivo: `src/lib/auth/auth-client.ts`
 
 Exporta hooks e funções para uso em Client Components:
 
@@ -93,7 +93,7 @@ A validação real da sessão fica centralizada em [src/utils/session.ts](../src
 import "server-only";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth, type Session } from "@/lib/auth";
+import { auth, type Session } from "@/lib/auth/auth";
 
 export async function getSession(): Promise<Session | null> {
   return auth.api.getSession({ headers: await headers() });
@@ -158,4 +158,4 @@ Em produção você também pode usar [Resend](https://resend.com) em vez de SMT
 
 ## Configuração futura: provedores sociais
 
-O objeto `socialProviders: {}` em `src/lib/auth.ts` está pronto para receber integrações com GitHub, Google, etc. Basta adicionar as chaves correspondentes e as variáveis de ambiente (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, etc.).
+O objeto `socialProviders: {}` em `src/lib/auth/auth.ts` está pronto para receber integrações com GitHub, Google, etc. Basta adicionar as chaves correspondentes e as variáveis de ambiente (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, etc.).

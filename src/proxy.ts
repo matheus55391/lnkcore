@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
-import { isRateLimited } from "@/lib/rate-limit";
+import { isRateLimited } from "@/lib/security/rate-limit";
 
 export function proxy(request: NextRequest) {
   const ip =

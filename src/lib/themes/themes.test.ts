@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { THEMES, DEFAULT_THEME, getTheme } from "@/lib/themes";
+import { THEMES, DEFAULT_THEME, getTheme } from "@/lib/themes/themes";
 
 describe("THEMES", () => {
   it("has 12 themes", () => {

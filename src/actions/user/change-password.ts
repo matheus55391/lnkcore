@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { requireSession } from "@/utils/session";
 import type { ActionResult } from "@/@types/action-result";
 

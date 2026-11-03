@@ -1,7 +1,7 @@
 import "server-only";
 
 import * as nodemailer from "nodemailer";
-import { sendDiscordLog } from "./discord-log";
+import { DiscordKind, sendDiscordLog } from "@/lib/logging/discord-log";
 
 type SendEmailParams = {
   to: string;
@@ -38,7 +38,7 @@ async function sendViaResend({ to, subject, text, html }: SendEmailParams) {
       console.error("[email]", error);
       await sendDiscordLog({
         title: "Email não enviado (Resend)",
-        kind: "error",
+        kind: DiscordKind.ERROR,
         fields: [
           { name: "Assunto", value: subject },
           { name: "Erro", value: error },
@@ -51,7 +51,7 @@ async function sendViaResend({ to, subject, text, html }: SendEmailParams) {
     console.log("[email] Resend sent successfully:", data.id);
     await sendDiscordLog({
       title: "Email enviado (Resend)",
-      kind: "success",
+      kind: DiscordKind.SUCCESS,
       fields: [
         { name: "Assunto", value: subject },
         { name: "Para", value: to, inline: true },
@@ -64,7 +64,7 @@ async function sendViaResend({ to, subject, text, html }: SendEmailParams) {
     console.error("[email] Resend send failed:", errorMsg);
     await sendDiscordLog({
       title: "Falha ao enviar email (Resend)",
-      kind: "error",
+      kind: DiscordKind.ERROR,
       fields: [
         { name: "Assunto", value: subject },
         { name: "Erro", value: errorMsg },
@@ -102,7 +102,7 @@ export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
         console.warn(msg);
         await sendDiscordLog({
           title: "Email não configurado (SMTP)",
-          kind: "warn",
+          kind: DiscordKind.WARN,
           fields: [
             { name: "Assunto", value: subject },
             { name: "Motivo", value: "SMTP_HOST ausente" },
@@ -123,7 +123,7 @@ export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
       });
       await sendDiscordLog({
         title: "Email enviado (SMTP)",
-        kind: "success",
+        kind: DiscordKind.SUCCESS,
         fields: [
           { name: "Assunto", value: subject },
           { name: "Para", value: to },
@@ -137,7 +137,7 @@ export async function sendEmail({ to, subject, text, html }: SendEmailParams) {
     if (!process.env.RESEND_API_KEY) {
       await sendDiscordLog({
         title: "Falha ao enviar email (SMTP)",
-        kind: "error",
+        kind: DiscordKind.ERROR,
         fields: [
           { name: "Assunto", value: subject },
           { name: "Erro", value: errorMsg },

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Session } from "@/lib/auth";
+import type { Session } from "@/lib/auth/auth";
 import type { Page, Link } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({

@@ -7,7 +7,7 @@ import {
   deleteOwnedStoredImage,
   normalizeOwnedImageUrl,
   OwnedImageError,
-} from "@/lib/storage-cleanup";
+} from "@/lib/storage/storage-cleanup";
 import type { ActionResult } from "@/@types/action-result";
 import type { Link } from "@/@types";
 

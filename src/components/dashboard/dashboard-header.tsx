@@ -2,9 +2,9 @@
 
 import { useCurrentUser } from "@/queries/use-current-user-query";
 import { UpgradeButton } from "@/components/billing/upgrade-button";
-import { ProfileAvatar } from "@/components/profile-avatar";
+import { ProfileAvatar } from "@/components/dashboard/profile-avatar";
 import Link from "next/link";
-import { LogoTheme } from "./logo-theme";
+import { LogoTheme } from "@/components/brand/logo-theme";
 
 export function DashboardHeader() {
   const { data: currentUser } = useCurrentUser();

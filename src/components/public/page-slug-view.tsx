@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { getTheme } from "@/lib/themes";
+import { getTheme } from "@/lib/themes/themes";
 import {
   LinkType,
   PageLayout,

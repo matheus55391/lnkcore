@@ -1,6 +1,6 @@
 # Billing (Stripe)
 
-O MakeBio tem dois planos. Limites em [`src/lib/plan-limits.ts`](../src/lib/plan-limits.ts). O painel anuncia PRO a **R$ 7/mês**; o valor cobrado é o Price ID do Stripe.
+O MakeBio tem dois planos. Limites em [`src/lib/billing/plan-limits.ts`](../src/lib/billing/plan-limits.ts). O painel anuncia PRO a **R$ 7/mês**; o valor cobrado é o Price ID do Stripe.
 
 | Plano | Preço | Páginas | Links por página | Imagens |
 | ----- | ----- | :-----: | :--------------: | :-----: |
@@ -59,7 +59,7 @@ A assinatura é verificada com `stripe.webhooks.constructEvent(payload, signatur
 
 ## Validação de plano
 
-Arquivo: [src/lib/plan.ts](../src/lib/plan.ts) (marcado com `server-only`).
+Arquivo: [src/lib/billing/plan.ts](../src/lib/billing/plan.ts) (marcado com `server-only`).
 
 ```ts
 export const PLAN_LIMITS = {

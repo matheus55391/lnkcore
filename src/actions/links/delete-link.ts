@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import { deleteLinkSchema, type DeleteLinkInput } from "@/schemas/links";
-import { deleteOwnedStoredImage } from "@/lib/storage-cleanup";
+import { deleteOwnedStoredImage } from "@/lib/storage/storage-cleanup";
 import type { ActionResult } from "@/@types/action-result";
 
 export async function deleteLink(

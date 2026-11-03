@@ -1,6 +1,6 @@
 import { LinkIcon } from "lucide-react";
 import type { Link } from "@/@types/link";
-import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/link-adornments";
+import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/links/link-adornments";
 
 type Props = { link: Link };
 

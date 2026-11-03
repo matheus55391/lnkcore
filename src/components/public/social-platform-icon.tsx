@@ -1,4 +1,4 @@
-import type { SocialPlatformId } from "@/lib/social-platforms";
+import type { SocialPlatformId } from "@/lib/links/social-platforms";
 import {
   GenericLinkIcon,
   SOCIAL_PLATFORM_ICONS,

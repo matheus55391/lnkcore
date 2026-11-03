@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LogoTheme } from "@/components/logo-theme";
+import { LogoTheme } from "@/components/brand/logo-theme";
 
 export const metadata: Metadata = {
   title: "Termos de Uso",

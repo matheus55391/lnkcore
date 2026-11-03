@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Session } from "@/lib/auth";
+import { Plan } from "@/@types";
+import type { Session } from "@/lib/auth/auth";
 import type { User } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
@@ -50,7 +51,7 @@ const mockDbUser: User = {
   image: null,
   createdAt: BASE_DATE,
   updatedAt: BASE_DATE,
-  plan: "FREE",
+  plan: Plan.FREE,
   stripeCustomerId: null,
   stripeSubscriptionId: null,
 };
@@ -68,7 +69,7 @@ describe("getCurrentUser", () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.id).toBe("user-1");
-      expect(result.data.plan).toBe("FREE");
+      expect(result.data.plan).toBe(Plan.FREE);
     }
   });
 

@@ -1,12 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { buildDiscordEmbed, publicPageUrl } from "@/lib/discord-log";
+import {
+  buildDiscordEmbed,
+  DiscordKind,
+  publicPageUrl,
+} from "@/lib/logging/discord-log";
 
 describe("buildDiscordEmbed", () => {
   it("builds a titled embed with color, footer and timestamp", () => {
     const embed = buildDiscordEmbed({
       title: "Nova página criada",
       description: "Alguém publicou um perfil.",
-      kind: "success",
+      kind: DiscordKind.SUCCESS,
       url: "https://www.makebio.com.br/ana",
       fields: [
         { name: "Página", value: "[abrir](https://www.makebio.com.br/ana)" },

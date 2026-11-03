@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Session } from "@/lib/auth";
+import type { Session } from "@/lib/auth/auth";
 import type { Page } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
@@ -15,12 +15,18 @@ vi.mock("@/utils/session", () => ({
   requireSession: vi.fn(),
 }));
 
-vi.mock("@/lib/discord-log", () => ({
+vi.mock("@/lib/logging/discord-log", () => ({
+  DiscordKind: {
+    INFO: "info",
+    SUCCESS: "success",
+    WARN: "warn",
+    ERROR: "error",
+  },
   publicPageUrl: (slug: string) => `https://www.makebio.com.br/${slug}`,
   sendDiscordLog: vi.fn().mockResolvedValue(true),
 }));
 
-vi.mock("@/lib/plan", () => {
+vi.mock("@/lib/billing/plan", () => {
   class PlanLimitError extends Error {
     constructor(message: string) {
       super(message);
@@ -35,8 +41,8 @@ vi.mock("@/lib/plan", () => {
 
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
-import { assertCanCreatePage, PlanLimitError } from "@/lib/plan";
-import { sendDiscordLog } from "@/lib/discord-log";
+import { assertCanCreatePage, PlanLimitError } from "@/lib/billing/plan";
+import { sendDiscordLog } from "@/lib/logging/discord-log";
 import { createPage } from "@/actions/pages/create-page";
 
 const BASE_DATE = new Date("2025-01-01");

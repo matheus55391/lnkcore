@@ -1,6 +1,6 @@
 "use client";
 
-import { SlugPageView } from "@/components/page-slug-view";
+import { SlugPageView } from "@/components/public/page-slug-view";
 import { cn } from "@/lib/utils";
 import type { Page } from "@/@types";
 

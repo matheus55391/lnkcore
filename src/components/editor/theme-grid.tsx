@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { updatePage } from "@/actions/pages/update-page";
 import { pageQueryKey } from "@/queries/use-page-query";
-import { THEMES } from "@/lib/themes";
+import { THEMES } from "@/lib/themes/themes";
 import { cn } from "@/lib/utils";
 import type { Page } from "@/@types";
 

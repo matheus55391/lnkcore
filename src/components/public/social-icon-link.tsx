@@ -1,7 +1,7 @@
 import {
   detectSocialPlatform,
   SOCIAL_BRAND,
-} from "@/lib/social-platforms";
+} from "@/lib/links/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
 
 type Props = {

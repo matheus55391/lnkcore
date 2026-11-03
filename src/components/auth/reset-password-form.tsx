@@ -7,12 +7,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { resetPassword } from "@/lib/auth-client";
+import { resetPassword } from "@/lib/auth/auth-client";
 import {
   resetPasswordSchema,
   type ResetPasswordInput,
 } from "@/schemas/auth";
-import { PasswordInput } from "../password-input";
+import { PasswordInput } from "./password-input";
 
 export function ResetPasswordForm() {
   const router = useRouter();

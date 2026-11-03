@@ -1,5 +1,5 @@
 import { PageLayout } from "@/@types";
-import type { Theme } from "@/lib/themes";
+import type { Theme } from "@/lib/themes/themes";
 
 /** CSS/HTML hook. Must stay lowercase — `[data-layout="COVER"]` never matches. */
 export function slugLayoutAttr(

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { ProfileAvatar } from "@/components/profile-avatar";
+import { ProfileAvatar } from "@/components/dashboard/profile-avatar";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/queries/use-current-user-query";
 

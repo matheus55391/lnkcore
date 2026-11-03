@@ -3,16 +3,16 @@
 import { PlusIcon } from "lucide-react";
 
 import type { Page } from "@/@types";
-import { ImageUpload } from "@/components/image-upload";
+import { ImageUpload } from "@/components/media/image-upload";
 import { Button } from "@/components/ui/button";
 import { LinksManager } from "@/components/links/links-manager";
 import { SocialsManager } from "@/components/links/socials-manager";
 import { CreateLinkDialog } from "@/components/links/create-link-dialog";
 import { CreateSocialDialog } from "@/components/links/create-social-dialog";
 import { cn } from "@/lib/utils";
-import type { ContentTab } from "./editor-types";
+import { ContentTab } from "./editor-types";
 import { SocialIconsRow } from "./social-icons-row";
-import type { SelectableSocial } from "@/lib/social-platforms";
+import type { SelectableSocial } from "@/lib/links/social-platforms";
 
 type Props = {
   page: Pick<Page, "id" | "title" | "bio" | "image">;
@@ -28,8 +28,8 @@ type Props = {
 };
 
 const TABS: { id: ContentTab; label: string }[] = [
-  { id: "links", label: "Links" },
-  { id: "socials", label: "Redes" },
+  { id: ContentTab.LINKS, label: "Links" },
+  { id: ContentTab.SOCIALS, label: "Redes" },
 ];
 
 export function ContentPanel({
@@ -70,7 +70,7 @@ export function ContentPanel({
             <SocialIconsRow
               pageId={page.id}
               onAdd={() => onAddSocial()}
-              onManage={() => onContentTabChange("socials")}
+              onManage={() => onContentTabChange(ContentTab.SOCIALS)}
             />
           </div>
         </div>
@@ -101,7 +101,7 @@ export function ContentPanel({
         })}
       </div>
 
-      {contentTab === "links" ? (
+      {contentTab === ContentTab.LINKS ? (
         <div
           className="flex flex-col gap-4"
           role="tabpanel"

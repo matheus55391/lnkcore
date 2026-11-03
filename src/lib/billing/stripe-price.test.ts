@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { isProPriceId } from "@/lib/stripe-price";
+import { isProPriceId } from "@/lib/billing/stripe-price";
 
 describe("isProPriceId", () => {
   const prev = process.env.STRIPE_PRO_PRICE_ID;

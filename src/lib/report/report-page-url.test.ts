@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isAllowedReportPageUrl } from "@/lib/report-page-url";
+import { isAllowedReportPageUrl } from "@/lib/report/report-page-url";
 
 describe("isAllowedReportPageUrl", () => {
   it("accepts canonical makebio hosts", () => {

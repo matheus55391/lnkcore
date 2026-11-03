@@ -9,22 +9,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormField } from "@/components/ui/form-field";
-import { LogoTheme } from "@/components/logo-theme";
+import { LogoTheme } from "@/components/brand/logo-theme";
 import {
   submitPageReport,
   type ReportPageInput,
 } from "@/actions/report/submit-page-report";
+import { ReportReason } from "@/@types";
 
 const REASONS: { value: ReportPageInput["reason"]; label: string }[] = [
-  { value: "spam", label: "Spam, golpe ou phishing" },
-  { value: "conteudo-ilegal", label: "Conteúdo ilegal" },
-  { value: "assedio", label: "Assédio, ameaça ou discurso de ódio" },
-  { value: "improprio", label: "Conteúdo impróprio ou ofensivo" },
+  { value: ReportReason.SPAM, label: "Spam, golpe ou phishing" },
+  { value: ReportReason.ILLEGAL_CONTENT, label: "Conteúdo ilegal" },
   {
-    value: "propriedade-intelectual",
+    value: ReportReason.HARASSMENT,
+    label: "Assédio, ameaça ou discurso de ódio",
+  },
+  {
+    value: ReportReason.INAPPROPRIATE,
+    label: "Conteúdo impróprio ou ofensivo",
+  },
+  {
+    value: ReportReason.INTELLECTUAL_PROPERTY,
     label: "Violação de propriedade intelectual",
   },
-  { value: "outro", label: "Outro motivo" },
+  { value: ReportReason.OTHER, label: "Outro motivo" },
 ];
 
 export function DenunciarForm() {

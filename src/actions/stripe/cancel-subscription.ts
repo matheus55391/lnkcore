@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "@/lib/billing/stripe";
 import { requireSession } from "@/utils/session";
 import type { ActionResult } from "@/@types/action-result";
 

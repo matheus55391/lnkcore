@@ -7,9 +7,9 @@ import {
   Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LogoTheme } from "@/components/logo-theme";
+import { LogoTheme } from "@/components/brand/logo-theme";
 import { BioMock } from "@/components/landing/bio-mock";
-import { PLAN_LIMITS } from "@/lib/plan-limits";
+import { PLAN_LIMITS } from "@/lib/billing/plan-limits";
 
 type Props = {
   signedIn: boolean;

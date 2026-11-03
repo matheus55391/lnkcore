@@ -23,7 +23,7 @@ import {
   SELECTABLE_SOCIALS,
   getSelectableSocial,
   type SelectableSocial,
-} from "@/lib/social-platforms";
+} from "@/lib/links/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
 import { cn } from "@/lib/utils";
 

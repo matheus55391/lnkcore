@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { LogoTheme } from "@/components/logo-theme";
+import { auth } from "@/lib/auth/auth";
+import { LogoTheme } from "@/components/brand/logo-theme";
 import { AuthBrandPanel } from "@/components/auth/auth-brand-panel";
 import { AuthLightScope } from "@/components/auth/auth-light-scope";
 

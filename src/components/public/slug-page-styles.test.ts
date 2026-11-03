@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { PageLayout } from "@/@types";
-import { THEMES } from "@/lib/themes";
+import { THEMES } from "@/lib/themes/themes";
 import { getSlugPageStyles, slugLayoutAttr } from "./slug-page-styles";
 
 describe("slugLayoutAttr", () => {

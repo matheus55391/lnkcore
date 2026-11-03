@@ -1,7 +1,7 @@
 import "server-only";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth, type Session } from "@/lib/auth";
+import { auth, type Session } from "@/lib/auth/auth";
 
 export async function getSession(): Promise<Session | null> {
   return auth.api.getSession({ headers: await headers() });

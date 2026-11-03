@@ -7,7 +7,7 @@ import {
   isLinkIconValue,
   toLinkIconValue,
   type LinkIconId,
-} from "@/lib/link-adornments";
+} from "@/lib/links/link-adornments";
 
 type Props = {
   value: string | null;
