@@ -14,6 +14,7 @@ Plataforma de link-in-bio em português (`makebio.com.br`), construída com Next
 | [Billing (Stripe)](./billing.md) | Planos FREE/PRO, checkout e webhook |
 | [Storage](./storage.md) | MinIO / S3 |
 | [Deploy](./deployment.md) | Produção (GHCR + VPS) |
+| [ADRs](./adr/) | Decisões de arquitetura (ex.: enums const) |
 
 ## Visão geral
 
@@ -27,11 +28,11 @@ User
 
 ## Planos
 
-Fonte: [`src/lib/plan-limits.ts`](../src/lib/plan-limits.ts). O painel anuncia PRO a **R$ 7/mês**; o valor cobrado é o Price ID do Stripe.
+Fonte: [`src/lib/billing/plan-limits.ts`](../src/lib/billing/plan-limits.ts). O painel anuncia PRO a **R$ 7/mês**; o valor cobrado é o Price ID do Stripe.
 
 | Plano | Páginas | Links por página | Imagens |
 | ----- | :-----: | :--------------: | :-----: |
 | FREE | 1 | 5 | 10 |
 | PRO | 5 | 20 | 40 |
 
-Regras validadas **no server** via [`src/lib/plan.ts`](../src/lib/plan.ts).
+Regras validadas **no server** via [`src/lib/billing/plan.ts`](../src/lib/billing/plan.ts).

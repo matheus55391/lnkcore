@@ -2,36 +2,28 @@
 
 import { headers } from "next/headers";
 import { z } from "zod";
-import { sendEmail } from "@/lib/email";
-import { sendDiscordLog } from "@/lib/discord-log";
-import { isRateLimited } from "@/lib/rate-limit";
-import { isAllowedReportPageUrl } from "@/lib/report-page-url";
+import { sendEmail } from "@/lib/email/email";
+import { DiscordKind, sendDiscordLog } from "@/lib/logging/discord-log";
+import { isRateLimited } from "@/lib/security/rate-limit";
+import { isAllowedReportPageUrl } from "@/lib/report/report-page-url";
 import type { ActionResult } from "@/@types/action-result";
+import { REPORT_REASON_LABELS, ReportReason } from "@/@types";
 
 const reportSchema = z.object({
   pageUrl: z.string().url("URL da página inválida").max(500),
   reason: z.enum([
-    "spam",
-    "conteudo-ilegal",
-    "assedio",
-    "improprio",
-    "propriedade-intelectual",
-    "outro",
+    ReportReason.SPAM,
+    ReportReason.ILLEGAL_CONTENT,
+    ReportReason.HARASSMENT,
+    ReportReason.INAPPROPRIATE,
+    ReportReason.INTELLECTUAL_PROPERTY,
+    ReportReason.OTHER,
   ]),
   details: z.string().max(2000).optional(),
   email: z.string().email("E-mail inválido").optional().or(z.literal("")),
 });
 
 export type ReportPageInput = z.infer<typeof reportSchema>;
-
-const REASON_LABELS: Record<ReportPageInput["reason"], string> = {
-  spam: "Spam ou golpe",
-  "conteudo-ilegal": "Conteúdo ilegal",
-  assedio: "Assédio ou ódio",
-  improprio: "Conteúdo impróprio",
-  "propriedade-intelectual": "Violação de propriedade intelectual",
-  outro: "Outro",
-};
 
 async function clientIp(): Promise<string> {
   const h = await headers();
@@ -67,7 +59,7 @@ export async function submitPageReport(
     };
   }
 
-  const reasonLabel = REASON_LABELS[reason];
+  const reasonLabel = REPORT_REASON_LABELS[reason];
   const reporter = email?.trim() || "(não informado)";
   const detailText = details?.trim() || "(sem detalhes)";
 
@@ -91,7 +83,7 @@ export async function submitPageReport(
   const discordOk = await sendDiscordLog({
     title: "Denúncia de página",
     description: "Alguém reportou um perfil público.",
-    kind: "error",
+    kind: DiscordKind.ERROR,
     url: pageUrl,
     fields: [
       { name: "Página", value: pageUrl },

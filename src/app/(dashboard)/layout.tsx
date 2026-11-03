@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/utils/session";
 import { QueryProvider } from "@/providers/query-provider";
-import { DashboardShell } from "@/components/dashboard-shell";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
 export default async function DashboardLayout({
   children,

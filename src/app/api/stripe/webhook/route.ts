@@ -1,10 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
-import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/stripe";
-import { isProPriceId } from "@/lib/stripe-price";
-import { Plan } from "@/@types";
-import { sendDiscordLog } from "@/lib/discord-log";
+import { stripe, STRIPE_WEBHOOK_SECRET } from "@/lib/billing/stripe";
+import { isProPriceId } from "@/lib/billing/stripe-price";
+import { PaymentStatus, Plan, SubscriptionStatus } from "@/@types";
+import { DiscordKind, sendDiscordLog } from "@/lib/logging/discord-log";
 
 type UserLookup = {
   userId?: string | null;
@@ -177,7 +177,7 @@ export async function POST(req: NextRequest) {
         await sendDiscordLog({
           title: "Pagamento confirmado",
           description: "A conta passou para o plano PRO.",
-          kind: "success",
+          kind: DiscordKind.SUCCESS,
           fields: await userLogFields(updated.id),
         });
         break;
@@ -204,7 +204,9 @@ export async function POST(req: NextRequest) {
 
         if (!userId) break;
 
-        const active = sub.status === "active" || sub.status === "trialing";
+        const active =
+          sub.status === SubscriptionStatus.ACTIVE ||
+          sub.status === SubscriptionStatus.TRIALING;
         const priceId = subscriptionPriceId(sub) ?? "";
         const allowedPrice = isProPriceId(priceId);
         if (active && !allowedPrice) {
@@ -328,7 +330,7 @@ export async function POST(req: NextRequest) {
               ? "Assinatura pausada"
               : "Assinatura cancelada",
           description: "A conta voltou para o plano FREE.",
-          kind: "error",
+          kind: DiscordKind.ERROR,
           fields: await userLogFields(userId),
         });
         break;
@@ -372,7 +374,7 @@ export async function POST(req: NextRequest) {
           : null;
         const paidAt = invoice.status_transitions?.paid_at
           ? new Date(invoice.status_transitions.paid_at * 1000)
-          : invoice.status === "paid"
+          : invoice.status === PaymentStatus.PAID
             ? new Date()
             : null;
 
@@ -380,6 +382,8 @@ export async function POST(req: NextRequest) {
           style: "currency",
           currency: invoice.currency.toUpperCase(),
         }).format(invoice.amount_paid / 100);
+
+        const paymentStatus = invoice.status ?? PaymentStatus.PAID;
 
         // Idempotent upsert by stripeInvoiceId (safe under Stripe retries)
         await prisma.payment.upsert({
@@ -391,7 +395,7 @@ export async function POST(req: NextRequest) {
             stripeChargeId: null,
             amount: invoice.amount_paid,
             currency: invoice.currency,
-            status: invoice.status ?? "paid",
+            status: paymentStatus,
             description: invoice.description,
             periodStart,
             periodEnd,
@@ -402,7 +406,7 @@ export async function POST(req: NextRequest) {
           update: {
             stripeChargeId: null,
             amount: invoice.amount_paid,
-            status: invoice.status ?? "paid",
+            status: paymentStatus,
             invoiceUrl: invoice.hosted_invoice_url,
             invoicePdf: invoice.invoice_pdf,
             paidAt,
@@ -412,7 +416,7 @@ export async function POST(req: NextRequest) {
         await sendDiscordLog({
           title: "Pagamento recebido",
           description: `Fatura paga no valor de **${formattedAmount}**.`,
-          kind: "success",
+          kind: DiscordKind.SUCCESS,
           url: invoice.hosted_invoice_url ?? undefined,
           fields: [
             ...(await userLogFields(userId)),

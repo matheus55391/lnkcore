@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Session } from "@/lib/auth";
+import type { Session } from "@/lib/auth/auth";
 
 vi.mock("@/utils/session", () => ({
   requireSession: vi.fn(),
 }));
 
-vi.mock("@/lib/auth", () => ({
+vi.mock("@/lib/auth/auth", () => ({
   auth: {
     api: {
       updateUser: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock("@/lib/auth", () => ({
 }));
 
 import { requireSession } from "@/utils/session";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { updateProfile } from "@/actions/user/update-profile";
 
 const BASE_DATE = new Date("2025-01-01");

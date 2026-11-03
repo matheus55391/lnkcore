@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { Session } from "@/lib/auth";
+import { Plan } from "@/@types";
+import type { Session } from "@/lib/auth/auth";
 import type { User } from "@/generated/prisma";
 
 vi.mock("@/lib/prisma", () => ({
@@ -51,7 +52,7 @@ const mockUserBase: User = {
   image: null,
   createdAt: BASE_DATE,
   updatedAt: BASE_DATE,
-  plan: "FREE",
+  plan: Plan.FREE,
   stripeCustomerId: null,
   stripeSubscriptionId: null,
 };

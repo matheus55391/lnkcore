@@ -24,7 +24,7 @@ import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
 import { cn } from "@/lib/utils";
 import { EditLinkDialog } from "./edit-link-dialog";
 import { LinkManagerItemThumb } from "./link-manager-item-thumb";
-import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/link-adornments";
+import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/links/link-adornments";
 
 type Props = {
   link: Link;

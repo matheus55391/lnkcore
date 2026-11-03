@@ -2,9 +2,13 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
-import { assertCanCreatePage, PlanLimitError } from "@/lib/plan";
+import { assertCanCreatePage, PlanLimitError } from "@/lib/billing/plan";
 import { createPageSchema, type CreatePageInput } from "@/schemas/pages";
-import { publicPageUrl, sendDiscordLog } from "@/lib/discord-log";
+import {
+  DiscordKind,
+  publicPageUrl,
+  sendDiscordLog,
+} from "@/lib/logging/discord-log";
 import type { ActionResult } from "@/@types/action-result";
 import type { Page } from "@/@types";
 
@@ -35,7 +39,7 @@ export async function createPage(
     await sendDiscordLog({
       title: "Nova página criada",
       description: "Um perfil novo entrou no ar.",
-      kind: "success",
+      kind: DiscordKind.SUCCESS,
       url: pageUrl,
       fields: [
         {

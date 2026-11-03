@@ -3,7 +3,7 @@
 import { Link2Icon, PaletteIcon, PanelTopIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import type { EditorSection } from "./editor-types";
+import { EditorSection } from "./editor-types";
 
 const ITEMS: {
   id: EditorSection;
@@ -12,19 +12,19 @@ const ITEMS: {
   icon: typeof Link2Icon;
 }[] = [
   {
-    id: "content",
+    id: EditorSection.CONTENT,
     label: "Links",
     hint: "Links e redes",
     icon: Link2Icon,
   },
   {
-    id: "profile",
+    id: EditorSection.PROFILE,
     label: "Cabeçalho",
     hint: "Foto, título e bio",
     icon: PanelTopIcon,
   },
   {
-    id: "appearance",
+    id: EditorSection.APPEARANCE,
     label: "Aparência",
     hint: "Tema da página",
     icon: PaletteIcon,

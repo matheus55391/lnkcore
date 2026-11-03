@@ -7,7 +7,7 @@ import {
   assertOwnedImageUrl,
   normalizeOwnedImageUrl,
   OwnedImageError,
-} from "@/lib/storage-cleanup";
+} from "@/lib/storage/storage-cleanup";
 
 describe("keyFromPublicUrl / ownership", () => {
   const prev = { ...process.env };

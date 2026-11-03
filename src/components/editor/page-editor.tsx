@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { SelectableSocial } from "@/lib/social-platforms";
+import type { SelectableSocial } from "@/lib/links/social-platforms";
 import { EditorRail } from "./editor-rail";
 import { EditorToolbar } from "./editor-toolbar";
 import { EditorPhone } from "./editor-phone";
@@ -17,7 +17,7 @@ import { ContentPanel } from "./content-panel";
 import { ProfilePanel } from "./profile-panel";
 import { AppearancePanel } from "./appearance-panel";
 import { SharePageDialog } from "./share-page-dialog";
-import type { ContentTab, EditorSection } from "./editor-types";
+import { ContentTab, EditorSection } from "./editor-types";
 
 type Props = {
   page: PageDetail;
@@ -28,8 +28,8 @@ function subscribeNoop() {
 }
 
 export function PageEditor({ page }: Props) {
-  const [section, setSection] = useState<EditorSection>("content");
-  const [contentTab, setContentTab] = useState<ContentTab>("links");
+  const [section, setSection] = useState<EditorSection>(EditorSection.CONTENT);
+  const [contentTab, setContentTab] = useState<ContentTab>(ContentTab.LINKS);
   const [linkOpen, setLinkOpen] = useState(false);
   const [socialOpen, setSocialOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -46,7 +46,7 @@ export function PageEditor({ page }: Props) {
   const pageUrl = origin ? `${origin}/${page.slug}` : `/${page.slug}`;
 
   function handleAddSocial(platformId?: SelectableSocial["id"]) {
-    setContentTab("socials");
+    setContentTab(ContentTab.SOCIALS);
     setInitialPlatformId(platformId ?? null);
     setSocialOpen(true);
   }
@@ -57,7 +57,7 @@ export function PageEditor({ page }: Props) {
   }
 
   function handleEditProfile() {
-    setSection("profile");
+    setSection(EditorSection.PROFILE);
   }
 
   return (
@@ -74,7 +74,7 @@ export function PageEditor({ page }: Props) {
 
         <main className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
-            {section === "content" ? (
+            {section === EditorSection.CONTENT ? (
               <ContentPanel
                 page={page}
                 contentTab={contentTab}
@@ -88,8 +88,10 @@ export function PageEditor({ page }: Props) {
                 onAddSocial={handleAddSocial}
               />
             ) : null}
-            {section === "profile" ? <ProfilePanel page={page} /> : null}
-            {section === "appearance" ? (
+            {section === EditorSection.PROFILE ? (
+              <ProfilePanel page={page} />
+            ) : null}
+            {section === EditorSection.APPEARANCE ? (
               <AppearancePanel page={page} />
             ) : null}
           </div>

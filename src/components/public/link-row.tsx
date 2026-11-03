@@ -1,5 +1,5 @@
 import { FeaturedSize, isFeaturedLink, type Link } from "@/@types";
-import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/link-adornments";
+import { LinkAdornmentIcon, isLinkIconValue } from "@/lib/links/link-adornments";
 
 type Props = {
   link: Link;

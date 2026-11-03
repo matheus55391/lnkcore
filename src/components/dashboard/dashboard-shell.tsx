@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 
 type Props = {
   children: React.ReactNode;

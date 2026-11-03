@@ -2,7 +2,7 @@
 
 Produto: **MakeBio** (`makebio.com.br/{slug}`).
 
-A página pública e o preview do editor compartilham o mesmo render: [`SlugPageView`](../src/components/page-slug-view.tsx). Estilos scoped em [`slug-page-styles.ts`](../src/components/public/slug-page-styles.ts). O atributo HTML é `data-layout="classic" | "cover"` (minúsculo) — o enum Prisma continua `CLASSIC | COVER`.
+A página pública e o preview do editor compartilham o mesmo render: [`SlugPageView`](../src/components/public/page-slug-view.tsx). Estilos scoped em [`slug-page-styles.ts`](../src/components/public/slug-page-styles.ts). O atributo HTML é `data-layout="classic" | "cover"` (minúsculo) — o enum Prisma continua `CLASSIC | COVER`. Open Graph da rota em [`src/lib/seo/page-metadata.ts`](../src/lib/seo/page-metadata.ts).
 
 ## Layouts (`Page.layout`)
 
@@ -43,7 +43,7 @@ O preview à direita é um iPhone (393×852, scaled) com `SlugPageView` em modo 
 
 ## Temas
 
-`Page.themeId` aponta para [`src/lib/themes.ts`](../src/lib/themes.ts). Cores (`background`, `foreground`, `cardBg`, `accent`…) alimentam as CSS variables `--sp-*` da página pública.
+`Page.themeId` aponta para [`src/lib/themes/themes.ts`](../src/lib/themes/themes.ts). Cores (`background`, `foreground`, `cardBg`, `accent`…) alimentam as CSS variables `--sp-*` da página pública.
 
 ## QA — o que bater
 

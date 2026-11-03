@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { SlugPageView } from "@/components/page-slug-view";
-import { buildPublicPageMetadata } from "@/lib/page-metadata";
+import { SlugPageView } from "@/components/public/page-slug-view";
+import { buildPublicPageMetadata } from "@/lib/seo/page-metadata";
 
 type Params = { slug: string };
 

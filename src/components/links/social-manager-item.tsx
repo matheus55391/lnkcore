@@ -20,9 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Link } from "@/@types/link";
-import { platformLabelFromUrl } from "@/lib/social-platforms";
+import { platformLabelFromUrl } from "@/lib/links/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
-import { detectSocialPlatform } from "@/lib/social-platforms";
+import { detectSocialPlatform } from "@/lib/links/social-platforms";
 import { useUpdateLinkMutation } from "@/queries/use-update-link-mutation";
 import { cn } from "@/lib/utils";
 import { EditSocialDialog } from "./edit-social-dialog";

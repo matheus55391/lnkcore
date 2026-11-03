@@ -1,5 +1,6 @@
 "use client";
 
+import { Plan } from "@/@types";
 import { CurrentUser } from "@/actions/user/get-current-user";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -77,7 +78,7 @@ export function ProfileAvatar({ user, className }: ProfileAvatarProps) {
                         </NextLink>
                     </DropdownMenuItem>
 
-                    {currentUser?.plan === "PRO" && (
+                    {currentUser?.plan === Plan.PRO && (
                         <DropdownMenuItem asChild>
                             <NextLink href="/billing">
                                 <CreditCardIcon className="mr-2 h-4 w-4" />
@@ -86,7 +87,7 @@ export function ProfileAvatar({ user, className }: ProfileAvatarProps) {
                         </DropdownMenuItem>
                     )}
 
-                    {currentUser?.plan !== "PRO" && (
+                    {currentUser?.plan !== Plan.PRO && (
                         <DropdownMenuItem
                             onSelect={(e) => {
                                 e.preventDefault();

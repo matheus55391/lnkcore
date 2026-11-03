@@ -11,7 +11,7 @@ import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
 import {
   getSelectableSocial,
   type SelectableSocial,
-} from "@/lib/social-platforms";
+} from "@/lib/links/social-platforms";
 
 const QUICK_SOCIALS: SelectableSocial["id"][] = [
   "whatsapp",

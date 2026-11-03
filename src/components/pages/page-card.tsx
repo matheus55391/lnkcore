@@ -3,21 +3,21 @@
 import { ExternalLinkIcon, MoreHorizontal, Pencil, Share2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 import {
     AlertDialog,
@@ -29,7 +29,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "./ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 
 import { Page } from "@/@types";
 import { useState } from "react";

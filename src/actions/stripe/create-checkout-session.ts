@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { stripe, STRIPE_PRO_PRICE_ID } from "@/lib/stripe";
+import { stripe, STRIPE_PRO_PRICE_ID } from "@/lib/billing/stripe";
 import { requireSession } from "@/utils/session";
 import type { ActionResult } from "@/@types/action-result";
 

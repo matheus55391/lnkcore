@@ -3,7 +3,7 @@ import sharp from "sharp";
 import { getSession } from "@/utils/session";
 import { getStorage } from "@/lib/storage";
 import { prisma } from "@/lib/prisma";
-import { PLAN_LIMITS } from "@/lib/plan";
+import { PLAN_LIMITS } from "@/lib/billing/plan";
 import { Plan } from "@/@types";
 import { buildUploadObjectKey } from "@/lib/storage/upload-key";
 

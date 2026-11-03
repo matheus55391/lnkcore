@@ -2,11 +2,11 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
-import { assertCanCreateLink, PlanLimitError } from "@/lib/plan";
+import { assertCanCreateLink, PlanLimitError } from "@/lib/billing/plan";
 import {
   normalizeOwnedImageUrl,
   OwnedImageError,
-} from "@/lib/storage-cleanup";
+} from "@/lib/storage/storage-cleanup";
 import { createLinkSchema, type CreateLinkInput } from "@/schemas/links";
 import type { ActionResult } from "@/@types/action-result";
 import { FeaturedSize, LinkType, type Link } from "@/@types";

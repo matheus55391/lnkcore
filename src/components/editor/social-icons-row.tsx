@@ -4,7 +4,7 @@ import { PlusIcon } from "lucide-react";
 
 import { LinkType } from "@/@types/link";
 import { useLinks } from "@/queries/use-links-query";
-import { detectSocialPlatform } from "@/lib/social-platforms";
+import { detectSocialPlatform } from "@/lib/links/social-platforms";
 import { SocialPlatformIcon } from "@/components/public/social-platform-icon";
 import { cn } from "@/lib/utils";
 

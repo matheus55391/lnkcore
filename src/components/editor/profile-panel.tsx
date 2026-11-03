@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormField } from "@/components/ui/form-field";
-import { ImageUpload } from "@/components/image-upload";
+import { ImageUpload } from "@/components/media/image-upload";
 
 const TITLE_MAX = 80;
 const BIO_MAX = 280;

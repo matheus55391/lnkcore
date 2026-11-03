@@ -5,7 +5,7 @@ import { Calendar, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useEscapeKey } from "@/hooks/use-escape-key";
-import { detectSocialPlatform } from "@/lib/social-platforms";
+import { detectSocialPlatform } from "@/lib/links/social-platforms";
 import type { Link } from "@/@types";
 
 type Props = {

@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/utils/session";
 import type { ActionResult } from "@/@types/action-result";
-import type { Plan } from "@/generated/prisma";
+import type { Plan } from "@/@types";
 
 export type CurrentUser = {
   id: string;

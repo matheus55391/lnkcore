@@ -44,14 +44,35 @@ lnkcore/
 │   │   └── api/                      # auth, stripe, upload
 │   ├── actions/                      # Server Actions (1 arquivo = 1 função)
 │   ├── components/
-│   │   ├── editor/                   # PageEditor, phone, rail, painéis
-│   │   ├── public/                   # header, links, estilos da /{slug}
+│   │   ├── account/                  # ProfileView, cards de perfil/senha/exclusão
+│   │   ├── auth/                     # sign-in/up, Google, password input
+│   │   ├── billing/                  # BillingView, plano, pagamentos, upgrade
+│   │   ├── brand/                    # LogoTheme
+│   │   ├── dashboard/                # shell, header, PagesDashboard
+│   │   ├── editor/                   # PageEditor, gate, phone, rail, painéis
+│   │   ├── landing/                  # LP
+│   │   ├── legal/                    # denúncia / páginas legais
 │   │   ├── links/                    # dialogs CLASSIC / FEATURED / SOCIAL
-│   │   └── ui/
+│   │   ├── media/                    # ImageUpload
+│   │   ├── pages/                    # PageCard, create/edit page dialogs
+│   │   ├── public/                   # SlugPageView, header, OG styles
+│   │   └── ui/                       # shadcn primitives (só em components/)
 │   ├── queries/                      # TanStack Query (usePages, useLinks, …)
 │   ├── schemas/                      # Zod compartilhado
 │   ├── @types/                       # DTOs (nunca importar generated/prisma)
-│   ├── lib/                          # prisma, auth, stripe, plan, themes, discord-log
+│   ├── lib/
+│   │   ├── auth/                     # Better Auth server + client
+│   │   ├── billing/                  # Stripe, planos e limites
+│   │   ├── email/                    # SMTP / Resend
+│   │   ├── links/                    # social platforms, adornments
+│   │   ├── logging/                  # Discord webhook embeds
+│   │   ├── report/                   # URL allowlist de denúncia
+│   │   ├── security/                 # rate limit
+│   │   ├── seo/                      # Open Graph da /{slug}
+│   │   ├── storage/                  # S3/R2, upload, cleanup
+│   │   ├── themes/                   # temas da página pública
+│   │   ├── prisma.ts
+│   │   └── utils.ts
 │   └── proxy.ts
 └── docker-compose.yml
 ```
@@ -74,7 +95,7 @@ Browser (Client Component)
 
 - `src/app/(dashboard)/layout.tsx` chama `requireSession()` no server e envolve os filhos com `QueryProvider`.
 - Páginas do dashboard são `"use client"` e consomem hooks em [src/queries](../src/queries).
-- `/dashboard/[pageId]` monta o [`PageEditor`](../src/components/editor/page-editor.tsx) (Links / Cabeçalho / Aparência + preview iPhone). O header do shell some nessa rota.
+- `/dashboard/[pageId]` monta o [`PageEditor`](../src/components/editor/page-editor.tsx) (Links / Cabeçalho / Aparência + preview iPhone). O header do [`DashboardShell`](../src/components/dashboard/dashboard-shell.tsx) some nessa rota.
 
 ### Página pública
 
@@ -82,12 +103,12 @@ Browser (Client Component)
 GET /[slug]
   └── Server Component
         └── prisma.page.findUnique({ slug, published, links active })
-              └── SlugPageView (client)
+              └── SlugPageView (client) — `src/components/public/page-slug-view.tsx`
                     CLASSIC → avatar + bio + sociais + botões
                     COVER   → hero 4:5 + fade do tema + card “celular” no desktop
 ```
 
-Fetch no server; hidratação no client só para share/modais. Estilos em [`slug-page-styles.ts`](../src/components/public/slug-page-styles.ts) (`data-layout="cover"|"classic"`). Detalhe visual: [public-page.md](./public-page.md).
+Fetch no server; hidratação no client só para share/modais. Estilos em [`slug-page-styles.ts`](../src/components/public/slug-page-styles.ts) (`data-layout="cover"|"classic"`). Share preview (OG) em [`page-metadata.ts`](../src/lib/seo/page-metadata.ts). Detalhe visual: [public-page.md](./public-page.md).
 
 ### Mutations (Server Actions)
 

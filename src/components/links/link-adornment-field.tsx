@@ -3,14 +3,14 @@
 import { useRef, useState } from "react";
 import { Camera, Loader2, Smile, ImageIcon, Ban } from "lucide-react";
 
-import { FeaturedSize } from "@/@types/link";
+import { AdornmentMode, FeaturedSize } from "@/@types";
 import { Label } from "@/components/ui/label";
 import { FormField } from "@/components/ui/form-field";
 import { cn } from "@/lib/utils";
-import { uploadImageFile } from "@/lib/upload-client";
+import { uploadImageFile } from "@/lib/storage/upload-client";
 import { LinkIconPicker } from "./link-icon-picker";
 
-export type AdornmentMode = "none" | "emoji" | "image";
+export { AdornmentMode };
 
 type Props = {
   emoji: string | null;
@@ -25,15 +25,15 @@ type Props = {
 };
 
 function resolveMode(emoji: string | null, image: string | null): AdornmentMode {
-  if (image) return "image";
-  if (emoji) return "emoji";
-  return "none";
+  if (image) return AdornmentMode.IMAGE;
+  if (emoji) return AdornmentMode.EMOJI;
+  return AdornmentMode.NONE;
 }
 
 const MODES: { id: AdornmentMode; label: string; Icon: typeof Smile }[] = [
-  { id: "none", label: "Nenhum", Icon: Ban },
-  { id: "emoji", label: "Emoji", Icon: Smile },
-  { id: "image", label: "Imagem", Icon: ImageIcon },
+  { id: AdornmentMode.NONE, label: "Nenhum", Icon: Ban },
+  { id: AdornmentMode.EMOJI, label: "Emoji", Icon: Smile },
+  { id: AdornmentMode.IMAGE, label: "Imagem", Icon: ImageIcon },
 ];
 
 export function LinkAdornmentField({
@@ -60,10 +60,10 @@ export function LinkAdornmentField({
   function selectMode(next: AdornmentMode) {
     setMode(next);
     setUploadError(null);
-    if (next === "none") {
+    if (next === AdornmentMode.NONE) {
       onChange({ emoji: null, image: null });
       setLocalPreview(null);
-    } else if (next === "emoji") {
+    } else if (next === AdornmentMode.EMOJI) {
       onChange({ emoji, image: null });
       setLocalPreview(null);
     } else {
@@ -126,7 +126,7 @@ export function LinkAdornmentField({
         ))}
       </div>
 
-      {mode === "emoji" && (
+      {mode === AdornmentMode.EMOJI && (
         <LinkIconPicker
           value={emoji}
           onChange={(v) => onChange({ emoji: v, image: null })}
@@ -135,7 +135,7 @@ export function LinkAdornmentField({
         />
       )}
 
-      {mode === "image" && (
+      {mode === AdornmentMode.IMAGE && (
         <div className={cover ? "flex flex-col gap-2" : "flex items-center gap-3"}>
           <button
             type="button"

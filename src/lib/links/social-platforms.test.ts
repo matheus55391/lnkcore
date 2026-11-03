@@ -3,7 +3,7 @@ import {
   detectSocialPlatform,
   platformLabelFromUrl,
   SOCIAL_BRAND,
-} from "@/lib/social-platforms";
+} from "@/lib/links/social-platforms";
 
 describe("detectSocialPlatform", () => {
   it("detects Instagram", () => {
@@ -36,7 +36,7 @@ describe("detectSocialPlatform", () => {
   });
 
   it("builds profile URLs from handles", async () => {
-    const { getSelectableSocial } = await import("@/lib/social-platforms");
+    const { getSelectableSocial } = await import("@/lib/links/social-platforms");
     expect(getSelectableSocial("instagram")?.buildUrl("matheus")).toBe(
       "https://instagram.com/matheus"
     );

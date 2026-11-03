@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogOut } from "lucide-react";
 
-import { signOut } from "@/lib/auth-client";
+import { signOut } from "@/lib/auth/auth-client";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export function SignOutButton() {

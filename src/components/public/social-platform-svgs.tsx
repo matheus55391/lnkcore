@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { SocialPlatformId } from "@/lib/social-platforms";
+import type { SocialPlatformId } from "@/lib/links/social-platforms";
 
 export type SocialIconProps = { className?: string; color?: string };
 
